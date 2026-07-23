@@ -10,7 +10,9 @@
     "format": "oxfmt",
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "lint:staged": "lint-staged",
+    "prepare": "husky"
   },
   "dependencies": {
     "@heroui-pro/react": "1.0.0-beta.7",
@@ -28,11 +30,20 @@
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
     "drizzle-kit": "^1.0.0-rc.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
     "oxfmt": "^0.60.0",
     "oxlint": "^1.75.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.1",
     "typescript": "^7.0.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}": [
+      "oxlint --fix",
+      "oxfmt"
+    ],
+    "*.{json,md,css,scss,html,yml,yaml}": "oxfmt"
   },
   "trustedDependencies": [
     "@heroui-pro/react",
