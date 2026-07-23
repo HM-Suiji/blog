@@ -1,5 +1,12 @@
 import { sql } from 'drizzle-orm'
-import { pgTable, uuid, timestamp, varchar, integer } from 'drizzle-orm/pg-core'
+import {
+  pgTable,
+  uuid,
+  timestamp,
+  varchar,
+  integer,
+  boolean,
+} from 'drizzle-orm/pg-core'
 
 export const postsTable = pgTable('posts', {
   id: uuid()
@@ -15,6 +22,7 @@ export const postsTable = pgTable('posts', {
     .notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
   contentPath: varchar('content_path', { length: 256 }).notNull(),
+  public: boolean('public').default(true).notNull(),
 })
 
 export const postStatsTable = pgTable('post_stats', {
@@ -26,3 +34,8 @@ export const postStatsTable = pgTable('post_stats', {
   likes: integer('likes').default(0).notNull(),
   averageReadTime: integer('average_read_time').default(0).notNull(),
 })
+
+export type InsertPost = Omit<typeof postsTable.$inferInsert, 'id'>
+export type SelectPost = typeof postsTable.$inferSelect
+export type InsertPostStats = Omit<typeof postStatsTable.$inferInsert, 'id'>
+export type SelectPostStats = typeof postStatsTable.$inferSelect
