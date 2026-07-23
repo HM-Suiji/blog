@@ -33,6 +33,7 @@
 │   ├── actions
 │   │   └── post.ts           # 文章相关的服务端操作
 │   ├── db
+│   │   ├── dto               # 数据库类型映射
 │   │   ├── schema
 │   │   │   └── post.ts       # 数据库表结构定义
 │   │   └── query
