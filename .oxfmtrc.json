@@ -1,0 +1,52 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"ignorePatterns": ["node_modules/**", "dist/**", ".next/**"],
+	"tabWidth": 2,
+	"useTabs": false,
+	"endOfLine": "lf",
+	"quoteStyle": "single",
+	"semi": false,
+	"singleQuote": true,
+	"trailingComma": "es5",
+	"printWidth": 80,
+	"bracketSpacing": true,
+	"arrowParens": "avoid",
+	"experimentalSortImports": {
+		"groups": [
+			"type",
+			"builtin",
+			"react",
+			"external",
+			"external-heroui",
+			"internal",
+			"internal-alias",
+			"parent",
+			"sibling",
+			"index",
+			"unknown"
+		],
+		"customGroups": [
+			{
+				"groupName": "react",
+				"elementNamePattern": ["react"],
+				"selector": "external",
+				"modifiers": ["value"]
+			},
+			{
+				"groupName": "external-heroui",
+				"elementNamePattern": ["@heroui-pro/**", "@heroui/**"],
+				"selector": "external",
+				"modifiers": ["value"]
+			},
+			{
+				"groupName": "internal-alias",
+				"elementNamePattern": ["@/**"],
+				"selector": "internal",
+				"modifiers": ["value"]
+			}
+		],
+		"internalPattern": ["@/"],
+		"newlinesBetween": true,
+		"order": "asc"
+	}
+}

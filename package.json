@@ -6,22 +6,28 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "biome check",
-    "format": "biome format --write"
+    "lint": "oxlint --fix",
+    "format": "oxfmt"
   },
   "dependencies": {
+    "@heroui-pro/react": "1.0.0-beta.7",
     "next": "16.3.0-preview.8",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.2",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^26.1.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "oxfmt": "^0.60.0",
+    "oxlint": "^1.75.0",
     "tailwindcss": "^4",
     "typescript": "^7.0.2"
-  }
+  },
+  "trustedDependencies": [
+    "@heroui-pro/react",
+    "@zowe/secrets-for-zowe-sdk"
+  ]
 }
