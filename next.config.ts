@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   reactCompiler: true,
   typedRoutes: true,
+  cacheComponents: true,
+  partialPrefetching: true,
   experimental: {
     useTypeScriptCli: true,
     turbopackRustReactCompiler: true,

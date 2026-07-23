@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm'
 
 import { db } from '..'
+import { toPostDto } from '../dto/post'
 import {
   InsertPost,
   InsertPostStats,
@@ -13,12 +14,12 @@ export const getPostBySlug = async (slug: string) => {
     .select()
     .from(postsTable)
     .where(eq(postsTable.slug, slug))
-  return post[0]
+  return toPostDto(post[0])
 }
 
 export const getPosts = async () => {
   const posts = await db.select().from(postsTable)
-  return posts
+  return posts.map(toPostDto)
 }
 
 export const getPostStats = async (postId: string) => {
@@ -30,13 +31,18 @@ export const getPostStats = async (postId: string) => {
 }
 
 export const getAllPostWithStats = async () => {
-  const postsWithStats = await db
-    .select({
-      post: postsTable,
-      stats: postStatsTable,
-    })
-    .from(postsTable)
-    .leftJoin(postStatsTable, eq(postsTable.id, postStatsTable.postId))
+  const postsWithStats = (
+    await db
+      .select({
+        post: postsTable,
+        stats: postStatsTable,
+      })
+      .from(postsTable)
+      .leftJoin(postStatsTable, eq(postsTable.id, postStatsTable.postId))
+  ).map(({ post, stats }) => ({
+    ...toPostDto(post),
+    stats,
+  }))
   return postsWithStats
 }
 

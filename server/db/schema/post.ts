@@ -29,7 +29,9 @@ export const postStatsTable = pgTable('post_stats', {
   id: uuid()
     .primaryKey()
     .default(sql`uuidv7()`),
-  postId: uuid().references(() => postsTable.id),
+  postId: uuid()
+    .references(() => postsTable.id)
+    .notNull(),
   views: integer('views').default(0).notNull(),
   likes: integer('likes').default(0).notNull(),
   averageReadTime: integer('average_read_time').default(0).notNull(),
