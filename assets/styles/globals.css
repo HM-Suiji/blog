@@ -1,6 +1,7 @@
 @import 'tailwindcss';
 @import '@heroui/styles';
 @import '@heroui-pro/react/css';
+@plugin "@tailwindcss/typography";
 
 :root,
 .light,

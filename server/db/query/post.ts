@@ -14,6 +14,11 @@ export const getPostBySlug = async (slug: string) => {
     .select()
     .from(postsTable)
     .where(eq(postsTable.slug, slug))
+
+  if (!post[0]) {
+    return null
+  }
+
   return toPostDto(post[0])
 }
 
