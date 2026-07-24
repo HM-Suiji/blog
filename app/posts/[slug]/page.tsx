@@ -65,10 +65,10 @@ export default async function PostSlugPage({
   const { default: Post } = await import(`@/content/posts/${slug}.mdx`)
 
   return (
-    <section className="">
+    <div className="">
       <div className="prose prose-headings:mt-8 prose-headings:font-semibold prose-h1:text-5xl prose-h2:text-4xl prose-h3:text-3xl prose-h4:text-2xl prose-h5:text-xl prose-h6:text-lg w-full max-w-6xl">
         <Post />
       </div>
-    </section>
+    </div>
   )
 }
