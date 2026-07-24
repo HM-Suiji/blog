@@ -10,13 +10,13 @@ export default async function PostsPage() {
   cacheLife('weeks')
   const posts = await findPosts()
   return (
-    <>
+    <div className="w-full flex flex-col">
       PostsPage
       {posts.map(post => (
         <Link href={`/posts/${post.slug}`} key={post.slug}>
           {post.title}
         </Link>
       ))}
-    </>
+    </div>
   )
 }

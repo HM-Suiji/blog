@@ -46,3 +46,43 @@
   --border: oklch(28% 0 287.57);
   --separator: oklch(25% 0 287.57);
 }
+
+.shiki {
+  @apply my-0 rounded-none!;
+  counter-reset: step;
+  counter-increment: step 0;
+  .line {
+    @apply border-l-4 border-transparent;
+    &::before {
+      counter-increment: step;
+      @apply mr-6 inline-block w-4 border-transparent text-right text-neutral-600 content-[counter(step)];
+    }
+    &.highlighted,
+    &.diff {
+      @apply -mr-5 -ml-4 inline-block w-[calc(100%+(--spacing(5)+(--spacing(4))))] pr-5 pl-4;
+    }
+    &.highlighted {
+      @apply border-neutral-500 bg-neutral-800;
+    }
+    &.diff {
+      &.add,
+      &.remove {
+        span:first-child::before {
+          @apply -ml-4 inline-flex w-4;
+        }
+      }
+      &.add {
+        @apply border-success bg-success/25 before:text-success;
+        span:first-child::before {
+          @apply text-success content-["+"];
+        }
+      }
+      &.remove {
+        @apply border-danger bg-danger/30 opacity-70 *:text-neutral-400! before:text-danger;
+        span:first-child::before {
+          @apply text-danger content-["-"];
+        }
+      }
+    }
+  }
+}
