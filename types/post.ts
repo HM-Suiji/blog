@@ -14,6 +14,7 @@ export const PostFrontmatterSchema = z.object({
   tags: z.array(z.string()).default([]),
   cover: z.string().optional(),
   public: z.boolean().default(true),
+  pin: z.boolean().default(false),
 })
 
 export type PostFrontmatter = z.infer<typeof PostFrontmatterSchema>

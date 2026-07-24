@@ -9,6 +9,7 @@ export const toPostDto = (post: SelectPost): Post => ({
   cover: post.cover || '',
   description: post.description || '',
   public: post.public,
+  pin: post.pin,
   publishedAt: post.publishedAt.toISOString(),
   slug: post.slug,
   title: post.title,

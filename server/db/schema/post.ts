@@ -23,6 +23,7 @@ export const postsTable = pgTable('posts', {
   updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
   contentPath: varchar('content_path', { length: 256 }).notNull(),
   public: boolean('public').default(true).notNull(),
+  pin: boolean('pin').default(false).notNull(),
 })
 
 export const postStatsTable = pgTable('post_stats', {

@@ -71,15 +71,13 @@ export default async function PostSlugPage({
 
   if (!frontmatter.public) notFound()
 
-  console.log(headings)
-
   const { content: MDXContent } = await compileMDX({
     source: content,
     components,
   })
 
   return (
-    <div className="w-full grid grid-cols-4 gap-4">
+    <div className="w-full grid grid-cols-4 gap-4 my-8">
       <div className="col-span-3 flex flex-col">
         <Link href={'/posts'} className="h-full border flex px-4 py-2 gap-2">
           <ArrowLeft />
@@ -92,6 +90,7 @@ export default async function PostSlugPage({
             </Chip>
           ))}
           <Chip>{readingTime} 分钟</Chip>
+          {frontmatter.pin && <Chip color="success">置顶</Chip>}
         </div>
         <div className="prose prose-headings:mt-8 prose-headings:font-semibold prose-headings:text-foreground text-muted prose-strong:text-foreground prose-h1:text-5xl prose-h2:text-4xl prose-h3:text-3xl prose-h4:text-2xl prose-h5:text-xl prose-h6:text-lg w-full max-w-6xl">
           {MDXContent}
