@@ -1,7 +1,7 @@
 import { cacheLife, cacheTag } from 'next/cache'
 import Link from 'next/link'
 
-import { findPosts } from '@/server/actions/post'
+import { findPosts } from '@/server/actions/post.action'
 import { cacheSelector } from '@/utils/cache'
 
 export default async function PostsPage() {

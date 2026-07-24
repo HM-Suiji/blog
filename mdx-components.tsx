@@ -8,7 +8,7 @@ import { Code as InlineCode } from '@heroui/react'
 
 import { Code } from './components/layout/code'
 
-const components: MDXComponents = {
+export const components: MDXComponents = {
   h1: props => (
     <WrapHeadingWithId>
       <h1>{props.children}</h1>

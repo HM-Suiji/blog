@@ -1,10 +1,15 @@
 import { ArrowLeft } from 'lucide-react'
+import { compileMDX } from 'next-mdx-remote/rsc'
 import { cacheLife, cacheTag } from 'next/cache'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { findPostBySlug, findPosts } from '@/server/actions/post'
+import { Chip } from '@heroui/react'
+
+import { components } from '@/mdx-components'
+import { findPostBySlug, findPosts } from '@/server/actions/post.action'
 import { cacheSelector } from '@/utils/cache'
+import { getPost } from '@/utils/get-post'
 
 export const generateMetadata = async ({
   params,
@@ -60,21 +65,48 @@ export default async function PostSlugPage({
 
   const post = await findPostBySlug(slug)
 
-  if (!post || !post.public) {
-    notFound()
-  }
+  if (!post || !post.public) notFound()
 
-  const { default: Post } = await import(`@/content/posts/${slug}.mdx`)
+  const { frontmatter, headings, readingTime, content } = await getPost(slug)
+
+  if (!frontmatter.public) notFound()
+
+  console.log(headings)
+
+  const { content: MDXContent } = await compileMDX({
+    source: content,
+    components,
+  })
 
   return (
-    <div className="w-full grid grid-cols-4">
+    <div className="w-full grid grid-cols-4 gap-4">
       <div className="col-span-3 flex flex-col">
         <Link href={'/posts'} className="h-full border flex px-4 py-2 gap-2">
           <ArrowLeft />
           返回博客列表
         </Link>
+        <div className="mt-2 flex gap-2">
+          {frontmatter.tags.map(tag => (
+            <Chip color="accent" key={tag}>
+              {tag}
+            </Chip>
+          ))}
+          <Chip>{readingTime} 分钟</Chip>
+        </div>
         <div className="prose prose-headings:mt-8 prose-headings:font-semibold prose-headings:text-foreground text-muted prose-strong:text-foreground prose-h1:text-5xl prose-h2:text-4xl prose-h3:text-3xl prose-h4:text-2xl prose-h5:text-xl prose-h6:text-lg w-full max-w-6xl">
-          <Post />
+          {MDXContent}
+        </div>
+      </div>
+      <div>
+        <div className="border p-2">
+          博客目录
+          <ul className="text-muted mt-2">
+            {headings.map(heading => (
+              <li key={heading.id}>
+                <Link href={`#${heading.id}`}>{heading.text}</Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

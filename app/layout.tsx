@@ -36,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       <body className="min-h-full flex flex-col relative">
         <Providers>
           <Header />
-          <section className="min-h-full mx-auto my-12 max-w-4xl 2xl:max-w-6xl">
+          <section className="min-h-full mx-auto my-12 max-w-5xl 2xl:max-w-6xl">
             {children}
           </section>
         </Providers>
