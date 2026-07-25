@@ -18,7 +18,7 @@ export default async function FriendsPage() {
         <p className="text-muted">海内存知己，天涯若比邻</p>
         <div className="flex gap-2">
           <div className="flex gap-2">
-            已收录<span className="text-accent">{1}</span>位朋友
+            已收录<span className="text-accent">{friends.length}</span>位朋友
           </div>
         </div>
       </div>

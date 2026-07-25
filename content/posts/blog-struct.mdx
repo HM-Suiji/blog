@@ -1,0 +1,69 @@
+---
+title: '探秘穗积宇宙船的核心架构'
+description: '简单介绍一下我是如何用 Next.js 搭建出一个优秀的全栈博客的'
+date: 2026-07-25
+tags: ['Next.js', '博客']
+author: 'HM-Suiji'
+---
+
+# 探秘穗积宇宙船的核心架构
+
+## 前言
+
+穗积宇宙船是一个基于 Next.js 的全栈博客，它拥有以下特点：
+
+- **响应式设计**：穗积宇宙船支持在桌面、平板和手机上无缝切换，为用户提供最佳阅读体验。无论是在电脑上浏览，还是在手机上查看，该博客都能提供一致的用户体验。
+- **SEO 优化**：穗积宇宙船采用 Next.js 的静态站点生成（SSG）和增量静态生成（ISR）技术，确保每个页面在构建时都被预渲染，从而提高搜索引擎的抓取效率和排名。
+- **内容管理**：穗积宇宙船支持 Markdown 格式的文章编写，并提供了一套简洁易用的内容管理系统，让用户可以轻松地发布、编辑和管理文章。
+- **Serverless部署**：穗积宇宙船采用 Vercel 的 Serverless 功能，无需担心服务器运维，只需专注于内容创作和优化。
+
+## 核心架构
+
+本博客借助于 Next.js 优秀的 Client/Server 分成解耦模型，实现了全栈式博客的 MVC 架构。
+
+### Model 层
+
+我使用 Drizzle ORM 作为 PostgreSQL 数据库的 ORM 工具，依赖强大的链式调用与类型推导，我不用写一行 SQL 语句就能完成数据库操作。同时，类型还是绝对安全。我并不需要同时维护 SQL 和 TypeScript 类型，Drizzle ORM 会自动帮我完成。
+
+面对不想对外暴露的字段，如 `user` 表中的 `password` 字段，或者是 Date 等类型需要进一步序列化，我通过 DTO 层完成对数据的过滤以及类型的转换。
+
+```typescript
+export type Dtoify<T> = {
+  [K in keyof T]: T[K] extends Date
+    ? string
+    : T[K] extends string | null
+      ? string
+      : T[K]
+}
+
+type User = Dtoify<Omit<UserEntity, 'password'>>
+```
+
+### Controller 层
+
+在 Controller 层，我并没有使用传统的 HTTP API 暴露的方案，即便是 Next.js 的 API Route，我也没有采用。取而代之的是更适配与 现代Next.js 的 `Server Action` 方案。
+
+这种方案既不会对外暴露 HTTP 端点，减少很多不必要的安全风险，同时还能利用 Next.js 的 `Cache Components` 机制，实现更高效的缓存策略，还省去了为了类型安全配置繁琐的 RPC 的过程，简直是一箭三雕。
+
+```tsx
+export async function findPosts() {
+  'use cache'
+  cacheTag('posts')
+  cacheLife('weeks')
+
+  return await getPosts() // db query
+}
+
+export default async function PostsPage() {
+  const posts = await findPosts()
+  return <>...</>
+}
+```
+
+## 未来展望
+
+穗积宇宙船的架构设计旨在提供高效、可扩展和易于维护的博客解决方案。随着技术的不断进步和用户需求的变化，穗积宇宙船将继续优化和改进，以提供更好的用户体验和功能。
+
+面对市场上暂时没有像本博客类似的 Serverless 博客解决方案，Halo 尽管十分成熟，但仍然逃脱不了服务器建站的宿命。如果大家有期待的话，在未来的某个版本中，我在整理、抽离好所有硬编码配置后，会尝试将本博客系统开源，并贡献给社区。
+
+敬请期待！

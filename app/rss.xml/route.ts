@@ -1,7 +1,7 @@
 import { Feed } from 'feed'
 
 import { siteConfig } from '@/config/site'
-import { getPosts } from '@/server/db/query/post'
+import { findPosts } from '@/server/actions/post.action'
 import { getPost } from '@/utils/get-post'
 import { mdxToHtml } from '@/utils/mdx'
 
@@ -19,7 +19,7 @@ export async function GET() {
     },
   })
 
-  const posts = await getPosts()
+  const posts = await findPosts()
 
   const items = await Promise.all(
     posts.map(async post => {

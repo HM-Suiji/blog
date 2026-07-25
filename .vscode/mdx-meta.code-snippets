@@ -1,0 +1,17 @@
+{
+	"generate MDX metadata": {
+		"scope": "md,mdx",
+		"prefix": "mdx-meta",
+		"body": [
+			"---",
+			"title: '$1'",
+			"description: '$2'",
+			"date: $3",
+			"tags: [$4]",
+			"author: 'HM-Suiji'",
+			"---"
+		],
+		"description": "Generate MDX metadata"
+	}
+	
+}
