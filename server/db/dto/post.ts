@@ -14,4 +14,5 @@ export const toPostDto = (post: SelectPost): Post => ({
   slug: post.slug,
   title: post.title,
   updatedAt: post.updatedAt.toISOString(),
+  tags: post.tags,
 })

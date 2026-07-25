@@ -6,6 +6,7 @@ import {
   varchar,
   integer,
   boolean,
+  text,
 } from 'drizzle-orm/pg-core'
 
 export const postsTable = pgTable('posts', {
@@ -24,6 +25,10 @@ export const postsTable = pgTable('posts', {
   contentPath: varchar('content_path', { length: 256 }).notNull(),
   public: boolean('public').default(true).notNull(),
   pin: boolean('pin').default(false).notNull(),
+  tags: text('tags')
+    .array()
+    .notNull()
+    .default(sql`ARRAY[]::text[]`),
 })
 
 export const postStatsTable = pgTable('post_stats', {

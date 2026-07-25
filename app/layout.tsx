@@ -24,6 +24,11 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  alternates: {
+    types: {
+      'application/rss+xml': siteConfig.url + '/rss.xml',
+    },
+  },
 }
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
