@@ -4,7 +4,7 @@ import { cacheLife, cacheTag } from 'next/cache'
 
 import { cacheSelector } from '@/utils/cache'
 
-import { getPostBySlug, getPosts } from '../db/query/post'
+import { getPostBySlug, getPosts } from '../db/query/post.query'
 
 export async function findPostBySlug(slug: string) {
   'use cache'

@@ -3,9 +3,10 @@
 import { Rss } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
-import { Button, toast } from '@heroui/react'
+import { Avatar, Button, toast } from '@heroui/react'
 
 import { siteConfig } from '@/config/site'
+import { Friend } from '@/types/friend'
 
 export const RSSButton: React.FC = () => {
   const copyRSS = async () => {
@@ -21,6 +22,19 @@ export const RSSButton: React.FC = () => {
     <Button variant="outline" onPress={copyRSS}>
       <Rss />
       RSS
+    </Button>
+  )
+}
+
+export const ExploreFriend: React.FC<{
+  friend: Friend
+}> = ({ friend }) => {
+  return (
+    <Button>
+      <Avatar>
+        <Avatar.Image src={friend.avatar} alt={friend.name} />
+        <Avatar.Fallback></Avatar.Fallback>
+      </Avatar>
     </Button>
   )
 }
