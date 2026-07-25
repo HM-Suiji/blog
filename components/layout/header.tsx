@@ -15,7 +15,7 @@ import { ThemeSwitcher } from './../theme-switcher'
 export const Header: React.FC = () => {
   const pathname = usePathname()
   return (
-    <Navbar position="static" shouldBlockScroll={false}>
+    <Navbar position="static" hideOnScroll shouldBlockScroll={false}>
       <Navbar.Header>
         <Navbar.MenuToggle className="md:hidden" />
         <Navbar.Brand>
