@@ -7,6 +7,7 @@ export const siteConfig = {
   description:
     '一个普普通通的程序员将与大家在这个宇宙船里分享一些开发经验和生活点滴。',
   author: 'HM-Suiji',
+  copyright: `${new Date().getFullYear()} 穗积`,
   links: {
     github: 'https://github.com/HM-Suiji',
   },

@@ -12,7 +12,7 @@ export async function GET() {
     id: siteConfig.url,
     link: siteConfig.url,
     language: 'zh-CN',
-    copyright: `${new Date().getFullYear()} ${siteConfig.name}`,
+    copyright: siteConfig.copyright,
     updated: new Date(),
     author: {
       name: siteConfig.name,
