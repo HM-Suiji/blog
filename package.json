@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "bun sync:posts && next build",
+    "build": "bun sync-posts && next build",
     "start": "next start",
     "postbuild": "next-sitemap",
     "lint": "oxlint --fix",
