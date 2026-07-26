@@ -2,7 +2,7 @@ import { Link } from '@heroui/react'
 
 export const siteConfig = {
   name: '穗积的宇宙船',
-  url: 'http://localhost:3000',
+  url: process.env.HOST || 'http://localhost:3000',
   slogan: '莫笑吾辈好远骛，跬步平川马蹄疾。',
   description:
     '一个普普通通的程序员将与大家在这个宇宙船里分享一些开发经验和生活点滴。',
@@ -52,6 +52,7 @@ export const siteConfig = {
       ),
       external: true,
       tags: ['React Native', 'Expo', 'Agents'],
+      link: 'https://github.com/CherryHQ/cherry-studio-app',
     },
     {
       title: '清风卡社小程序',

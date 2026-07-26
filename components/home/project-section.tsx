@@ -1,6 +1,6 @@
 import Image from 'next/image'
 
-import { Avatar, Card, Chip } from '@heroui/react'
+import { Avatar, Card, Chip, Link } from '@heroui/react'
 
 import { siteConfig } from '@/config/site'
 
@@ -24,7 +24,15 @@ export default function ProjectSection() {
             />
             <div className="flex flex-1 flex-col justify-center gap-1">
               <Card.Header>
-                <Card.Title className="text-lg">{project.title}</Card.Title>
+                {/* @ts-ignore */}
+                {project?.link ? (
+                  // @ts-ignore
+                  <Link href={project.link} target="_blank">
+                    <Card.Title className="text-lg">{project.title}</Card.Title>
+                  </Link>
+                ) : (
+                  <Card.Title className="text-lg">{project.title}</Card.Title>
+                )}
                 <Card.Description>{project.stats}</Card.Description>
                 <Card.Description className="flex gap-1 flex-wrap py-1">
                   {project.tags.map(tag => (
@@ -52,10 +60,10 @@ export default function ProjectSection() {
             </div>
           </Card>
         ))}
-        <div className="w-80 h-64 border">a</div>
-        <div className="w-80 h-64 border">a</div>
-        <div className="w-80 h-64 border">a</div>
-        <div className="w-80 h-64 border">a</div>
+        <div className="w-80 h-64 border"></div>
+        <div className="w-80 h-64 border"></div>
+        <div className="w-80 h-64 border"></div>
+        <div className="w-80 h-64 border"></div>
       </div>
     </div>
   )
