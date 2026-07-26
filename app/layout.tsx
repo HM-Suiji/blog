@@ -44,10 +44,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       <GoogleTagManager gtmId="GTM-K4SGL4W2" />
       <body className="min-h-full flex flex-col relative">
         <Providers>{children}</Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
       <GoogleAnalytics gaId="G-B7S2L4QE99" />
-      <Analytics />
-      <SpeedInsights />
       {/* <!-- Cloudflare Web Analytics --> */}
       <script
         type="module"
