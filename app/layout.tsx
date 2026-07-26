@@ -41,19 +41,19 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       className={`${geistSans.variable} ${geistMono.variable} min-h-screen h-auto antialiased`}
       suppressHydrationWarning
     >
-      <GoogleTagManager gtmId="GTM-K4SGL4W2" />
+      <GoogleTagManager gtmId={process.env.GOOGLE_TAG_MANAGER_ID!} />
       <body className="min-h-full flex flex-col relative">
         <Providers>{children}</Providers>
         <Analytics />
         <SpeedInsights />
+        {/* <!-- Cloudflare Web Analytics --> */}
+        <script
+          type="module"
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={`{"token": "${process.env.CLOUDFLARE_ANALYTICS_TOKEN}"}`}
+        ></script>
       </body>
-      <GoogleAnalytics gaId="G-B7S2L4QE99" />
-      {/* <!-- Cloudflare Web Analytics --> */}
-      <script
-        type="module"
-        src="https://static.cloudflareinsights.com/beacon.min.js"
-        data-cf-beacon='{"token": "32f0435273544d08b89ddf93d33ee4ce"}'
-      ></script>
+      <GoogleAnalytics gaId={process.env.GOOGLE_ANALYTICS_ID!} />
     </html>
   )
 }
