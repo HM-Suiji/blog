@@ -34,6 +34,55 @@ author: 'HM-Suiji'
 
 ## 核心架构
 
+```mermaid
+flowchart LR
+
+subgraph Client["客户端"]
+Browser["浏览器"]
+end
+
+subgraph Next["Next.js"]
+Page["RSC 页面"]
+Action["Server Action"]
+Route["Route Handler"]
+SEO["Metadata"]
+Cache["Cache Components"]
+end
+
+subgraph Content["内容系统"]
+MDX["Markdown / MDX"]
+DB["PostgreSQL"]
+end
+
+subgraph ORM["数据访问"]
+Drizzle["Drizzle ORM"]
+DTO["DTO"]
+end
+
+subgraph Deploy["部署"]
+Vercel["Vercel Serverless"]
+end
+
+Browser --> Page
+
+Page --> Action
+Page --> SEO
+
+Action --> Cache
+Action --> Drizzle
+
+Route --> Drizzle
+
+Drizzle --> DB
+
+Action --> MDX
+
+Drizzle --> DTO
+DTO --> Page
+
+Vercel --> Next
+```
+
 穗积宇宙船基于 Next.js App Router 构建，充分利用 React Server Components 提供的 Client / Server 分层能力，将应用划分为数据层、业务层以及展示层。
 
 虽然 Next.js 并不是传统意义上的 MVC 框架，但通过合理的工程组织，可以实现类似 MVC 的职责分离。

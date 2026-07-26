@@ -96,8 +96,8 @@ export default async function PostSlugPage({
           {MDXContent}
         </div>
       </div>
-      <div>
-        <div className="border p-2">
+      <div className="relative">
+        <div className="border p-2 sticky top-16">
           博客目录
           <ul className="text-muted mt-2">
             {headings.map(heading => (

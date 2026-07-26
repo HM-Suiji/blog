@@ -22,7 +22,7 @@ export default async function PostsPage() {
         <h1 className="text-3xl font-semibold">博客列表</h1>
         <RSSButton />
       </div>
-      <div className="flex mt-4 gap-2">
+      <div className="flex flex-col mt-4 gap-2">
         {posts.map(post => (
           <Link href={`/posts/${post.slug}`} key={post.slug}>
             {post.title}

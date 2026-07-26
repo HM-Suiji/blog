@@ -4,9 +4,12 @@ import { Children, cloneElement, isValidElement } from 'react'
 
 import Link from 'next/link'
 
+import { CodeBlock } from '@heroui-pro/react'
 import { Code as InlineCode } from '@heroui/react'
 
-import { Code } from './components/layout/code'
+import { Mermaid } from '@/components/mermaid'
+
+// import { Code } from './components/layout/code'
 
 export const components: MDXComponents = {
   h1: props => (
@@ -35,23 +38,39 @@ export const components: MDXComponents = {
     </InlineCode>
   ),
   pre: props => {
-    const code = props.children.props.children as string
+    const code = (props.children.props.children as string).trim()
 
-    let filename: string | undefined = undefined
+    // let filename: string | undefined = undefined
+    const lang = (props.children.props.className || '').split('-')[1]
 
-    if (code.startsWith('#!/')) filename = code.split('\n')[0].substring(3)
+    // if (code.startsWith('#!/')) filename = code.split('\n')[0].substring(3)
+
+    if (lang === 'mermaid') {
+      return <Mermaid chart={code} />
+    }
 
     return (
-      <Code
-        code={code
-          .split('\n')
-          .slice(filename ? 1 : 0, -1)
-          .join('\n')}
-        filename={filename}
-        lang={(props.children.props.className || '').split('-')[1]}
-      />
+      <>
+        {/* <Code
+          code={code
+            .split('\n')
+            .slice(filename ? 1 : 0)
+            .join('\n')}
+          filename={filename}
+          lang={lang}
+        /> */}
+        <CodeBlock>
+          <CodeBlock.Header>
+            <span className="text-muted text-xs uppercase">{lang}</span>
+            <CodeBlock.CopyButton code={code} />
+          </CodeBlock.Header>
+          <CodeBlock.Code code={code} language="typescript" />
+        </CodeBlock>
+      </>
     )
   },
+  mermaid: Mermaid,
+  Mermaid,
 }
 
 export function useMDXComponents(): MDXComponents {
