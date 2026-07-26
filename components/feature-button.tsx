@@ -1,7 +1,6 @@
 'use client'
 
 import { Rss, Shuffle } from 'lucide-react'
-import { redirect } from 'next/navigation'
 
 import { Button, toast } from '@heroui/react'
 
@@ -15,7 +14,6 @@ export const RSSButton: React.FC = () => {
       toast.success('成功复制RSS订阅地址')
     } catch {
       toast.danger(`复制失败，请前往${siteConfig.url}/rss.xml 查看`)
-      redirect(`${siteConfig.url}/rss.xml`)
     }
   }
   return (
