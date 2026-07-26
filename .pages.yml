@@ -1,0 +1,44 @@
+# .pages.yml
+
+media:
+  input: public/images
+  output: /images
+
+content:
+  - name: posts
+    label: 博客文章
+    path: content/posts
+    type: collection
+
+    filename: '{fields.slug}.mdx'
+
+    fields:
+      - name: slug
+        label: Slug
+        type: text
+
+      - name: title
+        label: 标题
+        type: text
+
+      - name: description
+        label: 描述
+        type: textarea
+
+      - name: date
+        label: 日期
+        type: date
+
+      - name: tags
+        label: 标签
+        type: list
+
+      - name: cover
+        label: 封面
+        type: image
+
+      - name: body
+        label: 正文
+        type: code
+        options:
+          language: mdx

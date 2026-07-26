@@ -15,4 +15,5 @@ export const toPostDto = (post: SelectPost): Post => ({
   title: post.title,
   updatedAt: post.updatedAt.toISOString(),
   tags: post.tags,
+  hash: post.hash || '',
 })

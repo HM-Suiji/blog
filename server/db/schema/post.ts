@@ -29,6 +29,7 @@ export const postsTable = pgTable('posts', {
     .array()
     .notNull()
     .default(sql`ARRAY[]::text[]`),
+  hash: text('hash'),
 })
 
 export const postStatsTable = pgTable('post_stats', {

@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 
 import { db } from '..'
 import { toPostDto } from '../dto/post'
@@ -52,7 +52,22 @@ export const getAllPostWithStats = async () => {
 }
 
 export const createPost = async (post: InsertPost) => {
-  await db.insert(postsTable).values(post)
+  await db
+    .insert(postsTable)
+    .values(post)
+    .onConflictDoUpdate({
+      target: postsTable.slug,
+      set: {
+        ...post,
+        updatedAt: sql`
+        CASE
+        WHEN ${postsTable.hash}
+            <> excluded.hash
+        THEN now()
+        ELSE ${postsTable.updatedAt}
+      END`,
+      },
+    })
 }
 
 export const createPostStats = async (postId: string) => {

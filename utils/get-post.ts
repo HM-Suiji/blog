@@ -10,6 +10,7 @@ export async function getPost(slug: string) {
   const { frontmatter, content } = parseFrontmatter(raw, PostFrontmatterSchema)
 
   return {
+    source: raw,
     content,
     frontmatter,
     headings: extractHeadings(content), // 使用去掉 frontmatter 的内容

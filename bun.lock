@@ -30,6 +30,7 @@
         "drizzle-orm": "^1.0.0-rc.4",
         "embla-carousel": ">=8.6.0",
         "embla-carousel-react": ">=8.6.0",
+        "fast-glob": "^3.3.3",
         "feed": "^6.0.0",
         "github-slugger": "^2.0.0",
         "gray-matter": "^4.0.3",

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "bun sync:posts && next build",
     "start": "next start",
     "postbuild": "next-sitemap",
     "lint": "oxlint --fix",
@@ -13,7 +13,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
     "lint:staged": "lint-staged",
-    "prepare": "husky"
+    "prepare": "husky",
+    "sync-posts": "bun run scripts/sync-posts.ts"
   },
   "dependencies": {
     "@heroui-pro/react": "1.0.0-beta.7",
@@ -41,6 +42,7 @@
     "drizzle-orm": "^1.0.0-rc.4",
     "embla-carousel": ">=8.6.0",
     "embla-carousel-react": ">=8.6.0",
+    "fast-glob": "^3.3.3",
     "feed": "^6.0.0",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
