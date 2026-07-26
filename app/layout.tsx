@@ -1,8 +1,12 @@
 import type { Metadata } from 'next'
 
-import { Geist, Geist_Mono } from 'next/font/google'
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 
 import '@/assets/styles/globals.css'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import { Geist, Geist_Mono } from 'next/font/google'
+
 import { siteConfig } from '@/config/site'
 
 import { Providers } from './providers'
@@ -37,9 +41,19 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       className={`${geistSans.variable} ${geistMono.variable} min-h-screen h-auto antialiased`}
       suppressHydrationWarning
     >
+      <GoogleTagManager gtmId="GTM-K4SGL4W2" />
       <body className="min-h-full flex flex-col relative">
         <Providers>{children}</Providers>
       </body>
+      <GoogleAnalytics gaId="G-B7S2L4QE99" />
+      <Analytics />
+      <SpeedInsights />
+      {/* <!-- Cloudflare Web Analytics --> */}
+      <script
+        type="module"
+        src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "32f0435273544d08b89ddf93d33ee4ce"}'
+      ></script>
     </html>
   )
 }
