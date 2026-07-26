@@ -23,7 +23,7 @@ content:
 
       - name: description
         label: 描述
-        type: textarea
+        type: text
 
       - name: date
         label: 日期
@@ -31,7 +31,18 @@ content:
 
       - name: tags
         label: 标签
-        type: list
+        type: text
+        list: true
+
+      - name: pin
+        label: 置顶
+        type: boolean
+        default: false
+
+      - name: public
+        label: 公开
+        type: boolean
+        default: true
 
       - name: cover
         label: 封面
