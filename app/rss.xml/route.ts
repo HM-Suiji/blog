@@ -8,7 +8,9 @@ import { mdxToHtml } from '@/utils/mdx'
 export async function GET() {
   const feed = new Feed({
     title: siteConfig.name,
-    description: siteConfig.description,
+    description: `${siteConfig.description}
+    feedId:${process.env.FOLO_FEED_ID}+userId:${process.env.FOLO_USER_ID}
+    `,
     id: siteConfig.url,
     link: siteConfig.url,
     language: 'zh-CN',
