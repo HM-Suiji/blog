@@ -19,6 +19,7 @@ export async function GET() {
     author: {
       name: siteConfig.name,
     },
+    image: `${siteConfig.url}/images/avatar.avif`,
   })
 
   const posts = await findPosts()
