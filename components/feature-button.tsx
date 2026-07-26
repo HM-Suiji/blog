@@ -1,9 +1,9 @@
 'use client'
 
-import { Rss } from 'lucide-react'
+import { Rss, Shuffle } from 'lucide-react'
 import { redirect } from 'next/navigation'
 
-import { Avatar, Button, toast } from '@heroui/react'
+import { Button, toast } from '@heroui/react'
 
 import { siteConfig } from '@/config/site'
 import { Friend } from '@/types/friend'
@@ -27,14 +27,16 @@ export const RSSButton: React.FC = () => {
 }
 
 export const ExploreFriend: React.FC<{
-  friend: Friend
-}> = ({ friend }) => {
+  friends: Friend[]
+}> = ({ friends }) => {
+  const go = () => {
+    const randomFriend = friends[Math.floor(Math.random() * friends.length)]
+    window.open(randomFriend.link, '_blank')
+  }
   return (
-    <Button>
-      <Avatar>
-        <Avatar.Image src={friend.avatar} alt={friend.name} />
-        <Avatar.Fallback></Avatar.Fallback>
-      </Avatar>
+    <Button variant="secondary" size="sm" onPress={go}>
+      <Shuffle />
+      随机访问
     </Button>
   )
 }

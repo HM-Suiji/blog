@@ -3,8 +3,6 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 
 import '@/assets/styles/globals.css'
-import { Footer } from '@/components/layout/footer'
-import { Header } from '@/components/layout/header'
 import { siteConfig } from '@/config/site'
 
 import { Providers } from './providers'
@@ -40,13 +38,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col relative">
-        <Providers>
-          <Header />
-          <section className="min-h-full mx-auto w-5xl 2xl:w-6xl max-w-5xl 2xl:max-w-6xl">
-            {children}
-          </section>
-          <Footer />
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

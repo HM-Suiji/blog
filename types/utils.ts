@@ -1,7 +1,9 @@
-export type Dtoify<T> = {
-  [K in keyof T]: T[K] extends Date
-    ? string
-    : T[K] extends string | null
-      ? string
-      : T[K]
-}
+export type Dtoify<T> = T extends Date
+  ? string
+  : T extends readonly (infer U)[]
+    ? Dtoify<U>[]
+    : T extends object
+      ? {
+          [K in keyof T]: Dtoify<Exclude<T[K], null>>
+        }
+      : Exclude<T, null>
