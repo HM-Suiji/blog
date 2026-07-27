@@ -21,10 +21,12 @@ export async function GET() {
 
 ## 博客文章
 
-${posts.map(
-  post =>
-    `- [${post.title}](${url}/posts/${post.slug}]: ${post.publishedAt} - ${post.description}`
-)}
+${posts
+  .map(
+    post =>
+      `- [${post.title}](${url}/posts/${post.slug}]: ${post.publishedAt} - ${post.description}`
+  )
+  .join('\n')}
 
 ## Optional
 
