@@ -27,5 +27,8 @@ await client.saveObjects({
     tags: post.tags,
     url: `/posts/${post.slug}`,
     headings: post.headings.map(({ text, depth }) => ({ text, level: depth })),
+    publishedAt: post.publishedAt,
+    updatedAt: post.updatedAt,
+    author: post.author,
   })),
 })

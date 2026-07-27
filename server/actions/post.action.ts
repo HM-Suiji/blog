@@ -19,5 +19,5 @@ export async function findPosts() {
   cacheTag(cacheSelector.posts)
   cacheLife('weeks')
 
-  return await getPosts()
+  return (await getPosts()).filter(post => post.public)
 }
