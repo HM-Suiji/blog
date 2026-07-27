@@ -13,7 +13,7 @@ import { cacheSelector } from '@/utils/cache'
 const code = JSON.stringify(
   {
     name: siteConfig.name,
-    description: siteConfig.description,
+    description: siteConfig.slogan,
     link: siteConfig.url,
     avatar: siteConfig.avatar,
   },
