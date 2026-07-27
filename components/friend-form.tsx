@@ -10,6 +10,7 @@ import {
 import { registerFriend } from '@/server/actions/friend.mutate'
 export const FriendForm: React.FC = () => {
   const formAction = async (formData: FormData) => {
+    'use server'
     const name = formData.get('name') as string
     const description = formData.get('description') as string
     const link = formData.get('link') as string
