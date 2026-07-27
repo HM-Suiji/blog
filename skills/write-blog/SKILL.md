@@ -11,16 +11,16 @@ Write a blog post with agent-browser and pagesCMS
 
 ## Usage
 
-1. Start agent-browser and link to PagesCMS
+1. Start agent-browser and link to PagesCMS with CDP mode
 
 ```bash
-agent-browser --headed open https://app.pagescms.org/hm-suiji/blog/main/collection/posts/new
+agent-browser --cdp 3764 open https://app.pagescms.org/hm-suiji/blog/main/collection/posts/new
 ```
 
 2. Get the snapshot to bind the form target
 
 ```bash
-agent-browser snapshot -i
+agent-browser --cdp 3764 snapshot -i
 ```
 
 The code will be like this(Your code may be different):
@@ -60,46 +60,46 @@ The code will be like this(Your code may be different):
 - Write the slug
 
 ```bash
-agent-browser fill e7 "blog-slug"
+agent-browser --cdp 3764 fill e7 "blog-slug"
 ```
 
 - Write the title
 
 ```bash
-agent-browser fill e8 "blog-title"
+agent-browser --cdp 3764 fill e8 "blog-title"
 ```
 
 - Write the description
 
 ```bash
-agent-browser fill e9 "blog-description"
+agent-browser --cdp 3764 fill e9 "blog-description"
 ```
 
 - Write the items(Tags)
 
 ```bash
-agent-browser click e10
-agent-browser fill e11 "blog-tag1"
+agent-browser --cdp 3764 click e10
+agent-browser --cdp 3764 fill e11 "blog-tag1"
 # if there are multiple tags, repeat the following steps
-agent-browser snapshot -i
-agent-browser click e13
-agent-browser fill e14 "blog-tag2"
+agent-browser --cdp 3764 snapshot -i
+agent-browser --cdp 3764 click e13
+agent-browser --cdp 3764 fill e14 "blog-tag2"
 ```
 
 - Write the content
 
 ```bash
-agent-browser fill e32 "blog-content"
+agent-browser --cdp 3764 fill e32 "blog-content"
 ```
 
 - Save the blog post
 
 ```bash
-agent-browser click e5
+agent-browser --cdp 3764 click e5
 ```
 
 - Close the agent-browser
 
 ```bash
-agent-browser close
+agent-browser --cdp 3764 close
 ```
