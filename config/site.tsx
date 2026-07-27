@@ -8,7 +8,7 @@ export const siteConfig = {
   slogan: '莫笑吾辈好远骛，跬步平川马蹄疾。',
   avatar: HOST + '/images/avatar.avif',
   description:
-    '一个普普通通的程序员将与大家在这个宇宙船里分享一些开发经验和生活点滴。',
+    '一个普普通通的程序员穗积将与大家在这个宇宙船里分享一些开发经验和生活点滴。大家共同进步！',
   author: 'HM-Suiji',
   copyright: `${new Date().getFullYear()} 穗积`,
   links: {
