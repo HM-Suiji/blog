@@ -85,13 +85,13 @@ flowchart LR
 
 让我们将 Graph Agent 与状态机进行严格对比：
 
-| 状态机概念 | Graph Agent 对应 |
-|-----------|-----------------|
-| 状态集合 | Agent 的所有可能执行阶段 |
-| 事件/输入 | LLM 的输出、工具返回值、用户输入 |
-| 转移函数 | 路由逻辑（根据 LLM 输出决定下一步） |
-| 当前状态 | 当前所在的节点 + 上下文信息 |
-| 初始状态 | Agent 的启动节点 |
+| 状态机概念 | Graph Agent 对应                    |
+| ---------- | ----------------------------------- |
+| 状态集合   | Agent 的所有可能执行阶段            |
+| 事件/输入  | LLM 的输出、工具返回值、用户输入    |
+| 转移函数   | 路由逻辑（根据 LLM 输出决定下一步） |
+| 当前状态   | 当前所在的节点 + 上下文信息         |
+| 初始状态   | Agent 的启动节点                    |
 
 **每一个节点就是一个状态，每一次转移就是一次状态跳转。**
 
@@ -103,29 +103,29 @@ flowchart LR
 from langgraph.graph import StateGraph
 
 graph = StateGraph(AgentState)
-graph.add_node(\plan\, plan_node)
-graph.add_node(\execute\, execute_node)
-graph.add_node(\output\, output_node)
+graph.add_node('plan', plan_node)
+graph.add_node('execute', execute_node)
+graph.add_node('output', output_node)
 
-graph.add_edge(\plan\, \execute\)
-graph.add_conditional_edges(\execute\, should_continue)
+graph.add_edge('plan', 'execute')
+graph.add_conditional_edges('execute', should_continue)
 ```
 
 你实际上在做的事情，和用 Statechart 或 XState 定义一个状态机完全一样：
 
 ```typescript
 const agentMachine = createMachine({
-  id: \agent\,
-  initial: \plan\,
+  id: 'agent',
+  initial: 'plan',
   states: {
-    plan: { on: { NEXT: \execute\ } },
+    plan: { on: { NEXT: 'execute' } },
     execute: {
       on: {
-        SUCCESS: \output\,
-        FAILURE: \plan\,
+        SUCCESS: 'output',
+        FAILURE: 'plan',
       },
     },
-    output: { type: \final\ },
+    output: { type: 'final' },
   },
 })
 ```
@@ -198,12 +198,14 @@ stateDiagram-v2
 
 ```mermaid
 stateDiagram-v2
-    state \数据收集\ as DataCollection {
+
+    state "数据收集" as DataCollection {
         [*] --> 收集用户数据
         收集用户数据 --> 收集环境数据
         收集环境数据 --> [*]
     }
-    state \日志记录\ as Logging {
+
+    state "日志记录" as Logging {
         [*] --> 记录请求
         记录请求 --> 记录结果
         记录结果 --> [*]
@@ -211,6 +213,7 @@ stateDiagram-v2
 
     [*] --> DataCollection
     [*] --> Logging
+
     DataCollection --> 汇总
     Logging --> 汇总
     汇总 --> [*]
