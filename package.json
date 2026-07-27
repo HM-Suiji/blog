@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "bun sync-posts && next build",
     "start": "next start",
-    "postbuild": "next-sitemap",
+    "postbuild": "next-sitemap && bun run scripts/index-now.ts",
     "lint": "oxlint --fix",
     "format": "oxfmt",
     "db:push": "drizzle-kit push",
@@ -79,6 +79,7 @@
     "tailwind-variants": ">=3.2.0",
     "unified": "^11.0.5",
     "unist-util-visit": "^5.1.0",
+    "xml2js": "^0.6.2",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -91,6 +92,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/rss": "^0.0.32",
+    "@types/xml2js": "^0.4.14",
     "babel-plugin-react-compiler": "1.0.0",
     "code-inspector-plugin": "^2.0.4",
     "drizzle-kit": "^1.0.0-rc.4",
