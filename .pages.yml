@@ -50,6 +50,13 @@ content:
 
       - name: body
         label: 正文
-        type: code
-        options:
-          language: mdx
+        type: rich-text
+
+actions:
+  - name: content-sync
+    label: Sync Content
+    workflow: content-sync.yml
+    confirm:
+      title: Sure sync content?
+      message: This will trigger the deployment workflow.
+      button: Sync
