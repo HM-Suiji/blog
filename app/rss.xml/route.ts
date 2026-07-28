@@ -1,17 +1,11 @@
 import { Feed } from 'feed'
-import { cacheLife, cacheTag } from 'next/cache'
 
 import { siteConfig } from '@/config/site'
 import { findPosts } from '@/server/actions/post.action'
-import { cacheSelector } from '@/utils/cache'
 import { getPost } from '@/utils/get-post'
 import { mdxToHtml } from '@/utils/mdx'
 
 export async function GET() {
-  'use cache'
-  cacheTag(cacheSelector.posts)
-  cacheLife('weeks')
-
   const feed = new Feed({
     title: siteConfig.name,
     description: `${siteConfig.description}
