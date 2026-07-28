@@ -6,6 +6,7 @@ import { codeInspectorPlugin } from 'code-inspector-plugin'
 
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  transpilePackages: ['next-mdx-remote'],
   turbopack: {
     rules: codeInspectorPlugin({
       bundler: 'turbopack',

@@ -1,7 +1,14 @@
+import { cacheLife, cacheTag } from 'next/cache'
+
 import { siteConfig } from '@/config/site'
 import { findPosts } from '@/server/actions/post.action'
+import { cacheSelector } from '@/utils/cache'
 
 export async function GET() {
+  'use cache'
+  cacheTag(cacheSelector.posts)
+  cacheLife('weeks')
+
   const posts = await findPosts()
 
   const { url, rss } = siteConfig

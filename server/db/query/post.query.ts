@@ -52,7 +52,7 @@ export const getAllPostWithStats = async () => {
 }
 
 export const createPost = async (post: InsertPost) => {
-  await db
+  return await db
     .insert(postsTable)
     .values(post)
     .onConflictDoUpdate({
@@ -68,6 +68,7 @@ export const createPost = async (post: InsertPost) => {
       END`,
       },
     })
+    .returning()
 }
 
 export const createPostStats = async (postId: string) => {
