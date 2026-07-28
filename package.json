@@ -13,6 +13,7 @@
     "db:push": "drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
+    "sync-posts": "bun scripts/sync-posts.ts",
     "lint:staged": "lint-staged",
     "prepare": "husky"
   },

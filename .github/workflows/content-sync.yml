@@ -1,0 +1,32 @@
+name: Content Sync
+
+on:
+  push:
+    branches: [main]
+    paths: [content/posts/**]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Sync posts
+        run: bun run sync-posts > sync-result.json
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      - name: Revalidate cache
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.REVALIDATE_SECRET }}" \
+            -H "Content-Type: application/json" \
+            -d @sync-result.json \
+            ${{ secrets.NEXT_PUBLIC_HOST }}/api/revalidate
