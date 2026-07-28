@@ -1,7 +1,9 @@
 ---
 slug: blog-isr
-title: 探秘博客构建的秘诀：ISR 增量静态再生
-description: 你也不想你的博客在更新之后需要重新构建整个网站吧，那也太费时费力了。不妨尝试一下 ISR 增量静态再生，让你的博客获得闪电般的更新体验。
+title: 探秘博客构建的秘诀：ISR 增量静态再生与自动化内容更新
+description: 你也不想你的博客在更新之后需要重新构建整个网站吧，那也太费时费力了。不妨尝试一下 ISR
+  增量静态再生，让你的博客获得闪电般的更新体验。记录我在 Next.js 博客中使用 ISR、Webhook 与 GitHub Actions
+  实现自动化内容更新的实践，以及一次关于 Vercel 架构的踩坑经历
 date: 2026-07-28
 tags:
   - ISR
@@ -11,193 +13,543 @@ tags:
 pin: false
 public: true
 ---
-# 探秘博客构建的秘诀：ISR 增量静态再生
+# 探秘博客构建的秘诀：ISR 增量静态再生与自动化内容更新
 
 在构建一个现代博客系统时，性能与开发体验往往是一对矛盾。
 
-传统动态渲染虽然灵活，但每一次访问都需要执行数据查询、生成页面，随着访问量增长，服务器压力会逐渐增加。
+传统动态网站：
 
-而纯静态生成（SSG）虽然性能优秀，但是每次内容更新都需要重新构建整个网站。
+```
+用户访问
+ ↓
+服务器查询数据库
+ ↓
+生成页面
+ ↓
+返回 HTML
+```
 
-那么，有没有一种方案，可以同时拥有：
+虽然数据实时，但是每一次访问都需要服务器计算。
 
-* 静态页面的极致性能；
-* 动态内容的快速更新；
-* 无需重新部署整个项目；
+而纯静态网站：
 
-答案就是 **ISR（Incremental Static Regeneration，增量静态再生）**。
+```
+next build
+ ↓
+生成 HTML
+ ↓
+部署 CDN
+```
 
-在我的博客系统中，我使用 **Next.js ISR + Webhook** 构建了一套自动化内容更新流程：
+拥有极快的访问速度，但是每次内容更新都需要重新构建整个项目。
 
-> 当我在 CMS 中修改文章后，CMS 自动发送 Webhook 通知 Next.js，Next.js 根据变化内容精准刷新缓存，让最新文章立即生效。
+对于博客、文档站这类内容驱动型网站来说，我们希望同时拥有：
 
-这套方案让博客拥有了接近静态站点的性能，同时保留了动态内容管理的便利。
+- 静态页面的极致性能；
+- 动态内容的快速更新；
+- 无需手动重新部署。
+
+这也是我最终选择：
+
+**Next.js ISR + Webhook + GitHub Actions**
+
+的原因。
+
+## 一次失败的 Webhook 架构
+
+最开始，我设计了一套看起来很合理的流程：
+
+```
+Pages CMS
+
+    ↓
+
+GitHub Commit
+
+    ↓
+
+GitHub Webhook
+
+    ↓
+
+Vercel API Route
+
+    ↓
+
+syncPosts()
+
+    ↓
+
+读取 content/posts
+
+    ↓
+
+更新数据库
+
+    ↓
+
+revalidateTag()
+```
+
+理论上：
+
+CMS 修改文章后：
+
+1. 提交 Markdown 文件；
+2. GitHub 通知 Vercel；
+3. Vercel 同步最新文章；
+4. 刷新 ISR 缓存。
+
+但是实际运行后发现：
+
+无论怎么修改文章，Webhook 触发之后始终返回：
+
+```
+no content changed
+```
+
+刚开始我以为是同步逻辑的问题。
+
+但是进一步排查后发现：
+
+真正的问题在于：
+
+**Vercel Runtime 并不是 Git 仓库。**
+
+## Vercel Deployment 的核心机制
+
+很多人第一次使用 Serverless 平台时容易产生一个误区：
+
+> GitHub 更新了代码，Vercel Function 里面的文件也会自动更新。
+
+实际上并不是这样。
+
+Vercel 的部署模型：
+
+```
+GitHub Repository
+
+        ↓
+
+      Build
+
+        ↓
+
+ Immutable Deployment
+
+        ↓
+
+ Serverless Function
+```
+
+一次部署生成的是一个不可变快照。
+
+例如：
+
+第一次部署：
+
+```
+GitHub main
+
+content/posts
+
+├── hello-world.mdx
+└── nextjs.mdx
+
+
+        ↓
+
+
+Vercel Build
+
+
+        ↓
+
+
+Deployment A
+
+
+        ↓
+
+
+Function Runtime
+```
+
+此时：
+
+Function 中携带的是：
+
+```
+hello-world.mdx
+nextjs.mdx
+```
+
+---
+
+之后：
+
+GitHub：
+
+```
+content/posts
+
+├── hello-world.mdx
+├── nextjs.mdx
+└── new-post.mdx
+```
+
+发生变化。
+
+但是：
+
+```
+GitHub Repository
+
+        ↓
+
+新的 commit
+```
+
+不会自动修改：
+
+```
+Deployment A
+
+        ↓
+
+Function Runtime
+```
+
+所以：
+
+```
+syncPosts()
+```
+
+读取到的依然是：
+
+```
+旧文章列表
+```
+
+最终自然得到：
+
+```
+no content changed
+```
+
+## 正确的架构应该是什么？
+
+发现问题之后，我重新调整了架构。
+
+新的流程：
+
+```
+Pages CMS
+
+    ↓
+
+GitHub Commit
+
+    ↓
+
+GitHub Actions
+
+    ↓
+
+checkout 最新代码
+
+    ↓
+
+执行同步脚本
+
+    ↓
+
+更新数据库
+
+    ↓
+
+调用 Next.js API
+
+    ↓
+
+revalidateTag()
+
+    ↓
+
+ISR 更新缓存
+```
+
+核心变化：
+
+**GitHub Actions 负责获取最新代码。**
+
+因为 Actions 才是真正拥有 Git 仓库工作区的环境。
+
+## GitHub Actions 为什么适合这个场景？
+
+很多人会认为：
+
+> GitHub Actions 只适合重新构建项目。
+
+其实并不是。
+
+Actions 本质上就是一个 CI Runner。
+
+它可以：
+
+- 拉取代码；
+- 执行脚本；
+- 调用 API；
+- 操作数据库。
+
+因此：
+
+这里不需要：
+
+```
+GitHub Push
+
+↓
+
+Vercel Build
+```
+
+而是：
+
+```
+GitHub Push
+
+↓
+
+Actions
+
+↓
+
+同步数据
+
+↓
+
+触发 ISR
+```
+
+避免了：
+
+- 不必要的重新部署；
+- 浪费构建时间；
+- 增加部署成本。
 
 ## 什么是 ISR？
 
-在理解 ISR 之前，我们先回顾 Next.js 中常见的页面渲染方式。
+ISR：
 
-### SSR：每次请求重新生成页面
+Incremental Static Regeneration
 
-服务端渲染（Server Side Rendering）：
+中文：
 
-```txt
+增量静态再生。
+
+它的目标：
+
+> 在保持静态页面性能的同时，让页面可以动态更新。
+
+## SSR：每次请求生成页面
+
+服务端渲染：
+
+```
 用户请求
-   ↓
-服务器查询数据库
-   ↓
+
+ ↓
+
+服务器查询数据
+
+ ↓
+
 生成 HTML
-   ↓
+
+ ↓
+
 返回浏览器
 ```
 
 优点：
 
-* 数据永远最新；
-* 适合强动态页面。
+- 数据实时。
 
 缺点：
 
-* 每次访问都有服务器计算成本；
-* 高并发下压力较大。
+- 每次访问都有计算成本。
 
-### SSG：构建时生成页面
 
-静态生成（Static Site Generation）：
+## SSG：构建时生成页面
 
-```txt
+静态生成：
+
+```
 next build
-    ↓
+
+ ↓
+
 读取数据
-    ↓
-生成 HTML 文件
+
+ ↓
+
+生成 HTML
 ```
 
-访问时：
+访问：
 
-```txt
+```
 用户
+
  ↓
+
 CDN
+
  ↓
-静态 HTML
+
+HTML
 ```
 
 优点：
 
-* 极快；
-* 几乎没有服务器压力。
+- 极快；
+- 几乎没有服务器压力。
 
 但是：
 
-如果文章更新：
+内容更新：
 
-```txt
+```
 修改文章
-↓
-重新执行 next build
-↓
+
+ ↓
+
+重新 build
+
+ ↓
+
 重新部署
 ```
 
-对于频繁更新的博客来说，体验并不好。
+对于博客并不方便。
 
-## ISR：静态页面的“局部更新”
+## ISR：静态页面的局部更新
 
 ISR 可以理解为：
 
-> 在保持静态页面性能的同时，允许服务器在运行时重新生成部分页面。
+> 让静态页面拥有重新生成能力。
 
-它的核心思想：
+流程：
 
-```txt
-第一次访问
+第一次访问：
 
+```
 用户请求
-   ↓
+
+ ↓
+
 生成页面
-   ↓
+
+ ↓
+
 缓存
+```
 
+之后：
 
-之后访问
-
+```
 用户请求
-   ↓
-直接返回缓存页面
+
+ ↓
+
+读取缓存
 ```
 
 当内容发生变化：
 
-```txt
+```
 触发重新验证
-↓
-删除旧缓存
-↓
-下一次请求重新生成页面
+
+ ↓
+
+旧缓存失效
+
+ ↓
+
+下一次请求重新生成
 ```
 
-整个过程不需要重新构建整个网站。
+整个过程：
 
-## Next.js 中如何使用 ISR？
+不需要重新部署整个网站。
 
-在新版 Next.js 中，我使用的是 **Cache Components 模式**。
+## Next.js 中使用 ISR
 
-相比以前通过：
+在新版 Next.js 中，我使用：
+
+**Cache Components 模式**
+
+代替传统：
 
 ```ts
 export const revalidate = 3600
 ```
 
-控制缓存时间，
+方式。
 
-新的 Cache Components 提供了更加细粒度的缓存控制。
-
-例如我的文章查询：
+例如：
 
 ```ts
-import { cacheLife, cacheTag } from 'next/cache'
+import {
+  cacheLife,
+  cacheTag
+} from 'next/cache'
+
 
 export async function getPosts() {
+
   'use cache'
 
   cacheTag('posts')
+
   cacheLife('weeks')
+
 
   return await findPosts()
 }
 ```
 
-这里有三个关键点。
-
-### 1. `'use cache'`
-
-表示这个函数结果应该被缓存：
+### use cache
 
 ```ts
 'use cache'
 ```
 
-Next.js 会缓存该函数返回的数据。
+表示：
 
-### 2. `cacheTag`
+这个函数返回值应该被缓存。
 
-给缓存添加标签：
+### cacheTag
 
 ```ts
 cacheTag('posts')
 ```
 
+为缓存添加标签。
+
 例如：
 
-```txt
+```
 posts
+
  ├── 首页文章列表
- ├── RSS Feed
+
+ ├── RSS
+
  └── 文章归档
 ```
-
-都依赖这个缓存。
 
 之后：
 
@@ -205,218 +557,231 @@ posts
 revalidateTag('posts')
 ```
 
-就可以一次刷新所有相关内容。
+即可刷新所有相关缓存。
 
-
-### 3. `cacheLife`
-
-控制缓存生命周期：
+### cacheLife
 
 ```ts
 cacheLife('weeks')
 ```
 
-表示这个缓存可以长期存在。
+表示：
 
-但是博客内容并不是永久不变的，所以我们需要一种主动刷新机制。
+缓存生命周期。
+
+博客内容通常不会每分钟变化，所以可以设置较长缓存。
+
+但是：
+
+我们仍然需要一种主动刷新机制。
 
 这就是 Webhook。
 
+
 ## 什么是 Webhook？
 
-Webhook 可以理解为：
+Webhook 是一种：
 
-> 一个系统主动通知另一个系统发生事件的 HTTP 请求。
+事件驱动通知机制。
 
 传统 API：
 
-```txt
+```
 你的程序
-  ↓
+
+ ↓
+
 主动请求
-  ↓
+
+ ↓
+
 第三方服务
 ```
 
 例如：
 
-```txt
-每隔一分钟检查 CMS：
+每分钟询问：
 
+```
 有没有新文章？
-
-有没有修改？
 ```
 
-这种方式叫：
+这种叫：
 
-**Polling（轮询）**
+Polling（轮询）
 
 缺点：
 
-* 浪费请求；
-* 延迟高。
+- 浪费请求；
+- 有延迟。
+
+---
 
 Webhook：
 
-```txt
-CMS
-文章更新
-↓
-发送 HTTP 请求
-↓
-你的 Next.js API
-↓
-执行更新逻辑
+```
+内容变化
+
+ ↓
+
+主动发送 HTTP 请求
+
+ ↓
+
+通知目标系统
 ```
 
-它是一种事件驱动架构。
+例如：
+
+```
+CMS
+
+文章更新
+
+ ↓
+
+Webhook
+
+ ↓
+
+你的服务
+```
 
 ## 我的博客如何使用 Webhook？
 
-我的博客内容存储在 Headless CMS 中。
+最终架构：
 
-整个流程：
-
-```txt
-修改文章
-  ↓
+```
 Pages CMS
-  ↓
-Git 内容同步
-  ↓
-Webhook 请求
-  ↓
-Next.js Route Handler
-  ↓
-同步文章数据
-  ↓
+
+    ↓
+
+GitHub Commit
+
+    ↓
+
+GitHub Actions
+
+    ↓
+
+syncPosts()
+
+    ↓
+
+数据库更新
+
+    ↓
+
+POST /api/revalidate
+
+    ↓
+
 revalidateTag()
-  ↓
-ISR重新生成页面
+
+    ↓
+
+ISR Cache 更新
 ```
 
-也就是说：
+## Next.js 接收刷新请求
 
-我不需要手动部署。
+Route Handler：
 
-修改文章后：
+`app/api/revalidate/posts/route.ts`
 
-几秒钟内博客内容自动更新。
-
-## Next.js 接收 Webhook
-
-在 App Router 中，可以创建：`app/api/webhooks/posts/route.ts`实现一个 POST 接口：
+示例：
 
 ```ts
-import { revalidateTag } from 'next/cache'
+import {
+  revalidateTag
+} from 'next/cache'
 
-export async function POST(req: Request) {
 
-  const auth = req.headers.get('authorization')
+export async function POST(
+  req: Request
+) {
+
+  const auth =
+    req.headers.get(
+      'authorization'
+    )
+
 
   if (
-    auth !== `Bearer xxx`
+    auth !==
+    `Bearer ${process.env.WEBHOOK_SECRET}`
   ) {
+
     return new Response(
       'Unauthorized',
       {
-        status: 401
+        status:401
       }
     )
   }
 
-
-  const actions = await syncPosts()
-
-
-  if (actions.length === 0) {
-    return Response.json({
-      success:true,
-      message:'no content changed'
-    })
-  }
-
-
-  // 刷新文章列表缓存
 
   revalidateTag(
     'posts',
     'max'
   )
 
-  // 刷新具体文章缓存
-
-  actions.forEach(action => {
-    revalidateTag(
-      `post-${action.slug}`,
-      'max'
-    )
-  })
-
 
   return Response.json({
-    success:true,
-    actions
+    success:true
   })
 }
 ```
 
 ## 为什么需要鉴权？
 
-Webhook 本质上就是一个公开 API。
+Webhook 本质上是公开接口。
 
 如果没有保护：
 
 任何人都可以：
 
 ```bash
-POST /api/webhooks/posts
+POST /api/revalidate/posts
 ```
 
 导致：
 
-* 大量缓存刷新；
-* 消耗服务器资源；
-* 影响网站性能。
+- 无限刷新缓存；
+- 消耗服务器资源；
+- 影响网站稳定性。
 
-所以我使用：
+因此需要：
 
-```ts
-Authorization: Bearer xxx
 ```
-
-进行简单验证。
-
-Github Webhooks Secret 配置：
-
-```txt
 Authorization:
 
 Bearer xxx
 ```
 
-只有拥有密钥的服务才能触发更新。
+进行验证。
 
-## 为什么还需要同步文章？
+## 为什么需要同步文章？
 
-Webhook 本身不会告诉 Next.js：
+Webhook 本身只负责通知：
 
-“哪篇文章变了”。
+> 有内容变化。
 
-它只是一个：
+它不会告诉系统：
 
-> 内容发生变化的通知。
+哪篇文章变化。
 
-所以收到通知后，我执行：
+因此：
+
+收到通知后，需要执行同步逻辑：
 
 ```ts
-const actions = await syncPosts()
+syncPosts()
 ```
 
-同步 CMS 中最新内容。
+例如：
 
-例如返回：
+返回：
 
 ```ts
 [
@@ -431,102 +796,133 @@ const actions = await syncPosts()
 ]
 ```
 
-然后根据变化：
+然后：
 
-精准刷新缓存。
+根据变化精准刷新缓存。
 
 ## 精准失效，而不是全部刷新
 
 博客通常包含：
 
-* 首页文章列表；
-* 标签页面；
-* 分类页面；
-* 单篇文章页面；
-* RSS。
+- 首页列表；
+- 标签页面；
+- 分类页面；
+- 单篇文章；
+- RSS。
 
-如果每次修改文章：
-
-直接：
+如果每次：
 
 ```ts
 revalidatePath('/')
 ```
 
-可能导致大量页面重新计算。
+会导致大量页面重新计算。
 
-所以我采用 Tag Cache：
+所以使用：
+
+Tag Cache。
+
+例如：
 
 ```
 posts
-  ↓
+
+ ↓
+
 文章列表
 
+
 post-nextjs-isr
-  ↓
+
+ ↓
+
 单篇文章
 ```
 
-更新文章：
+更新：
 
 ```ts
-revalidateTag("post-nextjs-isr")
+revalidateTag(
+  "post-nextjs-isr"
+)
 ```
 
-只影响对应页面。
+只影响对应内容。
 
-## 最终效果
+## 最终架构
 
-整个博客更新链路：
+```
+                 ┌──────────────┐
+                 │  Pages CMS   │
+                 └──────┬───────┘
+                        │
+                        │ Git Commit
+                        ↓
 
-```txt
-┌─────────────┐
-│  Pages CMS  │
-└──────┬──────┘
-       │
-       │ Webhook
-       ↓
-┌─────────────┐
-│ Next.js API │
-└──────┬──────┘
-       │
-       │ syncPosts()
-       ↓
-┌─────────────┐
-│ 数据同步层    │
-└──────┬──────┘
-       │
-       │ revalidateTag()
-       ↓
-┌─────────────┐
-│ ISR Cache   │
-└──────┬──────┘
-       │
-       ↓
- 最新博客页面
+                 ┌──────────────┐
+                 │ GitHub Action│
+                 └──────┬───────┘
+                        │
+                        │ syncPosts()
+                        ↓
+
+                 ┌──────────────┐
+                 │  Database    │
+                 └──────┬───────┘
+                        │
+                        │ Revalidate API
+                        ↓
+
+                 ┌──────────────┐
+                 │   Next.js    │
+                 └──────┬───────┘
+                        │
+
+                  revalidateTag()
+
+                        ↓
+
+                 ┌──────────────┐
+                 │ ISR Cache    │
+                 └──────┬───────┘
+
+                        ↓
+
+                 最新博客页面
 ```
 
-## 总结
+# 总结
 
-ISR 解决了：
+这次踩坑让我重新理解了 Serverless 平台的运行机制。
+
+ISR 解决：
 
 > 如何让静态页面拥有动态更新能力。
 
-Webhook 解决了：
+Webhook 解决：
 
 > 如何让系统知道什么时候需要更新。
 
-二者结合：
+GitHub Actions 解决：
 
-* CMS 负责内容管理；
-* Webhook 负责事件通知；
-* Next.js 负责缓存更新；
-* ISR 负责页面再生成。
+> 如何获取最新代码并执行同步任务。
 
-最终形成了一套：
+最终：
 
-**高性能、低成本、自动化的现代博客架构。**
+- CMS 负责内容管理；
+- GitHub 保存内容版本；
+- Actions 执行同步任务；
+- Next.js 管理缓存；
+- ISR 提供高速访问。
 
-对于个人博客、文档站、知识库这类内容驱动型网站来说，ISR + Webhook 是一个非常优雅的解决方案。
+形成了一套：
+
+**自动化、高性能、低成本的现代博客架构。**
+
+对于个人博客、文档站、知识库这类内容驱动型网站来说：
+
+ISR + Webhook + CI Workflow
+
+是一套非常优雅的解决方案。
 
 它让我可以像使用动态网站一样维护博客，同时享受到静态网站接近 CDN 的访问速度。
