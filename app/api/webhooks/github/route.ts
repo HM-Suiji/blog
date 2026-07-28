@@ -1,3 +1,4 @@
+import { Webhooks } from '@octokit/webhooks'
 import { revalidateTag } from 'next/cache'
 
 import { cacheSelector } from '@/utils/cache'
@@ -5,10 +6,25 @@ import { logger } from '@/utils/logger'
 import { webhookLimiter } from '@/utils/rate-limit'
 import { syncPosts } from '@/utils/sync-posts'
 
+const webhooks = new Webhooks({
+  secret: process.env.GITHUB_WEBHOOK_SECRET!,
+})
+
 export async function POST(req: Request) {
-  const auth = req.headers.get('authorization')
-  if (auth !== `Bearer ${process.env.PAGESCMS_WEBHOOK_SECRET}`) {
-    return new Response('Unauthorized', { status: 401 })
+  const signature = req.headers.get('x-hub-signature-256')
+  if (!signature) {
+    return new Response('Missing signature', {
+      status: 401,
+    })
+  }
+  const body = await req.text()
+
+  const isValid = await webhooks.verify(body, signature)
+
+  if (!isValid) {
+    return new Response('Unauthorized', {
+      status: 401,
+    })
   }
 
   const { success } = await webhookLimiter.limit('sync-posts')
