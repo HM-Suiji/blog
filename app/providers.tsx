@@ -4,8 +4,6 @@ import { ThemeProvider as NextThemesProvider } from 'next-themes'
 
 import { Toast } from '@heroui/react'
 
-import { SearchProvider } from '@/components/search'
-
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <NextThemesProvider
@@ -14,10 +12,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <SearchProvider>
-        <Toast.Provider placement="top" />
-        {children}
-      </SearchProvider>
+      <Toast.Provider placement="top" />
+      {children}
     </NextThemesProvider>
   )
 }

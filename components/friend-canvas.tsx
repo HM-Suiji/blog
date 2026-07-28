@@ -1,5 +1,3 @@
-'use client'
-
 import { HoverCard } from '@heroui-pro/react'
 import { Avatar, Button, Link } from '@heroui/react'
 

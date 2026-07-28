@@ -8,6 +8,7 @@ import { usePathname } from 'next/navigation'
 import { Navbar } from '@heroui-pro/react'
 import { Kbd, Modal, SearchField } from '@heroui/react'
 
+import { SearchProvider } from '@/components/search'
 import { siteConfig } from '@/config/site'
 
 import { BrandLogo } from '../icons'
@@ -94,23 +95,25 @@ export const Header: React.FC = () => {
           </Navbar.MenuItem>
         ))}
       </Navbar.Menu>
-      <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
-        <Modal.Backdrop>
-          <Modal.Container>
-            <Modal.Dialog className="sm:max-w-90">
-              <Modal.CloseTrigger />
-              <Modal.Header className="mt-2">
-                <Modal.Heading className="px-6">
-                  <SearchInput />
-                </Modal.Heading>
-              </Modal.Header>
-              <Modal.Body>
-                <SearchResults />
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
-      </Modal>
+      <SearchProvider>
+        <Modal isOpen={isOpen} onOpenChange={setIsOpen}>
+          <Modal.Backdrop>
+            <Modal.Container>
+              <Modal.Dialog className="sm:max-w-90">
+                <Modal.CloseTrigger />
+                <Modal.Header className="mt-2">
+                  <Modal.Heading className="px-6">
+                    <SearchInput />
+                  </Modal.Heading>
+                </Modal.Header>
+                <Modal.Body>
+                  <SearchResults />
+                </Modal.Body>
+              </Modal.Dialog>
+            </Modal.Container>
+          </Modal.Backdrop>
+        </Modal>
+      </SearchProvider>
     </Navbar>
   )
 }
