@@ -9,9 +9,16 @@ export const HeroSection: React.FC = () => {
   return (
     <div className="flex h-screen justify-center items-center">
       <div className="flex items-center gap-6">
-        <Image width={160} height={160} src="/images/avatar.avif" alt="穗积" />
+        <Image
+          width={160}
+          height={160}
+          src="/images/avatar.avif"
+          alt="穗积"
+          preload
+        />
         <div className="max-w-md flex flex-col gap-4 grow p-4">
           <h1 className="text-7xl font-bold italic">{siteConfig.author}</h1>
+          <h1 className="sr-only">程序员{siteConfig.profile.name}</h1>
           <h2 className="text-2xl font-semibold text-muted">
             {siteConfig.slogan}
           </h2>

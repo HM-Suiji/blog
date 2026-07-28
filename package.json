@@ -98,7 +98,7 @@
     "@types/rss": "^0.0.32",
     "@types/xml2js": "^0.4.14",
     "babel-plugin-react-compiler": "1.0.0",
-    "code-inspector-plugin": "^2.0.4",
+    "code-inspector-plugin": "^2.0.5",
     "drizzle-kit": "^1.0.0-rc.4",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.8",

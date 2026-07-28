@@ -98,7 +98,7 @@ export default async function PostSlugPage({
       </div>
       <div className="relative">
         <div className="border p-2 sticky top-16">
-          博客目录
+          <h2>博客目录</h2>
           <ul className="text-muted mt-2">
             {headings.map(heading => (
               <li key={heading.id}>

@@ -24,7 +24,7 @@ export async function GET() {
 ${posts
   .map(
     post =>
-      `- [${post.title}](${url}/posts/${post.slug}]: ${post.publishedAt} - ${post.description}`
+      `- [${post.title}](${url}/posts/${post.slug}): ${post.publishedAt} - ${post.description}`
   )
   .join('\n')}
 

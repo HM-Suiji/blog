@@ -17,7 +17,7 @@ export default function AboutPage() {
     <div className="min-h-screen w-full flex flex-col pt-12 items-center">
       <div className="flex flex-col items-center gap-2">
         <h1 className="text-2xl font-semibold">关于我</h1>
-        <p className="text-muted">{siteConfig.slogan}</p>
+        <h2 className="text-muted">{siteConfig.slogan}</h2>
       </div>
       <Card className="mt-8 w-96 p-6 flex flex-col items-center gap-6">
         <Avatar className="size-24" aria-label={siteConfig.author}>

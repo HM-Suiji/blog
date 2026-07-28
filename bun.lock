@@ -84,7 +84,7 @@
         "@types/rss": "^0.0.32",
         "@types/xml2js": "^0.4.14",
         "babel-plugin-react-compiler": "1.0.0",
-        "code-inspector-plugin": "^2.0.4",
+        "code-inspector-plugin": "^2.0.5",
         "drizzle-kit": "^1.0.0-rc.4",
         "husky": "^9.1.7",
         "lint-staged": "^17.0.8",
@@ -162,17 +162,17 @@
 
     "@clack/prompts": ["@clack/prompts@1.1.0", "", { "dependencies": { "@clack/core": "1.1.0", "sisteransi": "^1.0.5" } }, "sha512-pkqbPGtohJAvm4Dphs2M8xE29ggupihHdy1x84HNojZuMtFsHiUlRvqD24tM2+XmI+61LlfNceM3Wr7U5QES5g=="],
 
-    "@code-inspector/core": ["@code-inspector/core@2.0.4", "", { "dependencies": { "@vue/compiler-dom": "^3.5.13", "chalk": "^4.1.1", "launch-ide": "1.4.6", "portfinder": "^1.0.28", "ws": "^8.18.0" }, "optionalDependencies": { "node-pty": "^1.1.0" }, "peerDependencies": { "@anthropic-ai/claude-agent-sdk": "^0.2.29", "@openai/codex-sdk": "^0.106.0", "@opencode-ai/sdk": "^1.2.24" }, "optionalPeers": ["@anthropic-ai/claude-agent-sdk", "@openai/codex-sdk", "@opencode-ai/sdk"] }, "sha512-fYblD0SdGLA99MkMpFhFTHD1jP49MtwgO+w0UKs1wkHKjSGe3128ltcqzEFmeTrAx3JwRLPsdUfMMuCpoSDqyQ=="],
+    "@code-inspector/core": ["@code-inspector/core@2.0.5", "", { "dependencies": { "@vue/compiler-dom": "^3.5.13", "chalk": "^4.1.1", "launch-ide": "1.4.8", "portfinder": "^1.0.28", "ws": "^8.18.0" }, "optionalDependencies": { "node-pty": "^1.1.0" }, "peerDependencies": { "@anthropic-ai/claude-agent-sdk": "^0.2.29", "@openai/codex-sdk": "^0.106.0", "@opencode-ai/sdk": "^1.2.24" }, "optionalPeers": ["@anthropic-ai/claude-agent-sdk", "@openai/codex-sdk", "@opencode-ai/sdk"] }, "sha512-w/lR3iyb7/9JvnGcmDhCGmGX7bnDsvEJBmH/OK1ovkOIHRj4Wj+Fr1uaM+t86ONF4EIsB2u0Cq4ygjYGuijIFA=="],
 
-    "@code-inspector/esbuild": ["@code-inspector/esbuild@2.0.4", "", { "dependencies": { "@code-inspector/core": "2.0.4" } }, "sha512-w58JdVUE8uRcaDPsG+oAcIxhhkJZ7ReUH6WdWLSgwj07/XuBDGZXTVum9Rz390e8FGYQYHg6Qok8a7d2pe9Tfg=="],
+    "@code-inspector/esbuild": ["@code-inspector/esbuild@2.0.5", "", { "dependencies": { "@code-inspector/core": "2.0.5" } }, "sha512-3FbKPGWn1VjY1y/rUUHVSlwtJgpRnF1f7TjGCikzimmJFRzijSm+xTp/VTs1Zix0cjQPqmTl2qCOKBjQ1d2Cew=="],
 
-    "@code-inspector/mako": ["@code-inspector/mako@2.0.4", "", { "dependencies": { "@code-inspector/core": "2.0.4" } }, "sha512-ykDxRna0+rF1K1bGcOI3pN3lD1deoSkd44QhxAgr2c6/lfqWFPvbHFLMcPpgowgMrrPmGzOv7stu4wiY9g0Rdg=="],
+    "@code-inspector/mako": ["@code-inspector/mako@2.0.5", "", { "dependencies": { "@code-inspector/core": "2.0.5" } }, "sha512-Z9gT9I65qFjGodJt0zefsD8DJryJugkxfxNYapMhUfe+YhJefXfEVBB6VUJ/Y6IPZcB+1kRT5wGKDatuftwP+g=="],
 
-    "@code-inspector/turbopack": ["@code-inspector/turbopack@2.0.4", "", { "dependencies": { "@code-inspector/core": "2.0.4", "@code-inspector/webpack": "2.0.4" } }, "sha512-E4INOSYcFpTgfBYIQzpO/jdD0KeyEWkeClgUSjT5f6rVhRqZMczNUuPYidXDtcf4WI6XeKsES0P3xD6VTxqoTA=="],
+    "@code-inspector/turbopack": ["@code-inspector/turbopack@2.0.5", "", { "dependencies": { "@code-inspector/core": "2.0.5", "@code-inspector/webpack": "2.0.5" } }, "sha512-vFwEEeU/sD4qU3+3yNsjBpnxKCV48P906noUvtWo/po3X8204Ow1ipXv/bWFDJat28ekx68OwcwEZsNl6Rmp5A=="],
 
-    "@code-inspector/vite": ["@code-inspector/vite@2.0.4", "", { "dependencies": { "@code-inspector/core": "2.0.4", "chalk": "4.1.1" } }, "sha512-3PXCMtEga66IX7nu/XK1pw2cxxUA5cJbrR30hA5GPisDZUKF+3WpOFL7L3qadAkyyUod+SCS69YPmPThI1IkJg=="],
+    "@code-inspector/vite": ["@code-inspector/vite@2.0.5", "", { "dependencies": { "@code-inspector/core": "2.0.5", "chalk": "4.1.1" } }, "sha512-nXwP2S3nPc33Jzm4ZpwNMjGlvPVPRlFD8VAiGzjMAdq99rYRdxtzCNnmny1t7SFEzqmH9beQ6xptLpUsrrCofg=="],
 
-    "@code-inspector/webpack": ["@code-inspector/webpack@2.0.4", "", { "dependencies": { "@code-inspector/core": "2.0.4" } }, "sha512-snFTnMQVkitTUPLI1P78JDE8Ae5o4nf+hROUNyxE0FBjyQYJhZVHYWtmrKN8Bt2D5rZpMzpU0xkuE/XIKVsMrA=="],
+    "@code-inspector/webpack": ["@code-inspector/webpack@2.0.5", "", { "dependencies": { "@code-inspector/core": "2.0.5" } }, "sha512-H70qFh77rEb6gOjxvWKnfLV18Jm0VpsldBMm93pOd7Hlpk66XYnrKqW7fjbnXfLuKxzTCgAX5K6oWeTNGzXhWA=="],
 
     "@corex/deepmerge": ["@corex/deepmerge@4.0.43", "", {}, "sha512-N8uEMrMPL0cu/bdboEWpQYb/0i2K5Qn8eCsxzOmxSggJbbQte7ljMRoXm917AbntqTGOzdTu+vP3KOOzoC70HQ=="],
 
@@ -894,7 +894,7 @@
 
     "clsx": ["clsx@2.1.1", "", {}, "sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA=="],
 
-    "code-inspector-plugin": ["code-inspector-plugin@2.0.4", "", { "dependencies": { "@code-inspector/core": "2.0.4", "@code-inspector/esbuild": "2.0.4", "@code-inspector/mako": "2.0.4", "@code-inspector/turbopack": "2.0.4", "@code-inspector/vite": "2.0.4", "@code-inspector/webpack": "2.0.4", "chalk": "4.1.1" } }, "sha512-xBwgiAwL5wzIWIfo0Slo9ZovTi8TTiHE8vQgj7knPWIdLHKcwBe9oaeohuxrnL0ykvY2hbIlG8RCmVBM0NL2mw=="],
+    "code-inspector-plugin": ["code-inspector-plugin@2.0.5", "", { "dependencies": { "@code-inspector/core": "2.0.5", "@code-inspector/esbuild": "2.0.5", "@code-inspector/mako": "2.0.5", "@code-inspector/turbopack": "2.0.5", "@code-inspector/vite": "2.0.5", "@code-inspector/webpack": "2.0.5", "chalk": "4.1.1" } }, "sha512-RSmcX4EZJl9cy+Tor+NSRH6uX7DG+HJ+of4YZswVyiYKH2UbVliF0mSKylT+6F6MJb4vyS/2AH3ckvly0Y6CZw=="],
 
     "codem-isoboxer": ["codem-isoboxer@0.3.10", "", {}, "sha512-eNk3TRV+xQMJ1PEj0FQGY8KD4m0GPxT487XJ+Iftm7mVa9WpPFDMWqPt+46buiP5j5Wzqe5oMIhqBcAeKfygSA=="],
 
@@ -1262,7 +1262,7 @@
 
     "kind-of": ["kind-of@6.0.3", "", {}, "sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw=="],
 
-    "launch-ide": ["launch-ide@1.4.6", "", { "dependencies": { "chalk": "^4.1.1", "dotenv": "^16.1.4" } }, "sha512-R28mid8yt1aV1ZbuRo8wOCdn6SifV0RcdA+yunasclI6M8eGQEr6JM16YBWbuWL/cuqNlQGca5W1AaNHATidVw=="],
+    "launch-ide": ["launch-ide@1.4.8", "", { "dependencies": { "chalk": "^4.1.1", "dotenv": "^16.1.4" } }, "sha512-SeY4/242PZ6M2cUtZvwEatbmIAjSK2zBm5PFUHFgJsR+1Kw51SBcqUHYzd5yofVAiyt0L047Kya7DqxoP+0Ouw=="],
 
     "layout-base": ["layout-base@1.0.2", "", {}, "sha512-8h2oVEZNktL4BH2JCOI90iD1yXwL6iNW7KcCKT2QZgQJR2vbqDsldCTPRU9NifTCqHZci57XvQQ15YTu+sTYPg=="],
 
