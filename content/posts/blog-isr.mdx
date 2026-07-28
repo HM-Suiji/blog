@@ -1,0 +1,532 @@
+---
+slug: blog-isr
+title: 探秘博客构建的秘诀：ISR 增量静态再生
+description: 你也不想你的博客在更新之后需要重新构建整个网站吧，那也太费时费力了。不妨尝试一下 ISR 增量静态再生，让你的博客获得闪电般的更新体验。
+date: 2026-07-28
+tags:
+  - ISR
+  - Next.js
+  - 博客
+  - Webhooks
+pin: false
+public: true
+---
+# 探秘博客构建的秘诀：ISR 增量静态再生
+
+在构建一个现代博客系统时，性能与开发体验往往是一对矛盾。
+
+传统动态渲染虽然灵活，但每一次访问都需要执行数据查询、生成页面，随着访问量增长，服务器压力会逐渐增加。
+
+而纯静态生成（SSG）虽然性能优秀，但是每次内容更新都需要重新构建整个网站。
+
+那么，有没有一种方案，可以同时拥有：
+
+* 静态页面的极致性能；
+* 动态内容的快速更新；
+* 无需重新部署整个项目；
+
+答案就是 **ISR（Incremental Static Regeneration，增量静态再生）**。
+
+在我的博客系统中，我使用 **Next.js ISR + Webhook** 构建了一套自动化内容更新流程：
+
+> 当我在 CMS 中修改文章后，CMS 自动发送 Webhook 通知 Next.js，Next.js 根据变化内容精准刷新缓存，让最新文章立即生效。
+
+这套方案让博客拥有了接近静态站点的性能，同时保留了动态内容管理的便利。
+
+## 什么是 ISR？
+
+在理解 ISR 之前，我们先回顾 Next.js 中常见的页面渲染方式。
+
+### SSR：每次请求重新生成页面
+
+服务端渲染（Server Side Rendering）：
+
+```txt
+用户请求
+   ↓
+服务器查询数据库
+   ↓
+生成 HTML
+   ↓
+返回浏览器
+```
+
+优点：
+
+* 数据永远最新；
+* 适合强动态页面。
+
+缺点：
+
+* 每次访问都有服务器计算成本；
+* 高并发下压力较大。
+
+### SSG：构建时生成页面
+
+静态生成（Static Site Generation）：
+
+```txt
+next build
+    ↓
+读取数据
+    ↓
+生成 HTML 文件
+```
+
+访问时：
+
+```txt
+用户
+ ↓
+CDN
+ ↓
+静态 HTML
+```
+
+优点：
+
+* 极快；
+* 几乎没有服务器压力。
+
+但是：
+
+如果文章更新：
+
+```txt
+修改文章
+↓
+重新执行 next build
+↓
+重新部署
+```
+
+对于频繁更新的博客来说，体验并不好。
+
+## ISR：静态页面的“局部更新”
+
+ISR 可以理解为：
+
+> 在保持静态页面性能的同时，允许服务器在运行时重新生成部分页面。
+
+它的核心思想：
+
+```txt
+第一次访问
+
+用户请求
+   ↓
+生成页面
+   ↓
+缓存
+
+
+之后访问
+
+用户请求
+   ↓
+直接返回缓存页面
+```
+
+当内容发生变化：
+
+```txt
+触发重新验证
+↓
+删除旧缓存
+↓
+下一次请求重新生成页面
+```
+
+整个过程不需要重新构建整个网站。
+
+## Next.js 中如何使用 ISR？
+
+在新版 Next.js 中，我使用的是 **Cache Components 模式**。
+
+相比以前通过：
+
+```ts
+export const revalidate = 3600
+```
+
+控制缓存时间，
+
+新的 Cache Components 提供了更加细粒度的缓存控制。
+
+例如我的文章查询：
+
+```ts
+import { cacheLife, cacheTag } from 'next/cache'
+
+export async function getPosts() {
+  'use cache'
+
+  cacheTag('posts')
+  cacheLife('weeks')
+
+  return await findPosts()
+}
+```
+
+这里有三个关键点。
+
+### 1. `'use cache'`
+
+表示这个函数结果应该被缓存：
+
+```ts
+'use cache'
+```
+
+Next.js 会缓存该函数返回的数据。
+
+### 2. `cacheTag`
+
+给缓存添加标签：
+
+```ts
+cacheTag('posts')
+```
+
+例如：
+
+```txt
+posts
+ ├── 首页文章列表
+ ├── RSS Feed
+ └── 文章归档
+```
+
+都依赖这个缓存。
+
+之后：
+
+```ts
+revalidateTag('posts')
+```
+
+就可以一次刷新所有相关内容。
+
+
+### 3. `cacheLife`
+
+控制缓存生命周期：
+
+```ts
+cacheLife('weeks')
+```
+
+表示这个缓存可以长期存在。
+
+但是博客内容并不是永久不变的，所以我们需要一种主动刷新机制。
+
+这就是 Webhook。
+
+## 什么是 Webhook？
+
+Webhook 可以理解为：
+
+> 一个系统主动通知另一个系统发生事件的 HTTP 请求。
+
+传统 API：
+
+```txt
+你的程序
+  ↓
+主动请求
+  ↓
+第三方服务
+```
+
+例如：
+
+```txt
+每隔一分钟检查 CMS：
+
+有没有新文章？
+
+有没有修改？
+```
+
+这种方式叫：
+
+**Polling（轮询）**
+
+缺点：
+
+* 浪费请求；
+* 延迟高。
+
+Webhook：
+
+```txt
+CMS
+文章更新
+↓
+发送 HTTP 请求
+↓
+你的 Next.js API
+↓
+执行更新逻辑
+```
+
+它是一种事件驱动架构。
+
+## 我的博客如何使用 Webhook？
+
+我的博客内容存储在 Headless CMS 中。
+
+整个流程：
+
+```txt
+修改文章
+  ↓
+Pages CMS
+  ↓
+Git 内容同步
+  ↓
+Webhook 请求
+  ↓
+Next.js Route Handler
+  ↓
+同步文章数据
+  ↓
+revalidateTag()
+  ↓
+ISR重新生成页面
+```
+
+也就是说：
+
+我不需要手动部署。
+
+修改文章后：
+
+几秒钟内博客内容自动更新。
+
+## Next.js 接收 Webhook
+
+在 App Router 中，可以创建：`app/api/webhooks/posts/route.ts`实现一个 POST 接口：
+
+```ts
+import { revalidateTag } from 'next/cache'
+
+export async function POST(req: Request) {
+
+  const auth = req.headers.get('authorization')
+
+  if (
+    auth !== `Bearer xxx`
+  ) {
+    return new Response(
+      'Unauthorized',
+      {
+        status: 401
+      }
+    )
+  }
+
+
+  const actions = await syncPosts()
+
+
+  if (actions.length === 0) {
+    return Response.json({
+      success:true,
+      message:'no content changed'
+    })
+  }
+
+
+  // 刷新文章列表缓存
+
+  revalidateTag(
+    'posts',
+    'max'
+  )
+
+  // 刷新具体文章缓存
+
+  actions.forEach(action => {
+    revalidateTag(
+      `post-${action.slug}`,
+      'max'
+    )
+  })
+
+
+  return Response.json({
+    success:true,
+    actions
+  })
+}
+```
+
+## 为什么需要鉴权？
+
+Webhook 本质上就是一个公开 API。
+
+如果没有保护：
+
+任何人都可以：
+
+```bash
+POST /api/webhooks/posts
+```
+
+导致：
+
+* 大量缓存刷新；
+* 消耗服务器资源；
+* 影响网站性能。
+
+所以我使用：
+
+```ts
+Authorization: Bearer xxx
+```
+
+进行简单验证。
+
+Github Webhooks Secret 配置：
+
+```txt
+Authorization:
+
+Bearer xxx
+```
+
+只有拥有密钥的服务才能触发更新。
+
+## 为什么还需要同步文章？
+
+Webhook 本身不会告诉 Next.js：
+
+“哪篇文章变了”。
+
+它只是一个：
+
+> 内容发生变化的通知。
+
+所以收到通知后，我执行：
+
+```ts
+const actions = await syncPosts()
+```
+
+同步 CMS 中最新内容。
+
+例如返回：
+
+```ts
+[
+ {
+   type:"update",
+   slug:"nextjs-isr"
+ },
+ {
+   type:"delete",
+   slug:"old-post"
+ }
+]
+```
+
+然后根据变化：
+
+精准刷新缓存。
+
+## 精准失效，而不是全部刷新
+
+博客通常包含：
+
+* 首页文章列表；
+* 标签页面；
+* 分类页面；
+* 单篇文章页面；
+* RSS。
+
+如果每次修改文章：
+
+直接：
+
+```ts
+revalidatePath('/')
+```
+
+可能导致大量页面重新计算。
+
+所以我采用 Tag Cache：
+
+```
+posts
+  ↓
+文章列表
+
+post-nextjs-isr
+  ↓
+单篇文章
+```
+
+更新文章：
+
+```ts
+revalidateTag("post-nextjs-isr")
+```
+
+只影响对应页面。
+
+## 最终效果
+
+整个博客更新链路：
+
+```txt
+┌─────────────┐
+│  Pages CMS  │
+└──────┬──────┘
+       │
+       │ Webhook
+       ↓
+┌─────────────┐
+│ Next.js API │
+└──────┬──────┘
+       │
+       │ syncPosts()
+       ↓
+┌─────────────┐
+│ 数据同步层    │
+└──────┬──────┘
+       │
+       │ revalidateTag()
+       ↓
+┌─────────────┐
+│ ISR Cache   │
+└──────┬──────┘
+       │
+       ↓
+ 最新博客页面
+```
+
+## 总结
+
+ISR 解决了：
+
+> 如何让静态页面拥有动态更新能力。
+
+Webhook 解决了：
+
+> 如何让系统知道什么时候需要更新。
+
+二者结合：
+
+* CMS 负责内容管理；
+* Webhook 负责事件通知；
+* Next.js 负责缓存更新；
+* ISR 负责页面再生成。
+
+最终形成了一套：
+
+**高性能、低成本、自动化的现代博客架构。**
+
+对于个人博客、文档站、知识库这类内容驱动型网站来说，ISR + Webhook 是一个非常优雅的解决方案。
+
+它让我可以像使用动态网站一样维护博客，同时享受到静态网站接近 CDN 的访问速度。
