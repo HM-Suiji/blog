@@ -17,7 +17,11 @@ export const publishComment = async (comment: InsertComment) => {
 
 export const findComments = async (postId: string) => {
   const comments = (await getCommentsByPostId(postId)).filter(
-    comment => comment.status === 'approved'
+    comment => comment.comments.status === 'approved'
   )
-  return comments.map(toCommentDto)
+  return comments.map(comment => ({
+    ...toCommentDto(comment.comments),
+    userName: comment.user?.name || '',
+    userAvatar: comment.user?.image || '',
+  }))
 }

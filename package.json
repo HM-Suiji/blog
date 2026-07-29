@@ -47,6 +47,7 @@
     "algoliasearch": "^5.56.0",
     "better-auth": "^1.6.25",
     "canvas-confetti": "^1.9.4",
+    "dayjs": "^1.11.21",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^1.0.0-rc.4",
     "embla-carousel": ">=8.6.0",
