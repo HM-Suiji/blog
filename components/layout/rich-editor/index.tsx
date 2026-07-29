@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { RefObject, useState } from 'react'
 
-import { JSONContent } from '@tiptap/core'
+import { Editor, JSONContent } from '@tiptap/core'
+import { Markdown } from '@tiptap/markdown'
 import {
   Bold,
   Braces,
@@ -26,13 +27,23 @@ import {
 import { RichTextEditor } from '@heroui-pro/react'
 import { Separator } from '@heroui/react'
 
-export const RichEditor: React.FC = () => {
+export const RichEditor: React.FC<{ editorRef: RefObject<Editor | null> }> = ({
+  editorRef,
+}) => {
   const [documentJson, setDocumentJson] = useState<JSONContent>()
+
   return (
     <RichTextEditor
       placeholder="写评论"
       defaultValue={documentJson}
-      onValueChange={setDocumentJson}
+      onValueChange={(value, details) => {
+        setDocumentJson(value)
+        if (editorRef) {
+          editorRef.current = details.editor
+        }
+      }}
+      maxLength={1000}
+      extensions={[Markdown]}
     >
       <RichTextEditor.Shell>
         <DefaultToolbar />

@@ -4,9 +4,17 @@ import { admin } from 'better-auth/plugins'
 
 import { db } from '@/server/db'
 
+import { account, session, user, verification } from '../db/schema'
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
+    schema: {
+      user,
+      session,
+      account,
+      verification,
+    },
   }),
   emailAndPassword: {
     enabled: true,

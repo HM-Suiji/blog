@@ -8,3 +8,7 @@ export const signInWithGithub = async () => {
   })
   return data
 }
+
+export const signout = async () => {
+  await authClient.signOut()
+}
