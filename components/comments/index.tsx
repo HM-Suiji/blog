@@ -27,15 +27,19 @@ export const CommentsContainer: React.FC<{ postId: string }> = ({ postId }) => {
     if (!editorRef.current.getMarkdown().trim())
       return toast.warning('评论内容不能为空')
 
-    await publishComment({
-      postId,
-      userAgent: session.session.userAgent,
-      content: editorRef.current.getMarkdown().trim(),
-      userId: session.user.id,
-      ip: session.session.ipAddress,
-    })
-
-    editorRef.current.commands.clearContent()
+    try {
+      await publishComment({
+        postId,
+        userAgent: session.session.userAgent,
+        content: editorRef.current.getMarkdown().trim(),
+        userId: session.user.id,
+        ip: session.session.ipAddress,
+        status: 'approved',
+      })
+      editorRef.current.commands.clearContent()
+    } catch (e) {
+      toast.danger(e instanceof Error ? e.message : '评论发布失败')
+    }
   }
 
   return (

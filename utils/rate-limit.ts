@@ -6,6 +6,12 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 })
 
+export const commentLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, '1 m'),
+  analytics: true,
+})
+
 export const webhookLimiter = new Ratelimit({
   redis,
 
