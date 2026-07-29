@@ -1,3 +1,5 @@
+import { Suspense } from 'react'
+
 import { ArrowLeft } from 'lucide-react'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import { cacheLife, cacheTag } from 'next/cache'
@@ -97,7 +99,11 @@ export default async function PostSlugPage({
           {MDXContent}
         </div>
         <Separator className="my-8" />
-        <CommentsContainer postId={post.id} />
+        <Suspense
+          fallback={<div className="w-full p-4 border">加载评论中...</div>}
+        >
+          <CommentsContainer postId={post.id} />
+        </Suspense>
       </div>
       <div className="relative">
         <div className="border p-2 sticky top-16">
