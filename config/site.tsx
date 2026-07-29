@@ -6,6 +6,17 @@ export const siteConfig = {
   name: '穗积的宇宙船',
   url: HOST,
   slogan: '莫笑吾辈好远骛，跬步平川马蹄疾。',
+  keywords: [
+    '博客',
+    'Blog',
+    '穗积',
+    'Suiji',
+    'HM-Suiji',
+    '穗积的宇宙船',
+    '技术分享',
+    'AI',
+    'Agents',
+  ],
   avatar: HOST + '/images/avatar.avif',
   rss: HOST + '/rss.xml',
   description:

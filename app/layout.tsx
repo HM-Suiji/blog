@@ -32,6 +32,19 @@ export const metadata: Metadata = {
       'application/rss+xml': siteConfig.url + '/rss.xml',
     },
   },
+  applicationName: siteConfig.name,
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/images/apple-touch-icon.png',
+  },
+  authors: [
+    {
+      name: siteConfig.author,
+      url: siteConfig.links.github,
+    },
+  ],
+  keywords: siteConfig.keywords as unknown as string[],
 }
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
