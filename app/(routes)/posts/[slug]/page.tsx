@@ -80,13 +80,13 @@ export default async function PostSlugPage({
   })
 
   return (
-    <div className="w-full grid grid-cols-4 gap-4 my-8">
-      <div className="col-span-3 flex flex-col">
+    <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-4 my-8">
+      <div className="col-span-full lg:col-span-3 flex flex-col">
         <Link href={'/posts'} className="h-full border flex px-4 py-2 gap-2">
           <ArrowLeft />
           返回博客列表
         </Link>
-        <div className="mt-2 flex gap-2">
+        <div className="mt-2 flex gap-2 flex-wrap">
           {frontmatter.tags.map(tag => (
             <Chip color="accent" key={tag}>
               {tag}
@@ -95,7 +95,7 @@ export default async function PostSlugPage({
           <Chip>{readingTime} 分钟</Chip>
           {frontmatter.pin && <Chip color="success">置顶</Chip>}
         </div>
-        <div className="prose prose-headings:mt-8 prose-headings:font-semibold prose-headings:text-foreground text-muted prose-strong:text-foreground prose-blockquote:text-foreground prose-h1:text-5xl prose-h2:text-4xl prose-h3:text-3xl prose-h4:text-2xl prose-h5:text-xl prose-h6:text-lg w-full max-w-6xl">
+        <div className="prose prose-headings:mt-8 prose-headings:font-semibold prose-headings:text-foreground text-muted prose-strong:text-foreground prose-blockquote:text-foreground prose-h1:text-3xl md:prose-h1:text-5xl prose-h2:text-2xl md:prose-h2:text-4xl prose-h3:text-xl md:prose-h3:text-3xl prose-h4:text-lg md:prose-h4:text-2xl prose-h5:text-base md:prose-h5:text-xl prose-h6:text-sm md:prose-h6:text-lg w-full max-w-6xl">
           {MDXContent}
         </div>
         <Separator className="my-8" />
@@ -105,7 +105,7 @@ export default async function PostSlugPage({
           <CommentsContainer postId={post.id} />
         </Suspense>
       </div>
-      <div className="relative">
+      <div className="relative hidden lg:block">
         <div className="border p-2 sticky top-16">
           <h2>博客目录</h2>
           <ul className="text-muted mt-2">

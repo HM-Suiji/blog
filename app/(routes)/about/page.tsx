@@ -14,12 +14,12 @@ export default function AboutPage() {
   const { name, constellation, MBTI, hobbies } = siteConfig.profile
 
   return (
-    <div className="min-h-screen w-full flex flex-col pt-12 items-center">
+    <div className="min-h-screen w-full flex flex-col pt-12 items-center px-4">
       <div className="flex flex-col items-center gap-2">
         <h1 className="text-2xl font-semibold">关于我</h1>
-        <h2 className="text-muted">{siteConfig.slogan}</h2>
+        <h2 className="text-muted text-center">{siteConfig.slogan}</h2>
       </div>
-      <Card className="mt-8 w-96 p-6 flex flex-col items-center gap-6">
+      <Card className="mt-8 w-full max-w-sm md:w-96 p-6 flex flex-col items-center gap-6">
         <Avatar className="size-24" aria-label={siteConfig.author}>
           <Avatar.Image alt={siteConfig.author} src={siteConfig.avatar} />
           <Avatar.Fallback className="text-2xl">

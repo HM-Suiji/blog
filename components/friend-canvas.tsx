@@ -14,7 +14,7 @@ export const FriendCanvas: React.FC<{
   friends: Friend[]
 }> = ({ friends }) => {
   return (
-    <div className="mt-4 w-2/3 justify-center">
+    <div className="mt-4 md:w-2/3 justify-center">
       <div className="flex justify-center">
         <div className="flex gap-2">
           <Button variant="ghost" size="sm">
@@ -29,7 +29,7 @@ export const FriendCanvas: React.FC<{
           )}
         </div>
       </div>
-      <div className="p-4 flex gap-2 relative">
+      <div className="p-4 flex gap-2 relative flex-wrap">
         {friends.map(friend => (
           <HoverCard key={friend.id}>
             <HoverCard.Trigger className="relative">

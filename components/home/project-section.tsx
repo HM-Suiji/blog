@@ -6,13 +6,13 @@ import { siteConfig } from '@/config/site'
 
 export default function ProjectSection() {
   return (
-    <div className="flex h-screen justify-center items-center flex-col gap-8">
-      <h1 className="text-4xl">探索那些我做过的项目</h1>
-      <div className="grid md:grid-cols-2 gap-4 xl:grid-cols-3">
+    <div className="flex min-h-screen justify-center items-center flex-col gap-8 py-12">
+      <h1 className="text-2xl md:text-4xl">探索那些我做过的项目</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:grid-cols-3">
         {siteConfig.projects.map(project => (
           <Card
             key={project.title}
-            className="flex flex-row justify-center items-center w-80 h-64 gap-4 p-6"
+            className="flex flex-row justify-center items-center w-full max-w-xs md:w-80 h-64 gap-4 p-6"
           >
             <Image
               width={96}
@@ -60,10 +60,10 @@ export default function ProjectSection() {
             </div>
           </Card>
         ))}
-        <div className="w-80 h-64 border"></div>
-        <div className="w-80 h-64 border"></div>
-        <div className="w-80 h-64 border"></div>
-        <div className="w-80 h-64 border"></div>
+        <div className="w-full max-w-xs md:w-80 h-64 border hidden md:block"></div>
+        <div className="w-full max-w-xs md:w-80 h-64 border hidden md:block"></div>
+        <div className="w-full max-w-xs md:w-80 h-64 border hidden md:block"></div>
+        <div className="w-full max-w-xs md:w-80 h-64 border hidden md:block"></div>
       </div>
     </div>
   )

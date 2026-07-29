@@ -28,24 +28,24 @@ export default async function PostsPage() {
   cacheLife('weeks')
   const posts = await findPosts()
   return (
-    <div className="h-screen w-full flex flex-col pt-8">
+    <div className="min-h-screen w-full flex flex-col pt-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-semibold">博客列表</h1>
+        <h1 className="text-2xl md:text-3xl font-semibold">博客列表</h1>
         <RSSButton />
       </div>
-      <div className="grid md:grid-cols-2 border md:border-l mt-4 gap-2 p-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 border md:border-l mt-4 gap-2 p-2">
         {posts.map(post => (
           <Link href={`/posts/${post.slug}`} key={post.slug}>
-            <Card className="h-36 w-full items-stretch md:flex-row">
-              <div className="relative size-24 shrink-0 overflow-hidden rounded-2xl">
-                Image
+            <Card className="h-auto md:h-36 w-full items-stretch flex-col md:flex-row">
+              <div className="md:relative size-24 shrink-0 overflow-hidden rounded-2xl hidden md:block">
+                {/* <Image /> */}
               </div>
-              <div className="flex flex-1 flex-col min-w-0">
+              <div className="flex flex-1 flex-col min-w-0 p-2 md:p-0">
                 <div>
                   <span className="text-xs text-muted">{post.publishedAt}</span>
                 </div>
                 <Card.Header className="my-auto">{post.title}</Card.Header>
-                <Card.Description className="line-clamp-2 2xl:line-clamp-3 my-auto">
+                <Card.Description className="line-clamp-2 md:line-clamp-3 my-auto">
                   {post.description}
                 </Card.Description>
               </div>
