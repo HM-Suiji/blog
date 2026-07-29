@@ -1,5 +1,4 @@
 'use server'
-import 'server-only'
 import { toCommentDto } from '../db/dto/comment.dto'
 import { createComment, getCommentsByPostId } from '../db/query/comment.query'
 import { InsertComment } from '../db/schema'

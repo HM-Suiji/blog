@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useRef } from 'react'
+import { useRef } from 'react'
 
 import { Editor } from '@tiptap/core'
 
@@ -73,9 +73,7 @@ export const CommentsContainer: React.FC<{ postId: string }> = ({ postId }) => {
             <GithubOAuth />
           )}
         </div>
-        <Suspense>
-          <CommentResult postId={postId} />
-        </Suspense>
+        <CommentResult postId={postId} />
       </div>
     </div>
   )
