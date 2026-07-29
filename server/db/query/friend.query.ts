@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 
 import { db } from '..'
-import { toFriendDto } from '../dto/friend'
+import { toFriendDto } from '../dto/friend.dto'
 import { friendsTable, InsertFriend } from '../schema/friend'
 
 export const getAllFriends = async () => {

@@ -1,37 +1,39 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { Suspense, useRef } from 'react'
 
 import { Editor } from '@tiptap/core'
 
-import { Markdown } from '@heroui-pro/react'
 import { Button, toast, ToggleButton, ToggleButtonGroup } from '@heroui/react'
 
 import { SignoutButton } from '@/components/auth/oauth-button'
 import { GithubOAuth } from '@/components/auth/oauth-button'
 import { RichEditor } from '@/components/layout/rich-editor'
+import { publishComment } from '@/server/actions/comment.action'
 import { authClient } from '@/utils/auth-client'
 
-function getComments(postId: string) {
-  // TODO: 获取评论
-  return postId
-}
+import { CommentResult } from './comment-result'
 
 export const CommentsContainer: React.FC<{ postId: string }> = ({ postId }) => {
-  getComments(postId)
   const { data: session } = authClient.useSession()
   const editorRef = useRef<Editor>(null)
 
-  const [comments, setComments] = useState<string[]>([])
-
-  const handleComment = () => {
+  const handleComment = async () => {
     if (!editorRef.current)
       return toast.warning('评论框初始化异常，请联系管理员或刷新重试。')
+
+    if (!session?.session) return toast.warning('请先登录再进行评论')
 
     if (!editorRef.current.getMarkdown().trim())
       return toast.warning('评论内容不能为空')
 
-    setComments([...comments, editorRef.current.getMarkdown().trim()])
+    await publishComment({
+      postId,
+      userAgent: session.session.userAgent,
+      content: editorRef.current.getMarkdown().trim(),
+      userId: session.user.id,
+      ip: session.session.ipAddress,
+    })
 
     editorRef.current.commands.clearContent()
   }
@@ -71,13 +73,9 @@ export const CommentsContainer: React.FC<{ postId: string }> = ({ postId }) => {
             <GithubOAuth />
           )}
         </div>
-        <div>
-          {comments.map((comment, index) => (
-            <div key={index} className="p-2 border my-2">
-              <Markdown>{comment}</Markdown>
-            </div>
-          ))}
-        </div>
+        <Suspense>
+          <CommentResult postId={postId} />
+        </Suspense>
       </div>
     </div>
   )

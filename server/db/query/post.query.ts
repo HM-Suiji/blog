@@ -1,7 +1,7 @@
 import { eq, sql } from 'drizzle-orm'
 
 import { db } from '..'
-import { toPostDto } from '../dto/post'
+import { toPostDto } from '../dto/post.dto'
 import {
   InsertPost,
   InsertPostStats,
