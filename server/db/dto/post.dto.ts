@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 import { Post } from '@/types/post'
 
 import { SelectPost } from '../schema'
@@ -10,10 +12,10 @@ export const toPostDto = (post: SelectPost): Post => ({
   description: post.description || '',
   public: post.public,
   pin: post.pin,
-  publishedAt: post.publishedAt.toISOString(),
+  publishedAt: dayjs(post.publishedAt).format('YYYY-MM-DD'),
   slug: post.slug,
   title: post.title,
-  updatedAt: post.updatedAt.toISOString(),
+  updatedAt: dayjs(post.updatedAt).format('YYYY-MM-DD'),
   tags: post.tags,
   hash: post.hash || '',
 })
