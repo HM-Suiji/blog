@@ -1,6 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
+import { ArrowUp } from 'lucide-react'
 import {
   FaAndroid,
   FaApple,
@@ -65,6 +66,9 @@ const CommentItem: React.FC<{
       </div>
       <div className="mt-3 mb-2">
         <Markdown>{comment.content}</Markdown>
+      </div>
+      <div className="flex items-center text-muted">
+        <ArrowUp size={20} /> {comment.hot + 1}
       </div>
     </div>
   )

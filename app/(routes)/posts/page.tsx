@@ -6,9 +6,18 @@ import { RSSButton } from '@/components/feature-button'
 import { findPosts } from '@/server/actions/post.action'
 import { cacheSelector } from '@/utils/cache'
 
-export const metadata: Metadata = {
-  title: '博客列表',
-  description: '分享一些技术文章与个人简介，欢迎大家交流',
+export const generateMetadata = async (): Promise<Metadata> => {
+  'use cache'
+  cacheTag(cacheSelector.posts)
+  cacheLife('weeks')
+  const posts = await findPosts()
+  return {
+    title: '博客列表',
+    description: `分享一些技术文章与个人简介，欢迎大家交流。博客列表：${posts
+      .map(post => post.title)
+      .slice(0, 5)
+      .join('、')}`,
+  }
 }
 
 export default async function PostsPage() {

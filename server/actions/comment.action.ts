@@ -12,7 +12,12 @@ export const publishComment = async (comment: InsertComment) => {
     throw new Error('评论过于频繁，请稍后再试')
   }
 
-  await createComment(comment)
+  let region = ''
+  if (comment.ip) {
+    // TODO: 根据 IP 获取地区
+  }
+
+  await createComment({ ...comment, region })
 }
 
 export const findComments = async (postId: string) => {

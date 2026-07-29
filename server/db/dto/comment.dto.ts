@@ -14,4 +14,5 @@ export const toCommentDto = (comment: SelectComment): Comment => ({
   replyToId: comment.replyToId || '',
   userAgent: comment.userAgent || '',
   hot: comment.hot,
+  region: comment.region || '',
 })

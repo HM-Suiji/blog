@@ -41,6 +41,7 @@ export const commentsTable = pgTable('comments', {
     .notNull(),
   userAgent: text('user_agent'),
   ip: text('ip'),
+  region: text('region'),
 })
 
 export const commentReactionsTable = pgTable(
