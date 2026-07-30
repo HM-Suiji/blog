@@ -18,4 +18,5 @@ export const toPostDto = (post: SelectPost): Post => ({
   updatedAt: dayjs(post.updatedAt).format('YYYY-MM-DD'),
   tags: post.tags,
   hash: post.hash || '',
+  likes: post.likes,
 })
