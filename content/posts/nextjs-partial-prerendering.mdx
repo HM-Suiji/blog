@@ -11,8 +11,9 @@ tags:
   - React
 pin: false
 public: true
-cover: /images/nextjs-partial-prerendering.avif
+cover: /images/posts/nextjs-partial-prerendering.avif
 ---
+
 # 探秘 Next.js PPR：让静态博客拥有动态评论
 
 ## 前言
@@ -92,17 +93,15 @@ flowchart TD
 
 其中：
 
-
-| 页面区域 | 渲染方式 | 原因 |
-| ----------- | ----- | -------------- |
-| 网站导航 | 静态预渲染 | 所有用户看到的内容相同 |
-| 文章标题 | 静态或缓存 | 文章不会频繁变化 |
-| Markdown 正文 | 静态或缓存 | 内容更新频率较低 |
-| 文章目录 | 静态预渲染 | 可以根据文章提前计算 |
-| 评论列表 | 动态渲染 | 评论可能随时增加 |
-| 登录状态 | 动态渲染 | 依赖当前请求的 Cookie |
-| 评论输入框 | 客户端交互 | 需要状态和事件处理 |
-
+| 页面区域      | 渲染方式   | 原因                   |
+| ------------- | ---------- | ---------------------- |
+| 网站导航      | 静态预渲染 | 所有用户看到的内容相同 |
+| 文章标题      | 静态或缓存 | 文章不会频繁变化       |
+| Markdown 正文 | 静态或缓存 | 内容更新频率较低       |
+| 文章目录      | 静态预渲染 | 可以根据文章提前计算   |
+| 评论列表      | 动态渲染   | 评论可能随时增加       |
+| 登录状态      | 动态渲染   | 依赖当前请求的 Cookie  |
+| 评论输入框    | 客户端交互 | 需要状态和事件处理     |
 
 PPR 最重要的思想是：
 
@@ -130,7 +129,6 @@ export default function PostPage() {
     </main>
   )
 }
-
 ```
 
 如果 `Comments` 会实时查询数据库，那么它无法在构建阶段稳定地完成预渲染。
@@ -151,7 +149,6 @@ export default function PostPage() {
     </main>
   )
 }
-
 ```
 
 这样，Next.js 就可以先生成文章部分的静态 HTML。
@@ -168,7 +165,6 @@ export default function PostPage() {
     <!-- 评论骨架屏 -->
   </section>
 </main>
-
 ```
 
 与此同时，服务器开始查询评论数据。
@@ -259,13 +255,11 @@ flowchart LR
 
 三者可以总结为：
 
-
-| 渲染模式 | 文章内容 | 评论内容 | 首屏速度 | 数据实时性 |
-| ---- | ----- | ----- | -------- | ----- |
-| SSG | 构建时生成 | 构建时生成 | 快 | 较低 |
-| SSR | 请求时生成 | 请求时生成 | 取决于最慢的数据 | 高 |
-| PPR | 提前生成 | 请求时生成 | 快 | 高 |
-
+| 渲染模式 | 文章内容   | 评论内容   | 首屏速度         | 数据实时性 |
+| -------- | ---------- | ---------- | ---------------- | ---------- |
+| SSG      | 构建时生成 | 构建时生成 | 快               | 较低       |
+| SSR      | 请求时生成 | 请求时生成 | 取决于最慢的数据 | 高         |
+| PPR      | 提前生成   | 请求时生成 | 快               | 高         |
 
 PPR 并不是一种完全独立的新渲染方式。
 
@@ -287,7 +281,6 @@ const nextConfig: NextConfig = {
 }
 
 export default nextConfig
-
 ```
 
 开启之后，我们不再需要单独配置：
@@ -385,7 +378,6 @@ export async function findPostBySlug(slug: string) {
     where: (posts, { eq }) => eq(posts.slug, slug),
   })
 }
-
 ```
 
 这里做了三件事情。
@@ -398,14 +390,12 @@ export async function findPostBySlug(slug: string) {
 
 ```typescript
 findPostBySlug('nextjs-ppr')
-
 ```
 
 和：
 
 ```typescript
 findPostBySlug('react-server-components')
-
 ```
 
 会生成不同的缓存条目。
@@ -418,7 +408,6 @@ findPostBySlug('react-server-components')
 
 ```typescript
 cacheLife('weeks')
-
 ```
 
 这并不意味着文章修改后必须等待一周才能更新。
@@ -431,14 +420,12 @@ cacheLife('weeks')
 
 ```typescript
 cacheTag(`post:${slug}`)
-
 ```
 
 当 CMS、GitHub Webhook 或后台管理系统更新文章后，可以精准地重新验证这篇文章：
 
 ```typescript
 revalidateTag(`post:${slug}`, 'max')
-
 ```
 
 这样不会误伤其他文章的缓存。
@@ -480,7 +467,6 @@ export async function Article({ slug }: ArticleProps) {
     </article>
   )
 }
-
 ```
 
 因为 `findPostBySlug` 使用了 `use cache`，文章组件可以在预渲染阶段获得数据，并成为静态 Shell 的一部分。
@@ -517,7 +503,6 @@ export async function findCommentsByPostId(postId: string) {
     },
   })
 }
-
 ```
 
 这是一个未缓存的数据库查询。
@@ -552,7 +537,7 @@ export async function CommentList({ postId }: CommentListProps) {
       <h2>评论（{comments.length}）</h2>
 
       <ul>
-        {comments.map((comment) => (
+        {comments.map(comment => (
           <li key={comment.id}>
             <header>
               <strong>{comment.user.name}</strong>
@@ -568,7 +553,6 @@ export async function CommentList({ postId }: CommentListProps) {
     </section>
   )
 }
-
 ```
 
 由于这个组件会访问未缓存的数据，所以它不能直接放在页面的预渲染区域中。
@@ -599,7 +583,6 @@ export function CommentSkeleton() {
     </section>
   )
 }
-
 ```
 
 骨架屏本身不依赖动态数据，因此可以直接加入静态 Shell。
@@ -659,7 +642,6 @@ export default async function PostPage({ params }: PostPageProps) {
     </main>
   )
 }
-
 ```
 
 这里最关键的是：
@@ -668,7 +650,6 @@ export default async function PostPage({ params }: PostPageProps) {
 <Suspense fallback={<CommentSkeleton />}>
   <CommentList postId={post.id} />
 </Suspense>
-
 ```
 
 这段代码实际上是在告诉 Next.js：
@@ -744,7 +725,6 @@ export async function createComment(formData: FormData) {
 
   revalidatePath(`/posts/${postId}`)
 }
-
 ```
 
 然后创建评论表单：
@@ -774,7 +754,7 @@ export function CommentForm({ postId }: CommentFormProps) {
         }
       }
     },
-    {},
+    {}
   )
 
   return (
@@ -791,9 +771,7 @@ export function CommentForm({ postId }: CommentFormProps) {
         required
       />
 
-      {state.error ? (
-        <p role="alert">{state.error}</p>
-      ) : null}
+      {state.error ? <p role="alert">{state.error}</p> : null}
 
       <button type="submit" disabled={pending}>
         {pending ? '正在提交……' : '发表评论'}
@@ -801,7 +779,6 @@ export function CommentForm({ postId }: CommentFormProps) {
     </form>
   )
 }
-
 ```
 
 评论写入数据库后，页面会重新获取动态区域的数据，从而显示最新评论。
@@ -810,14 +787,12 @@ export function CommentForm({ postId }: CommentFormProps) {
 
 ```tsx
 <input type="hidden" name="slug" value={slug} />
-
 ```
 
 然后执行：
 
 ```typescript
 revalidatePath(`/posts/${slug}`)
-
 ```
 
 ## 评论一定不能缓存吗
@@ -834,7 +809,6 @@ export async function findCommentsByPostId(postId: string) {
     where: (comments, { eq }) => eq(comments.postId, postId),
   })
 }
-
 ```
 
 优点：
@@ -881,7 +855,6 @@ export async function findCommentsByPostId(postId: string) {
     },
   })
 }
-
 ```
 
 评论提交后，通过 `updateTag` 让缓存立即失效：
@@ -903,7 +876,6 @@ export async function createComment(formData: FormData) {
 
   updateTag(`comments:${postId}`)
 }
-
 ```
 
 `updateTag` 适合评论提交这样的场景，因为用户完成写操作后，通常希望立即看到自己刚刚发布的内容。
@@ -918,7 +890,6 @@ export async function createComment(formData: FormData) {
 
 ```typescript
 revalidateTag(`comments:${postId}`, 'max')
-
 ```
 
 它会将缓存标记为过期，并采用 stale-while-revalidate 行为。
@@ -933,15 +904,13 @@ revalidateTag(`comments:${postId}`, 'max')
 
 因此可以这样选择：
 
-
-| 场景 | 推荐方式 |
-| ----------- | ------------------------------- |
-| 评论必须绝对实时 | 不缓存评论 |
-| 用户提交后必须立即看到 | `updateTag` |
-| 可以短暂显示旧数据 | `revalidateTag(tag, 'max')` |
-| 评论更新频率较低 | `use cache` + `cacheLife` |
-| 后台审核通过后刷新 | Route Handler + `revalidateTag` |
-
+| 场景                   | 推荐方式                        |
+| ---------------------- | ------------------------------- |
+| 评论必须绝对实时       | 不缓存评论                      |
+| 用户提交后必须立即看到 | `updateTag`                     |
+| 可以短暂显示旧数据     | `revalidateTag(tag, 'max')`     |
+| 评论更新频率较低       | `use cache` + `cacheLife`       |
+| 后台审核通过后刷新     | Route Handler + `revalidateTag` |
 
 ## PPR 不等于客户端请求
 
@@ -961,13 +930,12 @@ export function Comments() {
 
   useEffect(() => {
     fetch('/api/comments')
-      .then((response) => response.json())
+      .then(response => response.json())
       .then(setComments)
   }, [])
 
   return <CommentList comments={comments} />
 }
-
 ```
 
 这种方式需要经历：
@@ -987,7 +955,6 @@ export async function CommentList({ postId }: CommentListProps) {
 
   return <CommentItems comments={comments} />
 }
-
 ```
 
 它不需要为了查询评论而向浏览器发送额外的业务 JavaScript。
@@ -996,17 +963,15 @@ export async function CommentList({ postId }: CommentListProps) {
 
 两种方式的区别可以总结为：
 
-
-| 特性 | 客户端请求 | PPR 动态区域 |
-| ------------------ | ------ | --------- |
-| 数据查询位置 | 浏览器 | 服务器 |
-| 是否需要额外 API | 通常需要 | 不一定需要 |
-| 是否增加客户端 JavaScript | 是 | 查询逻辑不会 |
-| 是否能直接访问数据库 | 否 | 可以 |
-| 是否支持流式 HTML | 通常不支持 | 支持 |
-| 是否需要等待水合后请求 | 是 | 否 |
-| 敏感数据是否暴露给客户端 | 需要谨慎处理 | 查询代码只在服务端 |
-
+| 特性                      | 客户端请求   | PPR 动态区域       |
+| ------------------------- | ------------ | ------------------ |
+| 数据查询位置              | 浏览器       | 服务器             |
+| 是否需要额外 API          | 通常需要     | 不一定需要         |
+| 是否增加客户端 JavaScript | 是           | 查询逻辑不会       |
+| 是否能直接访问数据库      | 否           | 可以               |
+| 是否支持流式 HTML         | 通常不支持   | 支持               |
+| 是否需要等待水合后请求    | 是           | 否                 |
+| 敏感数据是否暴露给客户端  | 需要谨慎处理 | 查询代码只在服务端 |
 
 PPR 并不是把动态内容推给客户端处理。
 
@@ -1024,7 +989,6 @@ PPR 并不是单独完成动态渲染的。
 <Suspense fallback={<CommentSkeleton />}>
   <CommentList postId={postId} />
 </Suspense>
-
 ```
 
 这里的 `Suspense` 同时承担了两个职责。
@@ -1035,7 +999,6 @@ PPR 并不是单独完成动态渲染的。
 
 ```tsx
 <CommentSkeleton />
-
 ```
 
 ### 第二层职责：定义渲染边界
@@ -1056,7 +1019,6 @@ PPR 并不是单独完成动态渲染的。
   <Article />
   <Comments />
 </Suspense>
-
 ```
 
 评论查询可能会导致文章也只能显示骨架屏。
@@ -1115,7 +1077,6 @@ export default async function PostPage({ params }: PostPageProps) {
     </main>
   )
 }
-
 ```
 
 这些动态区域可以独立加载。
@@ -1162,7 +1123,6 @@ export default async function PostPage({ params }: PostPageProps) {
     </main>
   )
 }
-
 ```
 
 虽然 `CommentList` 看起来是独立组件，但数据已经在页面顶部被 `await`。
@@ -1183,7 +1143,6 @@ export default async function PostPage({ params }: PostPageProps) {
     </main>
   )
 }
-
 ```
 
 然后在 `CommentList` 内部查询：
@@ -1194,7 +1153,6 @@ export async function CommentList({ slug }: { slug: string }) {
 
   return <CommentItems comments={comments} />
 }
-
 ```
 
 ### 不要创建一个巨大的 Suspense 边界
@@ -1207,7 +1165,6 @@ export async function CommentList({ slug }: { slug: string }) {
   <ReactionPanel />
   <CommentList />
 </Suspense>
-
 ```
 
 只要其中一个组件较慢，整个区域都无法显示。
@@ -1280,7 +1237,6 @@ flowchart TD
 'use cache'
 cacheLife('weeks')
 cacheTag(`post:${slug}`)
-
 ```
 
 这部分主要体现缓存和重新验证机制。
@@ -1291,7 +1247,6 @@ cacheTag(`post:${slug}`)
 <Suspense fallback={<CommentSkeleton />}>
   <CommentList postId={postId} />
 </Suspense>
-
 ```
 
 这部分主要体现 PPR 的动态区域。
@@ -1300,17 +1255,15 @@ cacheTag(`post:${slug}`)
 
 两者的关系可以总结为：
 
-
-| 技术 | 解决的问题 |
-| --------------- | --------------- |
-| PPR | 一个页面如何组合静态与动态区域 |
-| `use cache` | 哪些函数或组件结果应该缓存 |
-| `cacheLife` | 缓存可以使用多久 |
-| `cacheTag` | 如何标记缓存 |
-| `revalidateTag` | 如何让缓存进入后台重新验证 |
-| `updateTag` | 如何让用户立即看到自己的写入 |
-| Suspense | 哪些组件可以延迟并流式渲染 |
-
+| 技术            | 解决的问题                     |
+| --------------- | ------------------------------ |
+| PPR             | 一个页面如何组合静态与动态区域 |
+| `use cache`     | 哪些函数或组件结果应该缓存     |
+| `cacheLife`     | 缓存可以使用多久               |
+| `cacheTag`      | 如何标记缓存                   |
+| `revalidateTag` | 如何让缓存进入后台重新验证     |
+| `updateTag`     | 如何让用户立即看到自己的写入   |
+| Suspense        | 哪些组件可以延迟并流式渲染     |
 
 PPR 关注的是页面结构。
 
@@ -1472,4 +1425,3 @@ PPR 并不是简单地把一个页面切成“静态一半”和“动态一半�
 这或许就是部分预渲染最准确的定义：
 
 > **只在真正需要动态的地方动态渲染。**
-

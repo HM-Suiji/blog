@@ -43,26 +43,31 @@ const CommentItem: React.FC<{
 
   return (
     <div className="p-2 border">
-      <div className="flex items-center gap-2">
-        <Avatar size="sm">
-          <Avatar.Image src={comment.userAvatar} />
-        </Avatar>
-        <span>{comment.userName}</span>
-        <span className="text-muted">{comment.createdAt}</span>
-        <span className="text-muted flex items-center gap-1">
-          {os.name === 'Windows' && <FaWindows />}
-          {(os.name === 'Mac OS' || os.name === 'iOS') && <FaApple />}
-          {os.name === 'Android' && <FaAndroid />}
-          {os.name === 'Linux' && <FaLinux />}
-          {os.name}
-        </span>
-        <span className="text-muted flex items-center gap-1">
-          {browser.name === 'Chrome' && <FaChrome />}
-          {browser.name === 'Firefox' && <FaFirefox />}
-          {browser.name === 'Safari' && <FaSafari />}
-          {browser.name === 'Edge' && <FaEdge />}
-          {browser.name} {browser.version}
-        </span>
+      <div className="flex md:items-center gap-2 flex-col md:flex-row md:justify-between">
+        <div className="flex gap-2 items-center">
+          <Avatar size="sm">
+            <Avatar.Image src={comment.userAvatar} />
+          </Avatar>
+          <span>{comment.userName}</span>
+          <span className="text-muted">{comment.createdAt}</span>
+        </div>
+        <div className="flex gap-2 items-center">
+          <span className="text-muted flex items-center gap-1">
+            {os.name === 'Windows' && <FaWindows />}
+            {(os.name === 'Mac OS' || os.name === 'iOS') && <FaApple />}
+            {os.name === 'Android' && <FaAndroid />}
+            {os.name === 'Linux' && <FaLinux />}
+            {os.name}
+          </span>
+          <span className="text-muted flex items-center gap-1">
+            {browser.name === 'Chrome' && <FaChrome />}
+            {(browser.name === 'Firefox' ||
+              browser.name === 'Mobile Firefox') && <FaFirefox />}
+            {browser.name === 'Safari' && <FaSafari />}
+            {browser.name === 'Edge' && <FaEdge />}
+            {browser.name} {browser.version}
+          </span>
+        </div>
       </div>
       <div className="mt-3 mb-2">
         <Markdown>{comment.content}</Markdown>
