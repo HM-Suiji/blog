@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { cacheLife, cacheTag } from 'next/cache'
+import Image from 'next/image'
 import Link from 'next/link'
 
 import { Card } from '@heroui/react'
@@ -37,8 +38,13 @@ export default async function PostsPage() {
         {posts.map(post => (
           <Link href={`/posts/${post.slug}`} key={post.slug}>
             <Card className="h-auto md:h-36 w-full items-stretch flex-col md:flex-row">
-              <div className="md:relative size-24 shrink-0 overflow-hidden rounded-2xl hidden md:block">
-                {/* <Image /> */}
+              <div className="md:relative my-auto w-24 h-16 shrink-0 overflow-hidden rounded-2xl hidden md:block">
+                <Image
+                  src={post.cover}
+                  alt={post.title}
+                  width={96}
+                  height={64}
+                />
               </div>
               <div className="flex flex-1 flex-col min-w-0 p-2 md:p-0">
                 <div>

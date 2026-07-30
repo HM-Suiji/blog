@@ -1,7 +1,8 @@
 ---
 slug: blog-isr
 title: 探秘博客构建的秘诀：ISR 增量静态再生与自动化内容更新
-description: 你也不想你的博客在更新之后需要重新构建整个网站吧，那也太费时费力了。不妨尝试一下 ISR
+description:
+  你也不想你的博客在更新之后需要重新构建整个网站吧，那也太费时费力了。不妨尝试一下 ISR
   增量静态再生，让你的博客获得闪电般的更新体验。记录我在 Next.js 博客中使用 ISR、Webhook 与 GitHub Actions
   实现自动化内容更新的实践，以及一次关于 Vercel 架构的踩坑经历
 date: 2026-07-28
@@ -12,7 +13,9 @@ tags:
   - Webhooks
 pin: false
 public: true
+cover: '/images/posts/blog-isr.avif'
 ---
+
 # 探秘博客构建的秘诀：ISR 增量静态再生与自动化内容更新
 
 在构建一个现代博客系统时，性能与开发体验往往是一对矛盾。
@@ -381,7 +384,6 @@ Incremental Static Regeneration
 
 - 每次访问都有计算成本。
 
-
 ## SSG：构建时生成页面
 
 静态生成：
@@ -502,20 +504,14 @@ export const revalidate = 3600
 例如：
 
 ```ts
-import {
-  cacheLife,
-  cacheTag
-} from 'next/cache'
-
+import { cacheLife, cacheTag } from 'next/cache'
 
 export async function getPosts() {
-
   'use cache'
 
   cacheTag('posts')
 
   cacheLife('weeks')
-
 
   return await findPosts()
 }
@@ -576,7 +572,6 @@ cacheLife('weeks')
 我们仍然需要一种主动刷新机制。
 
 这就是 Webhook。
-
 
 ## 什么是 Webhook？
 
@@ -692,43 +687,21 @@ Route Handler：
 示例：
 
 ```ts
-import {
-  revalidateTag
-} from 'next/cache'
+import { revalidateTag } from 'next/cache'
 
+export async function POST(req: Request) {
+  const auth = req.headers.get('authorization')
 
-export async function POST(
-  req: Request
-) {
-
-  const auth =
-    req.headers.get(
-      'authorization'
-    )
-
-
-  if (
-    auth !==
-    `Bearer ${process.env.WEBHOOK_SECRET}`
-  ) {
-
-    return new Response(
-      'Unauthorized',
-      {
-        status:401
-      }
-    )
+  if (auth !== `Bearer ${process.env.WEBHOOK_SECRET}`) {
+    return new Response('Unauthorized', {
+      status: 401,
+    })
   }
 
-
-  revalidateTag(
-    'posts',
-    'max'
-  )
-
+  revalidateTag('posts', 'max')
 
   return Response.json({
-    success:true
+    success: true,
   })
 }
 ```
@@ -784,15 +757,15 @@ syncPosts()
 返回：
 
 ```ts
-[
- {
-   type:"update",
-   slug:"nextjs-isr"
- },
- {
-   type:"delete",
-   slug:"old-post"
- }
+;[
+  {
+    type: 'update',
+    slug: 'nextjs-isr',
+  },
+  {
+    type: 'delete',
+    slug: 'old-post',
+  },
 ]
 ```
 
@@ -842,9 +815,7 @@ post-nextjs-isr
 更新：
 
 ```ts
-revalidateTag(
-  "post-nextjs-isr"
-)
+revalidateTag('post-nextjs-isr')
 ```
 
 只影响对应内容。
