@@ -40,6 +40,7 @@
     "@tiptap/starter-kit": ">=3.23.6",
     "@tiptap/suggestion": ">=3.23.6",
     "@types/mdx": "^2.0.14",
+    "@uidotdev/usehooks": "^2.4.1",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.38.0",
     "@vercel/analytics": "^2.0.1",

@@ -43,7 +43,7 @@ export const CommentsContainer: React.FC<{ postId: string }> = ({ postId }) => {
   }
 
   return (
-    <div className="w-full p-4 border">
+    <div className="w-full p-4 border" id="comment">
       <div className="flex justify-between">
         <div className="flex gap-2">
           <span>{0} 条评论</span> · <span>{0} 条回复</span>
