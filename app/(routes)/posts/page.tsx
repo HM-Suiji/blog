@@ -27,7 +27,9 @@ export default async function PostsPage() {
   'use cache'
   cacheTag(cacheSelector.posts)
   cacheLife('weeks')
-  const posts = await findPosts()
+  const posts = (await findPosts()).sort((a, b) =>
+    b.publishedAt.localeCompare(a.publishedAt)
+  )
   return (
     <div className="min-h-screen w-full flex flex-col pt-8">
       <div className="flex items-center justify-between">
