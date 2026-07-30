@@ -9,6 +9,7 @@ import { notFound } from 'next/navigation'
 import { Chip, cn, Separator } from '@heroui/react'
 
 import { CommentsContainer } from '@/components/comments'
+import { siteConfig } from '@/config/site'
 import { components } from '@/mdx-components'
 import { findPostBySlug, findPosts } from '@/server/actions/post.action'
 import { cacheSelector } from '@/utils/cache'
@@ -32,6 +33,7 @@ export const generateMetadata = async ({
   return {
     title: post.title,
     description: post.description,
+    keywords: [siteConfig.name, ...post.tags],
     openGraph: {
       title: post.title,
       description: post.description,
