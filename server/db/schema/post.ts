@@ -30,6 +30,7 @@ export const postsTable = pgTable('posts', {
     .notNull()
     .default(sql`ARRAY[]::text[]`),
   hash: text('hash'),
+  likes: integer('likes').default(0).notNull(),
 })
 
 export const postStatsTable = pgTable('post_stats', {

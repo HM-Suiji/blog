@@ -2,6 +2,7 @@ import type { MDXComponents } from 'mdx/types'
 
 import { Children, cloneElement, isValidElement } from 'react'
 
+import GithubSlugger from 'github-slugger'
 import Link from 'next/link'
 
 import { CodeBlock } from '@heroui-pro/react'
@@ -85,9 +86,10 @@ const WrapHeadingWithId: React.FC<{ children: React.ReactNode }> = ({
       const { type, props } = child as any
 
       if (typeof type === 'string' && /^h[1-6]$/.test(type)) {
+        const slugger = new GithubSlugger()
         const headingText =
           typeof props.children === 'string' ? props.children : ''
-        const slugId = headingText.toLowerCase().replace(/ /g, '-')
+        const slugId = slugger.slug(headingText)
 
         return (
           <Link className="no-underline" href={`#${slugId}`}>
