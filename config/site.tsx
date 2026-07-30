@@ -1,3 +1,6 @@
+import { FaBilibili, FaGithub, FaTiktok } from 'react-icons/fa6'
+import { SiFolo } from 'react-icons/si'
+
 import { Link } from '@heroui/react'
 
 const HOST = process.env.NEXT_PUBLIC_HOST || 'http://localhost:3000'
@@ -92,6 +95,28 @@ export const siteConfig = {
     MBTI: 'ENFP',
     hobbies: ['编程', '摄影', '游戏', 'PTCG'],
   },
+  socials: [
+    {
+      name: 'BiliBili',
+      icon: <FaBilibili color="#fb7299" />,
+      href: 'https://space.bilibili.com/1914750613',
+    },
+    {
+      name: '抖音',
+      icon: <FaTiktok />,
+      href: 'https://www.douyin.com/user/MS4wLjABAAAAPR0YUR_Nyt6UJ3APVJzhMIHUbIS3nfI4L9_ut600NAxkIYUBkcc8wUaEHHSVdaDZ',
+    },
+    {
+      name: 'GitHub',
+      icon: <FaGithub />,
+      href: 'https://github.com/HM-Suiji',
+    },
+    {
+      name: 'Folo',
+      icon: <SiFolo className="text-orange-500" />,
+      href: 'https://app.folo.is/share/feeds/1216885715350978560',
+    },
+  ],
 } as const
 
 export type SiteConfig = typeof siteConfig
