@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "prebuild": "bun sync-posts && bun run scripts/upload-search.ts",
-    "build": "bun prebuild && next build",
+    "build": "next build",
     "start": "next start",
     "postbuild": "next-sitemap && bun run scripts/index-now.ts",
     "lint": "oxlint --fix",

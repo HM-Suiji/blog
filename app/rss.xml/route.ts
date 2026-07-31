@@ -39,7 +39,7 @@ export async function GET() {
           },
         ],
         date: new Date(post.publishedAt),
-        image: post.cover,
+        image: siteConfig.url + post.cover,
         category: post.tags.map(tag => ({
           name: tag,
         })),
