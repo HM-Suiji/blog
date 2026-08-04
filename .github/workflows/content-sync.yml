@@ -1,11 +1,17 @@
 name: Content Sync
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'content/posts/**'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'content/posts/**'
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS payload as JSON
+        required: true
+        type: string
 
 jobs:
   sync:
