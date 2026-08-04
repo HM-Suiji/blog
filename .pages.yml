@@ -60,3 +60,12 @@ actions:
       title: Sure sync content?
       message: This will trigger the deployment workflow.
       button: Sync
+      
+  - name: deploy
+    label: Deploy to Vercel
+    workflow: deploy.yml
+    confirm:
+      title: Sure deploy?
+      message: This will trigger the deployment workflow.
+      button: Deploy
+  
