@@ -1,0 +1,25 @@
+name: Deploy To Vercel
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS payload as JSON
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      VERCEL_DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Trigger Vercel Deployment
+        uses: sozo-design/curl@v1.0.2
+        with:
+          args: -X POST $VERCEL_DEPLOY_HOOK
