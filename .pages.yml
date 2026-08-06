@@ -1,8 +1,8 @@
 # .pages.yml
 
 media:
-  input: public/images
-  output: /images
+  input: public/images/posts
+  output: /images/posts
 
 content:
   - name: posts
@@ -56,6 +56,7 @@ actions:
   - name: content-sync
     label: Sync Content
     workflow: content-sync.yml
+    ref: main
     confirm:
       title: Sure sync content?
       message: This will trigger the deployment workflow.
@@ -64,8 +65,18 @@ actions:
   - name: deploy
     label: Deploy to Vercel
     workflow: deploy.yml
+    ref: main
     confirm:
       title: Sure deploy?
       message: This will trigger the deployment workflow.
       button: Deploy
+
+  - name: merge-content
+    label: Merge Edit to Main
+    workflow: merge.yml
+    ref: edit
+    confirm:
+      title: Sure merge?
+      message: This will merge edit branch to main.
+      button: Merge
   
