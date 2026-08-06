@@ -1,0 +1,101 @@
+name: Sync Content To Main
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS payload as JSON
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Fetch edit branch
+        run: git fetch origin edit
+
+      - name: Install dependencies
+        run: npm install gray-matter
+
+      - name: Generate commit message
+        id: message
+        run: |
+          git diff --name-only origin/main origin/edit > changed.txt
+
+          echo "Changed files:"
+          cat changed.txt
+
+          node <<'EOF'
+          const fs = require("fs");
+          const matter = require("gray-matter");
+
+          const files = fs
+            .readFileSync("changed.txt", "utf8")
+            .split("\n")
+            .filter(Boolean);
+
+          const posts = [];
+
+          for (const file of files) {
+            if (
+              file.startsWith("content/posts/") &&
+              file.endsWith(".mdx")
+            ) {
+              try {
+                const content = fs.readFileSync(file, "utf8");
+                const { data } = matter(content);
+
+                if (data.title) {
+                  posts.push(data.title);
+                }
+              } catch {}
+            }
+          }
+
+          let message;
+
+          if (posts.length === 1) {
+            message = `docs: 更新《${posts[0]}》`;
+          } else if (posts.length > 1) {
+            message =
+              `docs: 更新 ${posts.length} 篇文章\n\n` +
+              posts.map(p => `- ${p}`).join("\n");
+          } else {
+            message = "docs: 更新博客资源";
+          }
+
+          fs.writeFileSync(
+            "commit-message.txt",
+            message
+          );
+
+          console.log(message);
+          EOF
+
+      - name: Squash merge edit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git merge origin/edit --squash
+
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+
+          git commit \
+            -F commit-message.txt
+
+          git push origin main
