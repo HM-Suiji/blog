@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { cacheLife, cacheTag } from 'next/cache'
 
-import { CodeBlock } from '@heroui-pro/react'
+import { CodeBlock } from '@heroui-pro/react/code-block'
 
 import { ExploreFriend } from '@/components/feature-button'
 import { FriendCanvas } from '@/components/friend-canvas'
