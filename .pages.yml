@@ -1,8 +1,8 @@
 # .pages.yml
 
 media:
-  input: public/images
-  output: /images
+  input: public/images/posts
+  output: /images/posts
 
 content:
   - name: posts
