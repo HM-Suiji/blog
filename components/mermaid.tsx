@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useTheme } from 'next-themes'
 
+import { logger } from '@/utils/logger'
+
 interface MermaidProps {
   chart: string
 }
@@ -43,11 +45,12 @@ export function Mermaid({ chart }: MermaidProps) {
       } catch (err) {
         if (mounted) {
           setError(err instanceof Error ? err.message : '绘制图表失败')
-          console.error(err)
+          logger.error(err)
         }
       }
     }
 
+    // oxlint-disable-next-line typescript/no-floating-promises
     renderDiagram()
 
     return () => {

@@ -38,8 +38,8 @@ export const FloatButton: React.FC = () => {
     }
   }, [y])
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(siteConfig.url + pathname)
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(siteConfig.url + pathname)
     toast.success('已复制链接')
   }
 
