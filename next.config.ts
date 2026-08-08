@@ -17,7 +17,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   experimental: {
-    viewTransition: true,
+    useOffline: true,
+    // viewTransition: true,
     useTypeScriptCli: true,
     turbopackRustReactCompiler: true,
     mdxRs: true,
