@@ -5,7 +5,7 @@ import { Children, cloneElement, isValidElement } from 'react'
 import GithubSlugger from 'github-slugger'
 import Link from 'next/link'
 
-import { CodeBlock } from '@heroui-pro/react'
+import { CodeBlock } from '@heroui-pro/react/code-block'
 import { Code as InlineCode } from '@heroui/react'
 
 import { Mermaid } from '@/components/mermaid'

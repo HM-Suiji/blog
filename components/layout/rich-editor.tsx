@@ -24,7 +24,7 @@ import {
   Underline,
 } from 'lucide-react'
 
-import { RichTextEditor } from '@heroui-pro/react'
+import { RichTextEditor } from '@heroui-pro/react/rich-text-editor'
 import { Separator } from '@heroui/react'
 
 export const RichEditor: React.FC<{ editorRef: RefObject<Editor | null> }> = ({
