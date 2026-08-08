@@ -6,9 +6,10 @@ import { cacheLife, cacheTag } from 'next/cache'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { Chip, cn, Separator } from '@heroui/react'
+import { Chip, Separator } from '@heroui/react'
 
 import { CommentsContainer } from '@/components/comments'
+import { PostSidebar } from '@/components/posts/sidebar'
 import { siteConfig } from '@/config/site'
 import { components } from '@/mdx-components'
 import { findPostBySlug, findPosts } from '@/server/actions/post.action'
@@ -110,19 +111,7 @@ export default async function PostSlugPage({
       <div className="relative hidden lg:block">
         <div className="border p-2 sticky top-16">
           <h2>博客目录</h2>
-          <ul className="text-muted mt-2">
-            {headings.map(heading => (
-              <li
-                className={cn({
-                  'pl-4': heading.depth === 3,
-                  'pl-6': heading.depth === 4,
-                })}
-                key={heading.id}
-              >
-                <Link href={`#${heading.id}`}>{heading.text}</Link>
-              </li>
-            ))}
-          </ul>
+          <PostSidebar headings={headings} />
         </div>
       </div>
     </div>

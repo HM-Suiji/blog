@@ -88,17 +88,18 @@ export function SearchCommand() {
                   </div>
                 )}
                 onAction={key => router.push(key as any)}
+                className="gap-2 flex flex-col"
               >
                 {query &&
                   items.map(item => (
                     <Command.Item
-                      className="p-1"
+                      className="p-0 mx-2 rounded-xl"
                       key={item.url}
                       id={item.url}
                       textValue={item.title}
                     >
                       <Link href={item.url} className="w-full">
-                        <Card className="w-full">
+                        <Card className="w-full bg-transparent">
                           <Card.Title className="font-medium">
                             {item.title}
                           </Card.Title>
