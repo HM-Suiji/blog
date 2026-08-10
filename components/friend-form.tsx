@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Button,
   FieldError,
@@ -12,7 +14,6 @@ import { registerFriend } from '@/server/actions/friend.mutate'
 
 export const FriendForm: React.FC = () => {
   const formAction = async (formData: FormData) => {
-    'use server'
     const name = formData.get('name') as string
     const description = formData.get('description') as string
     const link = formData.get('link') as string
@@ -26,7 +27,6 @@ export const FriendForm: React.FC = () => {
         avatar,
       })
     } catch (error) {
-      // TODO: server action cannot trigger client toast
       toast.danger(error instanceof Error ? error.message : '提交失败')
     }
   }
