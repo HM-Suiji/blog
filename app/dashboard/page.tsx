@@ -1,5 +1,7 @@
 import { Suspense } from 'react'
 
+import Link from 'next/link'
+
 import { Badge } from '@heroui/react'
 
 import { DashCard } from '@/components/dashboard/dash-card'
@@ -27,22 +29,24 @@ export const FriendCard: React.FC = async () => {
     friend => friend.status === 'pending'
   )
   return (
-    <DashCard title="友链数量" className="flex flex-row gap-3">
-      <div className="flex gap-2 w-24 h-10 items-center justify-center rounded-md bg-surface">
-        <span>Active</span>
-        <span>{activeFriends.length}</span>
-      </div>
-      <Badge.Anchor>
+    <Link href="/dashboard/friends">
+      <DashCard title="友链数量" className="flex flex-row gap-3">
         <div className="flex gap-2 w-24 h-10 items-center justify-center rounded-md bg-surface">
-          <span>Pending</span>
-          <span>{pendingFriends.length}</span>
+          <span>Active</span>
+          <span>{activeFriends.length}</span>
         </div>
-        {pendingFriends.length > 0 && (
-          <Badge color="success" size="sm">
-            New
-          </Badge>
-        )}
-      </Badge.Anchor>
-    </DashCard>
+        <Badge.Anchor>
+          <div className="flex gap-2 w-24 h-10 items-center justify-center rounded-md bg-surface">
+            <span>Pending</span>
+            <span>{pendingFriends.length}</span>
+          </div>
+          {pendingFriends.length > 0 && (
+            <Badge color="success" size="sm">
+              New
+            </Badge>
+          )}
+        </Badge.Anchor>
+      </DashCard>
+    </Link>
   )
 }

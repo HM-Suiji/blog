@@ -44,10 +44,6 @@ export function DashContainer({ children }: { children: React.ReactNode }) {
   )
 }
 
-const BreadcrumbItems = [
-  { icon: <House className="size-4" />, label: 'Dashboard' },
-]
-
 type NavItem = {
   icon: React.ElementType
   label: string
@@ -251,17 +247,15 @@ function DashboardNavbar() {
         <AppLayout.MenuToggle />
         <Sidebar.Trigger />
         <Breadcrumbs className="min-w-0">
-          {BreadcrumbItems.map((item, index) => (
-            <Breadcrumbs.Item
-              key={`${item.label}-${index}`}
-              className="min-w-0 font-semibold"
-            >
+          <Breadcrumbs.Item className="min-w-0 font-semibold">
+            {/* TODO: fix link cannot be clicked */}
+            <Link href="/dashboard">
               <span className="flex min-w-0 items-center gap-2 overflow-hidden">
-                {item.icon}
-                <span className="truncate">{item.label}</span>
+                <House className="size-4" />
+                <span className="truncate">Dashboard</span>
               </span>
-            </Breadcrumbs.Item>
-          ))}
+            </Link>
+          </Breadcrumbs.Item>
         </Breadcrumbs>
         <Navbar.Spacer />
         <Navbar.Content>
