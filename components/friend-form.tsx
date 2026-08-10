@@ -8,6 +8,8 @@ import {
 } from '@heroui/react'
 
 import { registerFriend } from '@/server/actions/friend.mutate'
+import { friendNotificationEmail } from '@/server/email/notifications/friend'
+
 export const FriendForm: React.FC = () => {
   const formAction = async (formData: FormData) => {
     'use server'
@@ -17,6 +19,13 @@ export const FriendForm: React.FC = () => {
     const avatar = formData.get('avatar') as string
 
     await registerFriend({
+      name,
+      description,
+      link,
+      avatar,
+    })
+
+    void friendNotificationEmail({
       name,
       description,
       link,
