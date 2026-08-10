@@ -12,7 +12,9 @@ import {
   TowelRack,
   User,
 } from 'lucide-react'
+import { Route } from 'next'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 import { AppLayout, Navbar, Sidebar } from '@heroui-pro/react'
 import {
@@ -30,8 +32,13 @@ import { siteConfig } from '@/config/site'
 import { AccountAvatar } from '../auth/account'
 
 export function DashContainer({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
   return (
-    <AppLayout navbar={<DashboardNavbar />} sidebar={<DashboardSidebar />}>
+    <AppLayout
+      navigate={href => router.push(href as Route)}
+      navbar={<DashboardNavbar />}
+      sidebar={<DashboardSidebar />}
+    >
       <div className="p-6">{children}</div>
     </AppLayout>
   )
@@ -41,17 +48,36 @@ const BreadcrumbItems = [
   { icon: <House className="size-4" />, label: 'Dashboard' },
 ]
 
-const navItems = [
-  { icon: House, label: 'Dashboard' },
+type NavItem = {
+  icon: React.ElementType
+  label: string
+  href?: Route
+  badge?: string
+  items?: {
+    label: string
+    href?: Route
+  }[]
+}
+
+const navItems: NavItem[] = [
+  { icon: House, label: 'Dashboard', href: '/dashboard' },
   {
     icon: ChartColumn,
-    items: ['Overview', 'Reports', 'Conversions'],
+    items: [
+      { label: 'Overview', href: '#' },
+      { label: 'Reports', href: '#' },
+      { label: 'Conversions', href: '#' },
+    ],
     label: 'Analytics',
   },
   { badge: 'New', icon: TowelRack, label: 'Tracker' },
   {
     icon: ListCheck,
-    items: ['General', 'Team', 'Notifications'],
+    items: [
+      { label: 'General', href: '/dashboard/settings/general' },
+      { label: 'Team', href: '#' },
+      { label: 'Notifications', href: '/dashboard/settings/notifications' },
+    ],
     label: 'Settings',
   },
 ]
@@ -87,10 +113,10 @@ function DashboardSidebar() {
             >
               {navItems.map(item => (
                 <Sidebar.MenuItem
-                  key={item.label}
-                  href={item.items ? undefined : '#'}
+                  href={item.items ? undefined : item.href || '#'}
                   id={item.label}
                   isCurrent={item.label === 'Dashboard'}
+                  key={item.label}
                   textValue={item.label}
                 >
                   <Sidebar.MenuIcon>
@@ -115,12 +141,12 @@ function DashboardSidebar() {
                     <Sidebar.Submenu>
                       {item.items.map(subitem => (
                         <Sidebar.MenuItem
-                          key={subitem}
-                          href="#"
-                          id={`${item.label}-${subitem}`}
-                          textValue={subitem}
+                          href={subitem.href}
+                          key={subitem.label}
+                          id={`${item.label}-${subitem.label}`}
+                          textValue={subitem.label}
                         >
-                          <Sidebar.MenuLabel>{subitem}</Sidebar.MenuLabel>
+                          <Sidebar.MenuLabel>{subitem.label}</Sidebar.MenuLabel>
                         </Sidebar.MenuItem>
                       ))}
                     </Sidebar.Submenu>
@@ -198,12 +224,12 @@ function DashboardSidebar() {
                     <Sidebar.Submenu>
                       {item.items.map(subitem => (
                         <Sidebar.MenuItem
-                          key={subitem}
-                          href="#"
-                          id={`${item.label}-${subitem}`}
-                          textValue={subitem}
+                          key={subitem.label}
+                          href={subitem.href}
+                          id={`${item.label}-${subitem.label}`}
+                          textValue={subitem.label}
                         >
-                          <Sidebar.MenuLabel>{subitem}</Sidebar.MenuLabel>
+                          <Sidebar.MenuLabel>{subitem.label}</Sidebar.MenuLabel>
                         </Sidebar.MenuItem>
                       ))}
                     </Sidebar.Submenu>
