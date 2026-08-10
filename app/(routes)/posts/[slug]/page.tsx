@@ -105,7 +105,7 @@ export default async function PostSlugPage({
         <Suspense
           fallback={<div className="w-full p-4 border">加载评论中...</div>}
         >
-          <CommentsContainer postId={post.id} />
+          <CommentsContainer postId={post.id} postName={post.title} />
         </Suspense>
       </div>
       <div className="relative hidden lg:block">

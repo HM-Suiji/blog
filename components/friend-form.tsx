@@ -5,10 +5,10 @@ import {
   Input,
   Label,
   TextField,
+  toast,
 } from '@heroui/react'
 
 import { registerFriend } from '@/server/actions/friend.mutate'
-import { friendNotificationEmail } from '@/server/email/notifications/friend'
 
 export const FriendForm: React.FC = () => {
   const formAction = async (formData: FormData) => {
@@ -18,19 +18,17 @@ export const FriendForm: React.FC = () => {
     const link = formData.get('link') as string
     const avatar = formData.get('avatar') as string
 
-    await registerFriend({
-      name,
-      description,
-      link,
-      avatar,
-    })
-
-    void friendNotificationEmail({
-      name,
-      description,
-      link,
-      avatar,
-    })
+    try {
+      await registerFriend({
+        name,
+        description,
+        link,
+        avatar,
+      })
+    } catch (error) {
+      // TODO: server action cannot trigger client toast
+      toast.danger(error instanceof Error ? error.message : '提交失败')
+    }
   }
 
   return (

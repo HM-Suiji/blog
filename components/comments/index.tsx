@@ -14,7 +14,10 @@ import { authClient } from '@/utils/auth-client'
 
 import { CommentResult } from './comment-result'
 
-export const CommentsContainer: React.FC<{ postId: string }> = ({ postId }) => {
+export const CommentsContainer: React.FC<{
+  postId: string
+  postName: string
+}> = ({ postId, postName }) => {
   const { data: session } = authClient.useSession()
   const editorRef = useRef<Editor>(null)
 
@@ -24,18 +27,22 @@ export const CommentsContainer: React.FC<{ postId: string }> = ({ postId }) => {
 
     if (!session?.session) return toast.warning('请先登录再进行评论')
 
-    if (!editorRef.current.getMarkdown().trim())
-      return toast.warning('评论内容不能为空')
+    const content = editorRef.current.getMarkdown().trim()
+
+    if (!content) return toast.warning('评论内容不能为空')
 
     try {
-      await publishComment({
-        postId,
-        userAgent: session.session.userAgent,
-        content: editorRef.current.getMarkdown().trim(),
-        userId: session.user.id,
-        ip: session.session.ipAddress,
-        status: 'approved',
-      })
+      await publishComment(
+        {
+          postId,
+          userAgent: session.session.userAgent,
+          content: content,
+          userId: session.user.id,
+          ip: session.session.ipAddress,
+          status: 'approved',
+        },
+        { userName: session.user.name, postName: postName }
+      )
       editorRef.current.commands.clearContent()
     } catch (e) {
       toast.danger(e instanceof Error ? e.message : '评论发布失败')

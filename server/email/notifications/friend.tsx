@@ -1,3 +1,5 @@
+'use server'
+
 import { InsertFriend } from '@/server/db/schema'
 
 import { resend } from '../resend'

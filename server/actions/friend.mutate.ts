@@ -10,6 +10,7 @@ import {
   updateFriend,
 } from '../db/query/friend.query'
 import { InsertFriend } from '../db/schema'
+import { friendNotificationEmail } from '../email/notifications/friend'
 
 export const deleteFriend = async (id: string) => {
   await deleteFriendById(id)
@@ -18,6 +19,7 @@ export const deleteFriend = async (id: string) => {
 
 export const registerFriend = async (friend: InsertFriend) => {
   await createFriend(friend)
+  void friendNotificationEmail(friend)
 }
 
 export const updateFriendInfo = async (

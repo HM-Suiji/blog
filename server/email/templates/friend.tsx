@@ -1,11 +1,4 @@
-import {
-  Body,
-  Container,
-  Heading,
-  Html,
-  Img,
-  Text,
-} from '@react-email/components'
+import { Body, Container, Heading, Html, Img, Text } from 'react-email'
 
 import { InsertFriend } from '@/server/db/schema'
 
