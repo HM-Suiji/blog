@@ -8,6 +8,7 @@ import {
   getPosts,
   updatePost,
 } from '@/server/db/query/post.query'
+import { sendBlogUpdate } from '@/server/email/newsletter/send-blog-update'
 import { getPost } from '@/utils/get-post'
 
 export const syncPosts = async () => {
@@ -33,7 +34,7 @@ export const syncPosts = async () => {
 
     if (!db_posts_map.get(slug)) {
       // create post
-      await createPost({
+      const post = {
         title: frontmatter.title,
         tags: frontmatter.tags,
         slug,
@@ -45,12 +46,14 @@ export const syncPosts = async () => {
         public: frontmatter.public,
         publishedAt: frontmatter.date,
         pin: frontmatter.pin,
-      })
+      }
+      await createPost(post)
       if (frontmatter.public) {
         actions.push({
           type: 'create',
           slug,
         })
+        void sendBlogUpdate(post)
       }
       continue
     }
