@@ -15,10 +15,7 @@ export async function subscribeNewsletter(formData: FormData) {
   })
 
   if (!result.success) {
-    return {
-      success: false,
-      message: '请输入正确的邮箱地址',
-    }
+    throw new Error('不支持的邮箱格式')
   }
 
   const email = result.data.email
@@ -44,14 +41,6 @@ export async function subscribeNewsletter(formData: FormData) {
   if (error) {
     logger.error(error, 'Newsletter subscription failed:')
 
-    return {
-      success: false,
-      message: '订阅失败，请稍后再试',
-    }
-  }
-
-  return {
-    success: true,
-    message: '订阅成功！',
+    throw new Error('订阅失败，请稍后再试')
   }
 }
