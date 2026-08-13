@@ -19,5 +19,7 @@ export async function findPosts() {
   cacheTag(cacheSelector.posts)
   cacheLife('weeks')
 
-  return (await getPosts()).filter(post => post.public)
+  return (await getPosts())
+    .filter(post => post.public)
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 }

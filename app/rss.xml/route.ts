@@ -6,6 +6,8 @@ import { getPost } from '@/utils/get-post'
 import { mdxToHtml } from '@/utils/mdx'
 
 export async function GET() {
+  const posts = await findPosts()
+
   const feed = new Feed({
     title: siteConfig.name,
     description: `${siteConfig.description}
@@ -15,14 +17,12 @@ export async function GET() {
     link: siteConfig.url,
     language: 'zh-CN',
     copyright: siteConfig.copyright,
-    updated: new Date(),
+    updated: new Date(posts[0].publishedAt),
     author: {
       name: siteConfig.name,
     },
     image: `${siteConfig.url}/images/avatar.avif`,
   })
-
-  const posts = await findPosts()
 
   const items = await Promise.all(
     posts.map(async post => {
@@ -55,7 +55,7 @@ export async function GET() {
   return new Response(feed.rss2(), {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      'Cache-Control': 'public, max-age=300, s-maxage=300',
+      'Cache-Control': 'no-cache',
     },
   })
 }
