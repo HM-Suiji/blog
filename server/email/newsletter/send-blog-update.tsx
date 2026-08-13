@@ -6,12 +6,10 @@ import { BlogUpdateEmail } from '../templates/blog'
 
 export async function sendBlogUpdate(post: InsertPost) {
   const { data, error } = await resend.broadcasts.create({
+    name: `新文章：${post.title}`,
     segmentId: process.env.RESEND_BLOG_SEGMENT_ID!,
-
     from: `${siteConfig.name} <${process.env.MAIL_FROM!}>`,
-
     subject: `新文章：${post.title}`,
-
     react: (
       <BlogUpdateEmail
         title={post.title}
@@ -20,7 +18,6 @@ export async function sendBlogUpdate(post: InsertPost) {
         url={`${siteConfig.url}/posts/${post.slug}`}
       />
     ),
-
     send: true,
   })
 

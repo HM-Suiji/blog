@@ -25,9 +25,6 @@ jobs:
       - name: Fetch edit branch
         run: git fetch origin edit
 
-      - name: Install dependencies
-        run: npm install gray-matter
-
       - name: Generate commit message
         id: message
         run: |
@@ -38,7 +35,6 @@ jobs:
 
           node <<'EOF'
           const fs = require("fs");
-          const matter = require("gray-matter");
 
           const files = fs
             .readFileSync("changed.txt", "utf8")
@@ -54,10 +50,15 @@ jobs:
             ) {
               try {
                 const content = fs.readFileSync(file, "utf8");
-                const { data } = matter(content);
 
-                if (data.title) {
-                  posts.push(data.title);
+                const match = content.match(/^---\s*\n([\s\S]*?)\n---/);
+
+                if (!match) continue;
+
+                const title = match[1].match(/^title:\s*(.+)$/m)?.[1];
+
+                if (title) {
+                  posts.push(title.trim().replace(/^["']|["']$/g, ""));
                 }
               } catch {}
             }
@@ -75,10 +76,7 @@ jobs:
             message = "docs: 更新博客资源";
           }
 
-          fs.writeFileSync(
-            "commit-message.txt",
-            message
-          );
+          fs.writeFileSync("commit-message.txt", message);
 
           console.log(message);
           EOF
