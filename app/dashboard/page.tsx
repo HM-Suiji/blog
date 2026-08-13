@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Badge } from '@heroui/react'
 
 import { DashCard } from '@/components/dashboard/dash-card'
-import { findAllFriends } from '@/server/actions/friend.action'
+import { getAllFriends } from '@/server/db/query/friend.query'
 
 export default function DashboardPage() {
   return (
@@ -23,7 +23,7 @@ export default function DashboardPage() {
 }
 
 export const FriendCard: React.FC = async () => {
-  const allFriends = await findAllFriends()
+  const allFriends = await getAllFriends()
   const activeFriends = allFriends.filter(friend => friend.status === 'active')
   const pendingFriends = allFriends.filter(
     friend => friend.status === 'pending'

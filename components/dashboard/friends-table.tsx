@@ -113,7 +113,7 @@ export function FriendsTable({ friends }: { friends: Friend[] }) {
           onSortChange={setSortDescriptor}
         >
           <Table.Header>
-            <Table.Column allowsSorting id="name">
+            <Table.Column allowsSorting id="name" isRowHeader>
               {({ sortDirection }) => (
                 <Table.SortableColumnHeader sortDirection={sortDirection}>
                   Member

@@ -1,15 +1,8 @@
-import { cacheLife, cacheTag } from 'next/cache'
-
 import { FriendsTable } from '@/components/dashboard/friends-table'
-import { findAllFriends } from '@/server/actions/friend.action'
-import { cacheSelector } from '@/utils/cache'
+import { getAllFriends } from '@/server/db/query/friend.query'
 
 export default async function FriendsPage() {
-  'use cache: remote'
-  cacheTag(cacheSelector.friends)
-  cacheLife('weeks')
-
-  const friends = await findAllFriends()
+  const friends = await getAllFriends()
 
   return (
     <>
@@ -18,3 +11,5 @@ export default async function FriendsPage() {
     </>
   )
 }
+
+export const instant = false
