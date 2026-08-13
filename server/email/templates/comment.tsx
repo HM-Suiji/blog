@@ -4,16 +4,18 @@ export function CommentEmail({
   username,
   content,
   postTitle,
+  isReply = false,
 }: {
   username: string
   content: string
   postTitle: string
+  isReply?: boolean
 }) {
   return (
     <Html>
       <Body>
         <Container>
-          <Heading>新的博客评论</Heading>
+          <Heading>{isReply ? '新的博客回复' : '新的博客评论'}</Heading>
 
           <Text>
             文章：
