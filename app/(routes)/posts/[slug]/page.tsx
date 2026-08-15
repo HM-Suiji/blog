@@ -19,7 +19,7 @@ import { getPost } from '@/utils/get-post'
 export const generateMetadata = async ({
   params,
 }: PageProps<'/posts/[slug]'>) => {
-  'use cache'
+  'use cache: remote'
   const { slug } = await params
 
   cacheTag(cacheSelector.post(slug))
@@ -51,7 +51,7 @@ export const generateMetadata = async ({
 }
 
 export const generateStaticParams = async () => {
-  'use cache'
+  'use cache: remote'
   cacheTag(cacheSelector.posts)
   cacheLife('weeks')
   const posts = await findPosts()
@@ -63,7 +63,7 @@ export const generateStaticParams = async () => {
 export default async function PostSlugPage({
   params,
 }: PageProps<'/posts/[slug]'>) {
-  'use cache'
+  'use cache: remote'
   const { slug } = await params
 
   cacheTag(cacheSelector.post(slug))

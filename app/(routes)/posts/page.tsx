@@ -10,7 +10,7 @@ import { findPosts } from '@/server/actions/post.action'
 import { cacheSelector } from '@/utils/cache'
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  'use cache'
+  'use cache: remote'
   cacheTag(cacheSelector.posts)
   cacheLife('weeks')
   const posts = await findPosts()
@@ -24,7 +24,7 @@ export const generateMetadata = async (): Promise<Metadata> => {
 }
 
 export default async function PostsPage() {
-  'use cache'
+  'use cache: remote'
   cacheTag(cacheSelector.posts)
   cacheLife('weeks')
   const posts = await findPosts()
