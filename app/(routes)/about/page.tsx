@@ -13,6 +13,7 @@ import {
   TextField,
 } from '@heroui/react'
 
+import { ProfileJsonLd } from '@/components/seo/profile-json-ld'
 import { siteConfig } from '@/config/site'
 import { subscribeNewsletter } from '@/server/actions/newsletter.action'
 
@@ -27,6 +28,7 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center">
+      <ProfileJsonLd />
       <div className="w-full flex flex-col pt-12 items-center px-4">
         <div className="flex flex-col items-center gap-2">
           <h1 className="text-2xl font-semibold">关于我</h1>

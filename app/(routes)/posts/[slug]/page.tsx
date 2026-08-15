@@ -6,10 +6,11 @@ import { cacheLife, cacheTag } from 'next/cache'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
-import { Chip, Separator } from '@heroui/react'
+import { Breadcrumbs, Chip, Separator } from '@heroui/react'
 
 import { CommentsContainer } from '@/components/comments'
 import { PostSidebar } from '@/components/posts/sidebar'
+import { ArticleJsonLd } from '@/components/seo/article-json-ld'
 import { siteConfig } from '@/config/site'
 import { components } from '@/mdx-components'
 import { findPostBySlug, findPosts } from '@/server/actions/post.action'
@@ -35,17 +36,25 @@ export const generateMetadata = async ({
     title: post.title,
     description: post.description,
     keywords: [siteConfig.name, ...post.tags],
+
+    alternates: {
+      canonical: `${siteConfig.url}/posts/${post.slug}`,
+    },
+
     openGraph: {
       title: post.title,
       description: post.description,
-      images: [
-        {
-          url: post.cover,
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
+      url: `${siteConfig.url}/posts/${post.slug}`,
+      images: post.cover
+        ? [
+            {
+              url: post.cover,
+              width: 1200,
+              height: 630,
+              alt: post.title,
+            },
+          ]
+        : undefined,
     },
   }
 }
@@ -84,7 +93,19 @@ export default async function PostSlugPage({
 
   return (
     <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-4 my-8">
+      <ArticleJsonLd post={post} />
       <div className="col-span-full lg:col-span-3 flex flex-col">
+        <Breadcrumbs className="mb-2">
+          <Breadcrumbs.Item aria-label="首页">
+            <Link href="/">首页</Link>
+          </Breadcrumbs.Item>
+          <Breadcrumbs.Item aria-label="博客">
+            <Link href="/posts">博客</Link>
+          </Breadcrumbs.Item>
+          <Breadcrumbs.Item>
+            <Link href={`/posts/${post.slug}`}>{post.title}</Link>
+          </Breadcrumbs.Item>
+        </Breadcrumbs>
         <Link href={'/posts'} className="h-full border flex px-4 py-2 gap-2">
           <ArrowLeft />
           返回博客列表
@@ -98,9 +119,9 @@ export default async function PostSlugPage({
           <Chip>{readingTime} 分钟</Chip>
           {frontmatter.pin && <Chip color="success">置顶</Chip>}
         </div>
-        <div className="prose prose-headings:mt-8 prose-headings:font-semibold prose-headings:text-foreground text-muted prose-strong:text-foreground prose-blockquote:text-foreground prose-h1:text-3xl md:prose-h1:text-5xl prose-h2:text-2xl md:prose-h2:text-4xl prose-h3:text-xl md:prose-h3:text-3xl prose-h4:text-lg md:prose-h4:text-2xl prose-h5:text-base md:prose-h5:text-xl prose-h6:text-sm md:prose-h6:text-lg w-full max-w-6xl">
+        <article className="prose prose-headings:mt-8 prose-headings:font-semibold prose-headings:text-foreground text-muted prose-strong:text-foreground prose-blockquote:text-foreground prose-h1:text-3xl md:prose-h1:text-5xl prose-h2:text-2xl md:prose-h2:text-4xl prose-h3:text-xl md:prose-h3:text-3xl prose-h4:text-lg md:prose-h4:text-2xl prose-h5:text-base md:prose-h5:text-xl prose-h6:text-sm md:prose-h6:text-lg w-full max-w-6xl">
           {MDXContent}
-        </div>
+        </article>
         <Separator className="my-8" />
         <Suspense
           fallback={<div className="w-full p-4 border">加载评论中...</div>}
