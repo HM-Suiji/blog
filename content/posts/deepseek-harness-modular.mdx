@@ -1,0 +1,780 @@
+---
+slug: deepseek-harness-modular
+title: DeepSeek Harness：真正值得研究的，不是 Agent，而是它如何把自己拆掉
+description: 从模块化与插件化的角度重新审视 DeepSeek Harness，并以 Vite
+  为参照，理解一个大型系统为什么要把核心做小、把变化留给插件，以及这种设计如何让系统获得超出自身代码规模的扩展能力。
+date: 2026-08-16
+tags:
+  - DeepSeek
+  - DeepSeek Harness
+  - Agent
+  - 模块化
+  - 插件
+  - Vite
+pin: false
+public: true
+---
+# DeepSeek Harness：真正值得研究的，不是 Agent，而是它如何把自己拆掉
+
+最近 DeepSeek Harness 的热度有点夸张。
+
+但如果只把它理解成“DeepSeek 做的一个 Coding Agent”，其实很容易看错重点。
+
+我真正感兴趣的，是它在架构上做了一个相当激进的选择：
+
+> **Everything is a Plugin.**
+
+这句话不是 README 里随手写的一句宣传语。DeepSeek 官方的架构文档直接把话说得很彻底：模型适配器、Tool Registry、Session Log，甚至 **Agent Loop 本身都是 Plugin**；系统没有一个需要被所有功能依赖的“特权 Core”，新的能力应该通过挂载插件加入。
+
+这件事乍看有点反常。
+
+我们设计一个 Agent，通常会先想：
+
+```text
+Agent
+├── LLM
+├── Tools
+├── Memory
+├── Filesystem
+├── Sandbox
+└── Agent Loop
+```
+
+然后把这些东西一点点实现出来。
+
+DeepSeek Harness 却反过来做：
+
+```text
+Agent
+  ↓
+Plugin
+  ↓
+Plugin
+  ↓
+Plugin
+  ↓
+Plugin
+```
+
+连那个“负责运行 Agent 的东西”，都没有资格成为特殊存在。
+
+**它甚至把自己最重要的部分拆掉了。**
+
+我认为，这才是 DeepSeek Harness 最值得研究的地方。
+
+## 一个系统什么时候开始变得难以修改？
+
+大型项目最麻烦的时候，通常不是代码多。
+
+而是你发现：
+
+> **改一个地方，需要知道另外十个地方。**
+
+比如一个 Agent 原本使用本地 Shell。
+
+第一版代码可能非常简单：
+
+```ts
+await exec(command)
+```
+
+后来有人提出：
+
+- 能不能放到 Docker？
+- 能不能放到远程机器？
+- 能不能限制权限？
+- 能不能增加 PTY？
+- 能不能换成某种 Sandbox？
+- 能不能让不同 Agent 使用不同执行环境？
+
+如果 Shell 的实现直接长在 Agent Loop 里，问题就来了。
+
+你不是在“增加一个 Shell Provider”。
+
+你是在**修改 Agent**。
+
+于是一个本来应该独立变化的东西，开始污染整个系统。
+
+这就是大型软件最常见的一种腐化：
+
+```text
+A 依赖 B
+B 依赖 C
+C 又知道 A
+```
+
+最后任何东西都不能真正独立。
+
+目录可以拆得非常漂亮，类名可以设计得非常优雅，但只要变化会在模块之间到处传播，它就仍然是一团耦合的代码。
+
+所以模块化真正解决的问题，从来不是：
+
+> “怎么把 5000 行代码拆成 50 个文件？”
+
+而是：
+
+> **“如果某个东西明天完全换掉，系统里究竟有多少地方需要跟着改？”**
+
+这才是判断模块边界的一个很好的标准。
+
+## DeepSeek Harness 的答案：别让 Agent 知道“谁在干活”
+
+DeepSeek Harness 底层使用 Cordis。
+
+官方架构文档里有一个非常重要的概念：**Capability Seam**。
+
+它把一个可替换的能力拆成三个角色：
+
+```text
+Service Definition
+        ↓
+定义“我需要什么能力”
+        ↓
+Service Provider
+        ↓
+提供具体实现
+        ↓
+Consumer
+        ↓
+使用这个能力
+```
+
+比如 filesystem。
+
+Consumer 只需要知道：
+
+```text
+ctx.fs
+```
+
+至于背后究竟是：
+
+```text
+Local FS
+Docker FS
+Remote Sandbox FS
+```
+
+并不重要。
+
+这件事的价值比“抽象出一个 interface”大得多。
+
+因为它改变的是依赖方向。
+
+以前可能是：
+
+```text
+Agent → LocalFilesystem
+```
+
+现在更接近：
+
+```text
+Agent → Filesystem Capability ← LocalFilesystem
+                              ← RemoteFilesystem
+                              ← SandboxFilesystem
+```
+
+于是你换掉 Provider，Consumer 根本不需要知道。
+
+官方文档甚至举了一个很有意思的例子：
+
+> Filesystem 和 subprocess provider 共同构成执行环境，因此只需要切换到远程 sandbox，Bash、PTY、LSP 等能力就可以一起迁移，而不需要给每一个能力分别做一套 provider。
+
+这里其实藏着一个非常漂亮的架构思想：
+
+**模块化不是让每个东西都独立，而是让“变化”沿着正确的边界传播。**
+
+如果 Shell、PTY、LSP 都依赖同一个执行世界，那么切换执行世界时，它们就应该一起变化。
+
+这才是真正合理的耦合。
+
+## 更有意思的是：Agent Loop 也被拿掉了
+
+如果让我从 DeepSeek Harness 里挑一个最能体现设计野心的地方，我反而不会选 LLM Adapter。
+
+我会选 **Agent Loop**。
+
+因为 Agent Loop 几乎就是 Agent 的心脏。
+
+通常我们会把它写成：
+
+```text
+while (...) {
+    request LLM
+    if tool call:
+        execute tool
+    else:
+        break
+}
+```
+
+然后所有 Agent 的行为都建立在这个 Loop 上。
+
+DeepSeek Harness 偏偏没有这么做。
+
+官方文档明确写着：
+
+> model adapter、tool registry、session log、**agent loop itself** 都是 plugin。
+
+也就是说：
+
+```text
+Agent
+  ↓
+Agent Interface
+  ↑
+Agent Loop Plugin
+```
+
+Loop 只是 Agent Interface 的一个实现。
+
+那么以后如果你想做：
+
+```text
+普通 Tool Loop
+Plan → Execute Loop
+Multi-Agent Loop
+Research Loop
+Human-in-the-loop Loop
+```
+
+它们理论上都可以站在同一个 Agent 能力之上。
+
+这时候 Agent 就不再等价于某一个固定的 `while` 循环。
+
+**Agent 变成了一个可以被不同运行策略解释的东西。**
+
+这其实非常重要。
+
+因为今天我们习惯的 Agent，大多数仍然隐含着一个假设：
+
+> Agent = LLM + Tools + 一个固定循环。
+
+DeepSeek Harness 在架构上把这个等式拆掉了。
+
+## 它不是“插件很多”，而是“插件之间没有谁天生高贵”
+
+很多项目也有插件。
+
+但插件往往是这样的：
+
+```text
+Core
+├── Plugin A
+├── Plugin B
+└── Plugin C
+```
+
+Core 是老板。
+
+Plugin 是员工。
+
+Core 可以调用 Plugin，Plugin 却不能真正改变 Core。
+
+DeepSeek Harness 的设计有意思在于，它试图把这个“老板”也取消掉。
+
+官方架构文档甚至直接写：
+
+> **There is no privileged core to patch.**
+
+新的行为不是去修改一个巨大的核心，而是“mounting a plugin beside the others”。插件卸载时，它注册的 effect 也可以反向撤销。
+
+所以它更像：
+
+```text
+             Cordis Runtime
+                    │
+       ┌────────────┼────────────┐
+       ↓            ↓            ↓
+    Plugin A     Plugin B     Plugin C
+       ↓            ↓            ↓
+    Service       Event        Service
+       └────────────┼────────────┘
+                    ↓
+                 Context
+```
+
+这和“一个 Core + 一堆扩展”其实已经是两种完全不同的世界。
+
+前者的哲学是：
+
+> Core 定义系统，Plugin 扩展系统。
+
+后者则是：
+
+> **Runtime 定义规则，Plugin 共同组成系统。**
+
+DeepSeek Harness 更接近后者。
+
+## Profiles 和 Bundles：真正把“组合”变成了一等公民
+
+如果插件只是可以安装，事情还没有那么有意思。
+
+真正让我觉得这个架构开始成立的，是 **Profile / Bundle**。
+
+DeepSeek Harness 的运行实例不是固定的一套程序，而是启动时由多个 Layer 组合出来的 Plugin Tree。
+
+官方文档给出的结构大致是：
+
+```text
+Profile
+  ↓
+Bundle
+  ↓
+Plugin Tree
+```
+
+例如 `dsh-base` 可以提供模型适配器、Tools、Persistence、Sandbox、Approval Policy、Settings、Credentials、Telemetry；然后 `dsh-web-app` 再增加 Web UI，`dsh-headless` 则可以提供没有服务器的运行方式。
+
+这意味着：
+
+```text
+dsh web
+```
+
+和：
+
+```text
+dsh headless
+```
+
+并不是两个完全不同的程序。
+
+它们更像是：
+
+```text
+        同一个 Runtime
+              │
+       ┌──────┴──────┐
+       ↓             ↓
+     Web Profile   Headless Profile
+       ↓             ↓
+   一组 Plugins    另一组 Plugins
+```
+
+这时候，“产品形态”本身都变成了组合结果。
+
+这比单纯提供一个 `--headless` 参数要有意思得多。
+
+因为参数是在修改一个已经存在的产品。
+
+而 Profile 是在：
+
+> **选择你究竟要组装出什么产品。**
+
+## 这时候 Vite 就很好理解了
+
+讲到这里，再看 Vite，会发现它和 DeepSeek Harness 有一种很微妙的相似性。
+
+Vite 2 的架构改造中有一句非常关键的话：
+
+> **framework agnostic core**
+
+Vite 官方当时明确表示，Vite 2 被重新设计成 framework-agnostic，框架相关的能力交给插件；新的插件系统建立在 Rollup Plugin API 之上。
+
+这其实就是一个非常典型的“把变化赶出 Core”。
+
+Vite 不负责成为：
+
+```text
+React Build Tool
+Vue Build Tool
+Svelte Build Tool
+```
+
+它只负责提供：
+
+```text
+Dev Server
+Module Graph
+Transform Pipeline
+Build
+Plugin Runtime
+```
+
+然后：
+
+```text
+@vitejs/plugin-react
+@vitejs/plugin-vue
+@vitejs/plugin-rsc
+...
+```
+
+把具体框架接进来。
+
+现在 Vite 官方文档依然把 React、Vue 等框架支持明确列为 Plugin；官方 Plugin Registry 到 2026 年已经列出了超过 **5500 个插件**。
+
+这个数字其实很能说明问题。
+
+Vite 并没有自己实现 5500 种能力。
+
+它只是提供了一个：
+
+> **别人愿意在上面继续建设的接口。**
+
+## Vite 最聪明的地方，是它没有试图“支持 React”
+
+这句话听起来有点奇怪。
+
+Vite 当然支持 React。
+
+但从架构角度看，Vite 并没有把 React 变成 Vite 的内部概念。
+
+React 是：
+
+```text
+Vite
+  ↓
+Plugin API
+  ↓
+@vitejs/plugin-react
+```
+
+Vue 也是：
+
+```text
+Vite
+  ↓
+Plugin API
+  ↓
+@vitejs/plugin-vue
+```
+
+这意味着 Vite 不需要知道 React 内部究竟发生了什么。
+
+而 React 团队也不需要修改 Vite 的核心。
+
+双方只需要遵守一个共同的协议。
+
+这就是插件系统真正强大的地方：
+
+> **它不是在消灭依赖，而是在控制依赖应该停在哪里。**
+
+Vite 官方现在的 Project Philosophy 甚至直接把这一点概括为 **Lean Extendable Core**：核心保持精简、长期可维护，同时提供足够强的 primitive 和 API，让插件覆盖多样化需求。
+
+这句话其实非常值得大型项目反复琢磨。
+
+## DeepSeek Harness 和 Vite，真正相似的是“把未知留在外面”
+
+回到 DeepSeek Harness。
+
+它和 Vite 并不是因为“都有 Plugin API”才值得放在一起比较。
+
+真正相似的地方是：
+
+**它们都拒绝提前回答一个问题：未来到底需要什么。**
+
+Vite 没有决定：
+
+```text
+未来一定只有 React 和 Vue
+```
+
+所以它留下了 Plugin API。
+
+DeepSeek Harness 也没有决定：
+
+```text
+未来的 Agent 一定只有这一种 Loop
+未来的执行环境一定是本地
+未来的模型一定通过这一种方式接入
+```
+
+所以它把：
+
+```text
+LLM
+Tools
+Filesystem
+Sandbox
+Agent Loop
+Session
+UI
+```
+
+全部拆成可以组合的能力。
+
+这两个项目的核心思路可以压缩成一句话：
+
+> **核心只负责那些必须稳定的东西，变化交给外部。**
+
+区别只是 Vite 的“外部”主要是前端工具生态，而 DeepSeek Harness 面对的是 Agent 运行时生态。
+
+## 模块化真正可怕的地方：复杂度不会消失，但不会相乘
+
+假设有：
+
+```text
+3 个 LLM
+3 个 Sandbox
+3 个 Filesystem
+4 个 Agent Loop
+```
+
+如果它们彼此强耦合，你真正面对的不是 13 个模块。
+
+而是大量组合关系：
+
+```text
+LLM × Sandbox × Filesystem × Loop
+```
+
+一旦这些组合需要特殊处理，复杂度会迅速膨胀。
+
+模块化的价值并不是让复杂度凭空消失。
+
+而是把：
+
+```text
+“每一种组合都需要特殊代码”
+```
+
+变成：
+
+```text
+“每个模块只需要遵守自己的契约”
+```
+
+于是增加一个 LLM：
+
+```text
+旧系统
+  ↓
+修改 Agent
+修改 Tool
+修改 Loop
+修改配置
+……
+
+模块化系统
+  ↓
+增加一个 LLM Plugin
+```
+
+这就是为什么大型系统越往后，越应该在意模块边界。
+
+小项目里，耦合甚至是一种效率。
+
+因为你今天写：
+
+```ts
+agent.llm = deepseek
+```
+
+明天改一下就好了。
+
+但项目一旦活了三年、五年，参与者从一个人变成一百个人，需求从十个变成一千个，这种“顺手写进去”的东西就会开始收利息。
+
+而且是复利。
+
+## 插件生态的真正价值，不是“官方少写代码”
+
+这是很多人理解插件系统时容易忽略的地方。
+
+如果插件只是为了让官方团队少写几行代码，那其实没有什么了不起。
+
+真正有价值的是：
+
+```text
+Core
+ ↓
+API
+ ↓
+第三方开发者
+ ↓
+新的能力
+ ↓
+新的组合
+ ↓
+新的用户
+ ↓
+新的需求
+ ↓
+更多插件
+```
+
+它会形成一种正反馈。
+
+Vite 现在就是非常典型的例子。
+
+Vite 官方文档提到，随着生态成熟，Nuxt、SvelteKit、Astro、React Router、Analog、SolidStart 等项目都把 Vite 作为自己的基础设施。
+
+甚至到了 Vite 8，Vite 已经进一步把构建底层切换到了 Rolldown，同时继续保持对 Rollup Plugin API 的兼容；官方还专门推出了 Plugin Registry 来应对不断增长的插件生态。
+
+这就出现了一个非常有意思的现象：
+
+**Vite 的影响力已经远远超过了 Vite 自己的代码。**
+
+因为它创造的不是某几个功能。
+
+而是一块“生态可以长出来的土地”。
+
+## DeepSeek Harness 现在最值得观察的，也正是这件事
+
+DeepSeek Harness 目前仍然是 Developer Preview，官方 README 明确提醒会存在兼容性破坏。
+
+所以现在就断言它一定会成为 Agent 世界的“Vite”，显然太早。
+
+但它的架构方向已经非常清楚。
+
+尤其是官方甚至专门提供了：
+
+```text
+dsh-plugin
+```
+
+这个 GitHub Topic，帮助第三方插件被发现。
+
+这意味着它并不是单纯把 Plugin 当成内部工程技巧。
+
+它已经开始把：
+
+> **插件 → 第三方开发 → 生态**
+
+当成产品设计的一部分。
+
+而这才是事情开始变得有意思的地方。
+
+## 但真正困难的，从来不是“插件化”
+
+插件系统很好听。
+
+实际上也非常难做。
+
+因为一旦把能力从 Core 拿出去，就意味着：
+
+```text
+Core
+ ↓
+必须稳定
+```
+
+Plugin：
+
+```text
+Plugin
+ ↓
+必须能够依赖这个稳定边界
+```
+
+所以真正困难的问题变成：
+
+> **这个边界究竟应该画在哪里？**
+
+画错了，插件系统会变成：
+
+```text
+Plugin
+  ↓
+偷偷依赖 Core 内部实现
+  ↓
+Core 一改
+  ↓
+全生态爆炸
+```
+
+画得太死，又会变成：
+
+```text
+Plugin API
+  ↓
+什么都不能做
+```
+
+Vite 的 Plugin API 能够活到今天，一个很重要的原因就是它不是凭空发明一套巨大接口，而是建立在 Rollup 已经验证过的 Plugin Interface 之上，再加入 Vite 自己的能力。官方文档目前仍明确强调这一点。
+
+DeepSeek Harness 现在面临的其实也是类似的问题。
+
+它需要证明：
+
+```text
+Capability
+Plugin
+Event
+Context
+Profile
+Bundle
+```
+
+这些边界不仅今天好用，而且能够承受未来生态不断往里面塞东西。
+
+**插件系统真正的考验，不是第一百个插件能不能写出来。**
+
+而是第一百个插件写出来以后，第一个插件还能不能正常工作。
+
+## 最后，重新看“Everything is a Plugin”
+
+所以现在再回头看这句话：
+
+> **Everything is a Plugin.**
+
+它就不再像一句很酷的架构口号了。
+
+它真正表达的是一种非常克制的设计：
+
+**不要把未来写进 Core。**
+
+DeepSeek Harness 没有把 Agent Loop 写成不可动摇的核心。
+
+没有把某一种 LLM 写死。
+
+没有把某一种 Filesystem 当成唯一答案。
+
+甚至没有把 Web UI 当成 Agent 本身。
+
+它试图留下的是：
+
+```text
+Runtime
+Capability
+Contract
+Composition
+```
+
+然后让真正的系统在启动时长出来。
+
+这和 Vite 的思路其实非常像。
+
+Vite 没有试图成为 React。
+
+它让 React 通过 Plugin 成为 Vite 的一部分。
+
+DeepSeek Harness 也没有必要告诉你：
+
+> “Agent 应该是什么。”
+
+它更像是在提供：
+
+> **“Agent 可以由什么组成，以及这些东西应该如何组合。”**
+
+这可能是大型系统发展到一定阶段后，一个非常重要的转折。
+
+**早期的软件喜欢把东西做进去。**
+
+**成熟的软件开始学会把东西拿出来。**
+
+把 React 拿出 Vite Core。
+
+把 LLM 拿出 Agent Core。
+
+把 Sandbox 拿出 Agent Loop。
+
+把具体能力拿出 Runtime。
+
+然后留下一个越来越小、却越来越重要的东西：
+
+> **边界。**
+
+因为一个系统最后真正难以复制的，往往不是里面有多少代码。
+
+而是它有没有能力，让完全陌生的人写出来的东西，**在不修改核心的情况下，成为它的一部分。**
+
+如果 DeepSeek Harness 最终真的能把这套机制做成一个成熟的 Agent 生态，那么它最值得记住的可能并不是“DeepSeek 做了一个很强的 Coding Agent”。
+
+而是：
+
+> **它第一次认真尝试把 Agent 从一个“程序”，变成了一种可以被整个生态共同组装的基础设施。**
+
+这件事，可能比再多一个 Agent Loop 有意思得多。
