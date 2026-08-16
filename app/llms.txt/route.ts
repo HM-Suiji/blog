@@ -15,7 +15,7 @@ export async function GET() {
 
 ## 博客
 
-- [文章列表](${url}/posts): 共 159 篇，分页浏览
+- [文章列表](${url}/posts): 共 ${posts.length} 篇，分页浏览
 - [RSS 全文订阅源](${rss}): 全部文章带正文，适合批量抓取
 - [文章 sitemap](${url}/sitemap.xml): 全部文章 URL 与更新时间
 
