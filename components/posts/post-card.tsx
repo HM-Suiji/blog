@@ -9,8 +9,14 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
   return (
     <Link href={`/posts/${post.slug}`}>
       <Card className="h-auto md:h-36 w-full items-stretch flex-col md:flex-row">
-        <div className="md:relative my-auto w-24 h-16 shrink-0 overflow-hidden rounded-2xl hidden md:block">
-          <Image src={post.cover} alt={post.title} width={96} height={64} />
+        <div className="md:relative my-auto w-full md:w-24 md:h-16 shrink-0 overflow-hidden rounded-2xl md:block">
+          <Image
+            src={post.cover}
+            alt={post.title}
+            width={960}
+            height={640}
+            sizes="(max-width: 768px) 100vw, 96px"
+          />
         </div>
         <div className="flex flex-1 flex-col min-w-0 p-2 md:p-0">
           <div>
