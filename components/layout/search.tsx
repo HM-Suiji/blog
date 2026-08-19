@@ -16,8 +16,10 @@ export function SearchCommand() {
   const { items } = useHits()
   const router = useRouter()
   const pathname = usePathname()
+  const [inputValue, setInputValue] = useState(query)
 
   const handleChange = (value: string) => {
+    setInputValue(value)
     refine(value)
   }
   useEffect(() => {
@@ -62,7 +64,7 @@ export function SearchCommand() {
             <Command.Dialog
               className="max-h-128"
               filter={() => true}
-              inputValue={query}
+              inputValue={inputValue}
               onInputChange={handleChange}
             >
               <Command.Header>
