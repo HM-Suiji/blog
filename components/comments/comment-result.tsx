@@ -147,8 +147,12 @@ const CommentItem: React.FC<{
       <div className="mt-3 mb-2">
         <Markdown
           components={{
-            // @ts-ignore
-            a: props => <Link {...props}>{props.children}</Link>,
+            a: props => (
+              // @ts-ignore
+              <Link target="_blank" {...props}>
+                {props.children}
+              </Link>
+            ),
           }}
         >
           {comment.content}

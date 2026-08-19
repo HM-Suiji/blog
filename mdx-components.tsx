@@ -61,7 +61,7 @@ export const components: MDXComponents = {
   a: props => {
     const url = props.href as string
     return url.startsWith('http://') || url.startsWith('https://') ? (
-      <HerouiLink {...props}>
+      <HerouiLink target="_blank" {...props}>
         {props.children}
         <HerouiLink.Icon />
       </HerouiLink>
