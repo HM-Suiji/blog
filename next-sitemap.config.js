@@ -8,7 +8,7 @@ export default {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/dashboard/'],
+        disallow: ['/dashboard/', '/api/'],
       },
     ],
   },

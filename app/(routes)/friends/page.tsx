@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 }
 
 export default async function FriendsPage() {
-  'use cache'
+  'use cache: remote'
   cacheTag(cacheSelector.friends)
   cacheLife('weeks')
 

@@ -27,9 +27,12 @@ import {
 import { RichTextEditor } from '@heroui-pro/react/rich-text-editor'
 import { Separator } from '@heroui/react'
 
-export const RichEditor: React.FC<{ editorRef: RefObject<Editor | null> }> = ({
-  editorRef,
-}) => {
+// 必须保持引用稳定：extensions/placeholder 变化会导致 HeroUI 销毁重建 tiptap 编辑器实例
+const extensions = [Markdown]
+
+export const RichEditor: React.FC<{
+  editorRef: RefObject<Editor | null>
+}> = ({ editorRef }) => {
   const [documentJson, setDocumentJson] = useState<JSONContent>()
 
   return (
@@ -43,7 +46,7 @@ export const RichEditor: React.FC<{ editorRef: RefObject<Editor | null> }> = ({
         }
       }}
       maxLength={1000}
-      extensions={[Markdown]}
+      extensions={extensions}
     >
       <RichTextEditor.Shell>
         <DefaultToolbar />

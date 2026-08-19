@@ -1,7 +1,8 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Editor } from '@tiptap/core'
 
 import { Button, toast, ToggleButton, ToggleButtonGroup } from '@heroui/react'
@@ -9,7 +10,8 @@ import { Button, toast, ToggleButton, ToggleButtonGroup } from '@heroui/react'
 import { SignoutButton } from '@/components/auth/oauth-button'
 import { GithubOAuth } from '@/components/auth/oauth-button'
 import { RichEditor } from '@/components/layout/rich-editor'
-import { publishComment } from '@/server/actions/comment.action'
+import { findComments, publishComment } from '@/server/actions/comment.action'
+import { CommentWithAuthor } from '@/types/comment'
 import { authClient } from '@/utils/auth-client'
 
 import { CommentResult } from './comment-result'
@@ -20,6 +22,42 @@ export const CommentsContainer: React.FC<{
 }> = ({ postId, postName }) => {
   const { data: session } = authClient.useSession()
   const editorRef = useRef<Editor>(null)
+  const queryClient = useQueryClient()
+  const [replyTo, setReplyTo] = useState<{
+    id: string
+    userName: string
+    content: string
+  } | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const { data: comments = [], isLoading } = useQuery({
+    queryKey: ['comments', postId],
+    queryFn: () => findComments(postId),
+  })
+
+  const commentCount = comments.filter(comment => !comment.replyToId).length
+  const replyCount = comments.filter(comment => comment.replyToId).length
+
+  const handleReply = (comment: CommentWithAuthor) => {
+    if (!session?.session) {
+      toast.warning('请先登录再回复')
+      document.querySelector('#comment')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+      return
+    }
+
+    setReplyTo({
+      id: comment.id,
+      userName: comment.userName,
+      content: comment.content,
+    })
+    document.querySelector('#comment')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }
 
   const handleComment = async () => {
     if (!editorRef.current)
@@ -31,21 +69,25 @@ export const CommentsContainer: React.FC<{
 
     if (!content) return toast.warning('评论内容不能为空')
 
+    setIsSubmitting(true)
     try {
       await publishComment(
         {
           postId,
-          userAgent: session.session.userAgent,
+          userAgent: session.session.userAgent || undefined,
           content: content,
-          userId: session.user.id,
-          ip: session.session.ipAddress,
-          status: 'approved',
+          replyToId: replyTo?.id,
         },
-        { userName: session.user.name, postName: postName }
+        { postName: postName }
       )
       editorRef.current.commands.clearContent()
+      toast.success(replyTo ? '回复发布成功' : '评论发布成功')
+      setReplyTo(null)
+      await queryClient.invalidateQueries({ queryKey: ['comments', postId] })
     } catch (e) {
       toast.danger(e instanceof Error ? e.message : '评论发布失败')
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -53,7 +95,8 @@ export const CommentsContainer: React.FC<{
     <div className="w-full p-4 border" id="comment">
       <div className="flex justify-between">
         <div className="flex gap-2">
-          <span>{0} 条评论</span> · <span>{0} 条回复</span>
+          <span className="tabular-nums">{commentCount} 条评论</span> ·{' '}
+          <span className="tabular-nums">{replyCount} 条回复</span>
         </div>
         <div className="w-1/3">
           <ToggleButtonGroup
@@ -73,18 +116,41 @@ export const CommentsContainer: React.FC<{
         </div>
       </div>
       <div className="mt-6">
+        {replyTo && (
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <p className="text-sm text-muted">
+              正在回复{' '}
+              <span className="text-foreground">{replyTo.userName}</span>
+              <br />
+              <span className="text-xs text-muted">
+                {'>'} {replyTo.content}
+              </span>
+            </p>
+            <Button variant="ghost" size="sm" onPress={() => setReplyTo(null)}>
+              取消
+            </Button>
+          </div>
+        )}
         <RichEditor editorRef={editorRef} />
         <div className="flex justify-between mt-4">
           <SignoutButton />
           {session?.session ? (
-            <Button onPress={handleComment} variant="secondary">
-              评论
+            <Button
+              onPress={handleComment}
+              variant="secondary"
+              isDisabled={isSubmitting}
+            >
+              {replyTo ? '回复' : '评论'}
             </Button>
           ) : (
             <GithubOAuth />
           )}
         </div>
-        <CommentResult postId={postId} />
+        <CommentResult
+          comments={comments}
+          isLoading={isLoading}
+          onReply={handleReply}
+        />
       </div>
     </div>
   )

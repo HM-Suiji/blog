@@ -7,7 +7,7 @@ import { cacheSelector } from '@/utils/cache'
 import { getPostBySlug, getPosts } from '../db/query/post.query'
 
 export async function findPostBySlug(slug: string) {
-  'use cache'
+  'use cache: remote'
   cacheTag(cacheSelector.post(slug))
   cacheLife('weeks')
 
@@ -15,9 +15,11 @@ export async function findPostBySlug(slug: string) {
 }
 
 export async function findPosts() {
-  'use cache'
+  'use cache: remote'
   cacheTag(cacheSelector.posts)
   cacheLife('weeks')
 
-  return (await getPosts()).filter(post => post.public)
+  return (await getPosts())
+    .filter(post => post.public)
+    .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
 }
