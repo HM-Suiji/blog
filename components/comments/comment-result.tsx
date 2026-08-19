@@ -14,6 +14,8 @@ import {
   FaWindows,
 } from 'react-icons/fa6'
 import Markdown from 'react-markdown'
+import rehypeRaw from 'rehype-raw'
+import remarkGfm from 'remark-gfm'
 import { UAParser } from 'ua-parser-js'
 
 import { Avatar, Button } from '@heroui/react'
@@ -144,7 +146,9 @@ const CommentItem: React.FC<{
         </div>
       </div>
       <div className="mt-3 mb-2">
-        <Markdown>{comment.content}</Markdown>
+        <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+          {comment.content}
+        </Markdown>
       </div>
       <div className="flex items-center justify-between text-muted">
         <span className="flex items-center">
