@@ -13,12 +13,11 @@ import {
   FaSafari,
   FaWindows,
 } from 'react-icons/fa6'
-import Markdown from 'react-markdown'
-import rehypeRaw from 'rehype-raw'
-import remarkGfm from 'remark-gfm'
 import { UAParser } from 'ua-parser-js'
 
+import { Markdown } from '@heroui-pro/react/markdown'
 import { Avatar, Button } from '@heroui/react'
+import { Link } from '@heroui/react'
 
 import { CommentWithAuthor } from '@/types/comment'
 
@@ -146,7 +145,12 @@ const CommentItem: React.FC<{
         </div>
       </div>
       <div className="mt-3 mb-2">
-        <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+        <Markdown
+          components={{
+            // @ts-ignore
+            a: props => <Link {...props}>{props.children}</Link>,
+          }}
+        >
           {comment.content}
         </Markdown>
       </div>

@@ -7,6 +7,7 @@ import Link from 'next/link'
 
 import { CodeBlock } from '@heroui-pro/react/code-block'
 import { Code as InlineCode } from '@heroui/react'
+import { Link as HerouiLink } from '@heroui/react'
 
 import { Mermaid } from '@/components/mermaid'
 
@@ -57,6 +58,17 @@ export const components: MDXComponents = {
   },
   mermaid: Mermaid,
   Mermaid,
+  a: props => {
+    const url = props.href as string
+    return url.startsWith('http://') || url.startsWith('https://') ? (
+      <HerouiLink {...props}>
+        {props.children}
+        <HerouiLink.Icon />
+      </HerouiLink>
+    ) : (
+      <Link {...props}>{props.children}</Link>
+    )
+  },
 }
 
 export function useMDXComponents(): MDXComponents {
