@@ -5,6 +5,7 @@ import { compileMDX } from 'next-mdx-remote/rsc'
 import { cacheLife, cacheTag } from 'next/cache'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import remarkGfm from 'remark-gfm'
 
 import { Breadcrumbs, Chip, Separator } from '@heroui/react'
 
@@ -89,6 +90,11 @@ export default async function PostSlugPage({
   const { content: MDXContent } = await compileMDX({
     source: content,
     components,
+    options: {
+      mdxOptions: {
+        remarkPlugins: [remarkGfm],
+      },
+    },
   })
 
   return (
