@@ -22,8 +22,8 @@ await client.saveObjects({
   objects: postsWithContent.map(post => ({
     objectID: `post-${post.slug}`,
     title: post.title,
-    content: post.content.slice(0, 3000),
-    description: post.description,
+    content: post.content.slice(0, 2500),
+    description: post.description.slice(0, 200),
     tags: post.tags,
     url: `/posts/${post.slug}`,
     headings: post.headings.map(({ text, depth }) => ({ text, level: depth })),
