@@ -19,7 +19,12 @@ export const Header: React.FC = () => {
   const pathname = usePathname()
 
   return (
-    <Navbar position="static" hideOnScroll shouldBlockScroll={false}>
+    <Navbar
+      position="static"
+      hideOnScroll
+      shouldBlockScroll={false}
+      style={{ viewTransitionName: 'site-header' }}
+    >
       <Navbar.Header>
         <Navbar.MenuToggle className="md:hidden" />
         <Navbar.Brand>

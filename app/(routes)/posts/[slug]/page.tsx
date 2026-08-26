@@ -1,4 +1,4 @@
-import { Suspense } from 'react'
+import { Suspense, ViewTransition } from 'react'
 
 import { ArrowLeft } from 'lucide-react'
 import { compileMDX } from 'next-mdx-remote/rsc'
@@ -7,9 +7,10 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import remarkGfm from 'remark-gfm'
 
-import { Breadcrumbs, Chip, Separator } from '@heroui/react'
+import { Breadcrumbs, Chip, Separator, Skeleton } from '@heroui/react'
 
 import { CommentsContainer } from '@/components/comments'
+import { DirectionalTransition } from '@/components/layout/directional-transition'
 import { PostSidebar } from '@/components/posts/sidebar'
 import { ArticleJsonLd } from '@/components/seo/article-json-ld'
 import { siteConfig } from '@/config/site'
@@ -98,49 +99,65 @@ export default async function PostSlugPage({
   })
 
   return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-4 my-8">
-      <ArticleJsonLd post={post} />
-      <div className="col-span-full lg:col-span-3 flex flex-col">
-        <Breadcrumbs className="mb-2">
-          <Breadcrumbs.Item aria-label="首页">
-            <Link href="/">首页</Link>
-          </Breadcrumbs.Item>
-          <Breadcrumbs.Item aria-label="博客">
-            <Link href="/posts">博客</Link>
-          </Breadcrumbs.Item>
-          <Breadcrumbs.Item>
-            <Link href={`/posts/${post.slug}`}>{post.title}</Link>
-          </Breadcrumbs.Item>
-        </Breadcrumbs>
-        <Link href={'/posts'} className="h-full border flex px-4 py-2 gap-2">
-          <ArrowLeft />
-          返回博客列表
-        </Link>
-        <div className="mt-2 flex gap-2 flex-wrap">
-          {frontmatter.tags.map(tag => (
-            <Chip color="accent" key={tag}>
-              {tag}
-            </Chip>
-          ))}
-          <Chip>{readingTime} 分钟</Chip>
-          {frontmatter.pin && <Chip color="success">置顶</Chip>}
+    <DirectionalTransition>
+      <div className="w-full grid grid-cols-1 lg:grid-cols-4 gap-4 my-8">
+        <ArticleJsonLd post={post} />
+        <div className="col-span-full lg:col-span-3 flex flex-col">
+          <Breadcrumbs className="mb-2">
+            <Breadcrumbs.Item aria-label="首页">
+              <Link href="/" transitionTypes={['nav-back']}>
+                首页
+              </Link>
+            </Breadcrumbs.Item>
+            <Breadcrumbs.Item aria-label="博客">
+              <Link href="/posts" transitionTypes={['nav-back']}>
+                博客
+              </Link>
+            </Breadcrumbs.Item>
+            <Breadcrumbs.Item>
+              <Link href={`/posts/${post.slug}`}>{post.title}</Link>
+            </Breadcrumbs.Item>
+          </Breadcrumbs>
+          <Link
+            href={'/posts'}
+            className="h-full border flex px-4 py-2 gap-2"
+            transitionTypes={['nav-back']}
+          >
+            <ArrowLeft />
+            返回博客列表
+          </Link>
+          <div className="mt-2 flex gap-2 flex-wrap">
+            {frontmatter.tags.map(tag => (
+              <Chip color="accent" key={tag}>
+                {tag}
+              </Chip>
+            ))}
+            <Chip>{readingTime} 分钟</Chip>
+            {frontmatter.pin && <Chip color="success">置顶</Chip>}
+          </div>
+          <article className="prose prose-headings:mt-8 prose-headings:font-semibold prose-headings:text-foreground text-muted prose-a:text-foreground prose-strong:text-foreground prose-blockquote:text-foreground prose-h1:text-3xl md:prose-h1:text-5xl prose-h2:text-2xl md:prose-h2:text-4xl prose-h3:text-xl md:prose-h3:text-3xl prose-h4:text-lg md:prose-h4:text-2xl prose-h5:text-base md:prose-h5:text-xl prose-h6:text-sm md:prose-h6:text-lg w-full max-w-6xl">
+            {MDXContent}
+          </article>
+          <Separator className="my-8" />
+          <Suspense
+            fallback={
+              <ViewTransition exit="slide-down" default="none">
+                <div className="shadow-panel w-full space-y-5 rounded-lg bg-transparent p-4">
+                  <Skeleton className="h-56 rounded-lg" />
+                </div>
+              </ViewTransition>
+            }
+          >
+            <CommentsContainer postId={post.id} postName={post.title} />
+          </Suspense>
         </div>
-        <article className="prose prose-headings:mt-8 prose-headings:font-semibold prose-headings:text-foreground text-muted prose-a:text-foreground prose-strong:text-foreground prose-blockquote:text-foreground prose-h1:text-3xl md:prose-h1:text-5xl prose-h2:text-2xl md:prose-h2:text-4xl prose-h3:text-xl md:prose-h3:text-3xl prose-h4:text-lg md:prose-h4:text-2xl prose-h5:text-base md:prose-h5:text-xl prose-h6:text-sm md:prose-h6:text-lg w-full max-w-6xl">
-          {MDXContent}
-        </article>
-        <Separator className="my-8" />
-        <Suspense
-          fallback={<div className="w-full p-4 border">加载评论中...</div>}
-        >
-          <CommentsContainer postId={post.id} postName={post.title} />
-        </Suspense>
-      </div>
-      <div className="relative hidden lg:block">
-        <div className="border p-2 sticky top-16">
-          <h2>博客目录</h2>
-          <PostSidebar headings={headings} />
+        <div className="relative hidden lg:block">
+          <div className="border p-2 sticky top-16">
+            <h2>博客目录</h2>
+            <PostSidebar headings={headings} />
+          </div>
         </div>
       </div>
-    </div>
+    </DirectionalTransition>
   )
 }

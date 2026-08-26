@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, ViewTransition } from 'react'
 
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Editor } from '@tiptap/core'
@@ -92,66 +92,72 @@ export const CommentsContainer: React.FC<{
   }
 
   return (
-    <div className="w-full p-4 border" id="comment">
-      <div className="flex justify-between">
-        <div className="flex gap-2">
-          <span className="tabular-nums">{commentCount} 条评论</span> ·{' '}
-          <span className="tabular-nums">{replyCount} 条回复</span>
-        </div>
-        <div className="w-1/3">
-          <ToggleButtonGroup
-            defaultSelectedKeys={['time']}
-            fullWidth
-            selectionMode="single"
-          >
-            <ToggleButton aria-label="时间早优先" id="time">
-              <ToggleButtonGroup.Separator />
-              最早
-            </ToggleButton>
-            <ToggleButton aria-label="热度高优先" id="hot">
-              <ToggleButtonGroup.Separator />
-              最热
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </div>
-      </div>
-      <div className="mt-6">
-        {replyTo && (
-          <div className="mb-3 flex items-center justify-between gap-2">
-            <p className="text-sm text-muted">
-              正在回复{' '}
-              <span className="text-foreground">{replyTo.userName}</span>
-              <br />
-              <span className="text-xs text-muted">
-                {'>'} {replyTo.content}
-              </span>
-            </p>
-            <Button variant="ghost" size="sm" onPress={() => setReplyTo(null)}>
-              取消
-            </Button>
+    <ViewTransition enter="slide-up" default="none">
+      <div className="w-full p-4 border" id="comment">
+        <div className="flex justify-between">
+          <div className="flex gap-2">
+            <span className="tabular-nums">{commentCount} 条评论</span> ·{' '}
+            <span className="tabular-nums">{replyCount} 条回复</span>
           </div>
-        )}
-        <RichEditor editorRef={editorRef} />
-        <div className="flex justify-between mt-4">
-          <SignoutButton />
-          {session?.session ? (
-            <Button
-              onPress={handleComment}
-              variant="secondary"
-              isDisabled={isSubmitting}
+          <div className="w-1/3">
+            <ToggleButtonGroup
+              defaultSelectedKeys={['time']}
+              fullWidth
+              selectionMode="single"
             >
-              {replyTo ? '回复' : '评论'}
-            </Button>
-          ) : (
-            <GithubOAuth />
-          )}
+              <ToggleButton aria-label="时间早优先" id="time">
+                <ToggleButtonGroup.Separator />
+                最早
+              </ToggleButton>
+              <ToggleButton aria-label="热度高优先" id="hot">
+                <ToggleButtonGroup.Separator />
+                最热
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </div>
         </div>
-        <CommentResult
-          comments={comments}
-          isLoading={isLoading}
-          onReply={handleReply}
-        />
+        <div className="mt-6">
+          {replyTo && (
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <p className="text-sm text-muted">
+                正在回复{' '}
+                <span className="text-foreground">{replyTo.userName}</span>
+                <br />
+                <span className="text-xs text-muted">
+                  {'>'} {replyTo.content}
+                </span>
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onPress={() => setReplyTo(null)}
+              >
+                取消
+              </Button>
+            </div>
+          )}
+          <RichEditor editorRef={editorRef} />
+          <div className="flex justify-between mt-4">
+            <SignoutButton />
+            {session?.session ? (
+              <Button
+                onPress={handleComment}
+                variant="secondary"
+                isDisabled={isSubmitting}
+              >
+                {replyTo ? '回复' : '评论'}
+              </Button>
+            ) : (
+              <GithubOAuth />
+            )}
+          </div>
+          <CommentResult
+            comments={comments}
+            isLoading={isLoading}
+            onReply={handleReply}
+          />
+        </div>
       </div>
-    </div>
+    </ViewTransition>
   )
 }

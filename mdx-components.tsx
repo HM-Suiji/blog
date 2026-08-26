@@ -1,6 +1,6 @@
 import type { MDXComponents } from 'mdx/types'
 
-import { Children, cloneElement, isValidElement } from 'react'
+import { Children, cloneElement, isValidElement, ViewTransition } from 'react'
 
 import GithubSlugger from 'github-slugger'
 import Link from 'next/link'
@@ -13,9 +13,11 @@ import { Mermaid } from '@/components/mermaid'
 
 export const components: MDXComponents = {
   h1: props => (
-    <WrapHeadingWithId>
-      <h1>{props.children}</h1>
-    </WrapHeadingWithId>
+    <ViewTransition name={props.children} share="text-morph" default="none">
+      <WrapHeadingWithId>
+        <h1>{props.children}</h1>
+      </WrapHeadingWithId>
+    </ViewTransition>
   ),
   h2: props => (
     <WrapHeadingWithId>

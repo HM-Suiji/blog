@@ -89,7 +89,9 @@ export function SearchCommand() {
                     {!query && '请输入内容开始搜索'}
                   </div>
                 )}
-                onAction={key => router.push(key as any)}
+                onAction={key =>
+                  router.push(key as any, { transitionTypes: ['nav-forward'] })
+                }
                 className="gap-2 flex flex-col"
               >
                 {query &&
@@ -100,7 +102,11 @@ export function SearchCommand() {
                       id={item.url}
                       textValue={item.title}
                     >
-                      <Link href={item.url} className="w-full">
+                      <Link
+                        href={item.url}
+                        transitionTypes={['nav-forward']}
+                        className="w-full"
+                      >
                         <Card className="w-full bg-transparent">
                           <Card.Title className="font-medium">
                             {item.title}
