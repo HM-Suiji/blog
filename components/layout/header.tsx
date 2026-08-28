@@ -28,7 +28,7 @@ export const Header: React.FC = () => {
       <Navbar.Header>
         <Navbar.MenuToggle className="md:hidden" />
         <Navbar.Brand>
-          <Link href={'/'}>
+          <Link href={'/'} transitionTypes={['nav-tab']}>
             <BrandLogo />
           </Link>
           <span className="sr-only">HeroUI</span>
@@ -40,7 +40,9 @@ export const Header: React.FC = () => {
               className="px-2"
               isCurrent={pathname.startsWith(item.href)}
             >
-              <Link href={item.href}>{item.label}</Link>
+              <Link href={item.href} transitionTypes={['nav-tab']}>
+                {item.label}
+              </Link>
             </Navbar.Item>
           ))}
         </Navbar.Content>
