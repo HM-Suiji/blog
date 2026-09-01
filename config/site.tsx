@@ -36,6 +36,10 @@ export const siteConfig = {
       href: '/friends',
     },
     {
+      label: '时间线',
+      href: '/timeline',
+    },
+    {
       label: '关于',
       href: '/about',
       children: [
