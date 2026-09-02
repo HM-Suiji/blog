@@ -127,6 +127,7 @@ const CommentItem: React.FC<{
           <span className="text-muted">{comment.createdAt}</span>
         </div>
         <div className="flex gap-2 items-center">
+          <span className="text-muted">{comment.region}</span>
           <span className="text-muted flex items-center gap-1">
             {os.name === 'Windows' && <FaWindows />}
             {(os.name === 'Mac OS' || os.name === 'iOS') && <FaApple />}

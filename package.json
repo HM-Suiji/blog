@@ -18,7 +18,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@better-auth/drizzle-adapter": "^1.6.25",
+    "@better-auth/drizzle-adapter": "1.7.2",
     "@heroui-pro/react": "^1.0.0-beta.8",
     "@heroui/react": "^3.2.2",
     "@heroui/styles": "^3.2.2",
@@ -47,7 +47,7 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "algoliasearch": "^5.56.0",
-    "better-auth": "^1.7.1",
+    "better-auth": "1.7.2",
     "canvas-confetti": "^1.9.4",
     "dayjs": "^1.11.21",
     "dotenv": "^17.4.2",

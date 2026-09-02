@@ -12,6 +12,8 @@ import {
 } from '../db/query/comment.query'
 import { commentNotificationEmail } from '../email/notifications/comment'
 
+import { getRegionByIp } from './ip.action'
+
 export const publishComment = async (
   comment: {
     content: string
@@ -48,9 +50,11 @@ export const publishComment = async (
 
   const ip = session.session.ipAddress || undefined
 
+  console.log('publish comment', comment, session.user.id, ip)
+
   let region = ''
   if (ip) {
-    // TODO: 根据 IP 获取地区
+    region = await getRegionByIp(ip)
   }
 
   await createComment({
