@@ -12,13 +12,7 @@ import { Link as HerouiLink } from '@heroui/react'
 import { Mermaid } from '@/components/mermaid'
 
 export const components: MDXComponents = {
-  h1: props => (
-    <ViewTransition name={props.children} share="text-morph" default="none">
-      <WrapHeadingWithId>
-        <h1>{props.children}</h1>
-      </WrapHeadingWithId>
-    </ViewTransition>
-  ),
+  h1: props => <PostTitle {...props} />,
   h2: props => (
     <WrapHeadingWithId>
       <h2>{props.children}</h2>
@@ -75,6 +69,25 @@ export const components: MDXComponents = {
 
 export function useMDXComponents(): MDXComponents {
   return components
+}
+
+export function PostTitle({
+  transitionName,
+  ...props
+}: React.ComponentProps<'h1'> & { transitionName?: string }) {
+  const heading = (
+    <WrapHeadingWithId>
+      <h1 {...props} />
+    </WrapHeadingWithId>
+  )
+
+  return transitionName ? (
+    <ViewTransition name={transitionName} share="text-morph" default="none">
+      {heading}
+    </ViewTransition>
+  ) : (
+    heading
+  )
 }
 
 const WrapHeadingWithId: React.FC<{ children: React.ReactNode }> = ({

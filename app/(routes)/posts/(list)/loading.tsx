@@ -1,10 +1,10 @@
-import { ViewTransition } from 'react'
-
 import { Skeleton } from '@heroui/react'
+
+import { RouteLoadingTransition } from '@/components/layout/directional-transition'
 
 export default function Loading() {
   return (
-    <ViewTransition exit="slide-down" default="none">
+    <RouteLoadingTransition>
       <div className="min-h-screen w-full flex flex-col pt-8 gap-4">
         <Skeleton className="h-8 w-48 rounded-lg" />
         <div className="grid grid-cols-1 md:grid-cols-2 border md:border-l mt-4 gap-2 p-2">
@@ -13,6 +13,6 @@ export default function Loading() {
           ))}
         </div>
       </div>
-    </ViewTransition>
+    </RouteLoadingTransition>
   )
 }
