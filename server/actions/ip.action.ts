@@ -6,21 +6,23 @@ export const getRegionByIp = async (ip: string) => {
     headers: { 'Content-Type': 'application/json', 'X-Locale': 'zh-CN' },
   }).then(res => res.json())) as {
     data?: {
-      country?: string
-      region?: string
-      city?: string
+      location?: {
+        country?: string
+        region?: string
+        city?: string
+      }
     }
   }
 
-  if (!data) {
+  if (!data?.location) {
     return ''
   }
 
-  const { country, region, city } = data
+  const { country, region, city } = data.location
 
   if (country === '中国') {
     return `${region || ''}${city || ''}`
   } else {
-    return country || '未知'
+    return country || ''
   }
 }
