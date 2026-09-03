@@ -32,66 +32,42 @@ export default function TimelinePage() {
           </p>
         </div>
 
-        <div className="mx-auto mt-14 flex max-w-4xl flex-col gap-16">
+        <div className="mx-auto mt-14 flex max-w-5xl flex-col gap-16">
           {timelineYears.map(year => (
-            <div
+            <section
               key={year.year}
               aria-labelledby={`timeline-year-${year.year}`}
-              className="grid min-w-0 items-start gap-6 md:grid-cols-[5rem_minmax(0,1fr)] md:gap-8"
+              className="relative min-w-0"
             >
-              <div className="flex items-baseline justify-between md:block">
-                <h2
-                  id={`timeline-year-${year.year}`}
-                  className="text-3xl font-semibold tracking-tight tabular-nums"
-                >
-                  {year.year}
-                </h2>
-                <p className="text-muted mt-1 text-xs tabular-nums">
-                  {year.months.length} 个月 · {getEventCount(year.months)} 件事
-                </p>
-              </div>
+              <header className="mb-6 flex items-baseline justify-between lg:absolute lg:inset-y-0 lg:left-0 lg:mb-0 lg:block lg:w-24 lg:text-right">
+                <div className="lg:sticky lg:top-24">
+                  <h2
+                    id={`timeline-year-${year.year}`}
+                    className="text-3xl font-semibold tracking-tight tabular-nums"
+                  >
+                    {year.year}
+                  </h2>
+                  <p className="text-muted mt-1 text-xs tabular-nums">
+                    {year.months.length} 个月 · {getEventCount(year.months)}{' '}
+                    件事
+                  </p>
+                </div>
+              </header>
 
-              <div className="sm:hidden">
-                <Timeline
-                  aria-label={`${year.year} 年生活时间线`}
-                  className="min-w-0"
-                  density="comfortable"
-                  size="sm"
-                >
-                  {year.months.map(month => (
-                    <Timeline.Item
-                      key={month.month}
-                      status={month.isCurrent ? 'current' : 'default'}
-                    >
-                      <Timeline.Content>
-                        <MonthCard
-                          month={month.month}
-                          events={month.events}
-                          year={year.year}
-                        />
-                      </Timeline.Content>
-                    </Timeline.Item>
-                  ))}
-                </Timeline>
-              </div>
-
-              <div className="hidden sm:block">
-                <Timeline
-                  aria-label={`${year.year} 年生活时间线`}
-                  size="sm"
-                  axis="center"
-                  itemAlign="center"
-                  placement="alternate"
-                >
-                  {year.months.map((month, index) => {
-                    const isStartSide = index % 2 === 1
-                    return (
+              <div className="mx-auto w-full max-w-3xl">
+                <div className="sm:hidden">
+                  <Timeline
+                    aria-label={`${year.year} 年生活时间线`}
+                    className="min-w-0"
+                    density="comfortable"
+                    size="sm"
+                  >
+                    {year.months.map(month => (
                       <Timeline.Item
                         key={month.month}
-                        side={isStartSide ? 'start' : 'end'}
                         status={month.isCurrent ? 'current' : 'default'}
                       >
-                        <Timeline.Content side={isStartSide ? 'start' : 'end'}>
+                        <Timeline.Content>
                           <MonthCard
                             month={month.month}
                             events={month.events}
@@ -99,11 +75,41 @@ export default function TimelinePage() {
                           />
                         </Timeline.Content>
                       </Timeline.Item>
-                    )
-                  })}
-                </Timeline>
+                    ))}
+                  </Timeline>
+                </div>
+
+                <div className="hidden sm:block">
+                  <Timeline
+                    aria-label={`${year.year} 年生活时间线`}
+                    size="sm"
+                    axis="center"
+                    itemAlign="center"
+                    placement="alternate"
+                  >
+                    {year.months.map((month, index) => {
+                      const side = index % 2 === 1 ? 'start' : 'end'
+                      return (
+                        <Timeline.Item
+                          key={month.month}
+                          side={side}
+                          status={month.isCurrent ? 'current' : 'default'}
+                        >
+                          <Timeline.Content side={side}>
+                            <MonthCard
+                              month={month.month}
+                              events={month.events}
+                              side={side}
+                              year={year.year}
+                            />
+                          </Timeline.Content>
+                        </Timeline.Item>
+                      )
+                    })}
+                  </Timeline>
+                </div>
               </div>
-            </div>
+            </section>
           ))}
         </div>
       </div>
@@ -114,20 +120,36 @@ export default function TimelinePage() {
 function MonthCard({
   month,
   events,
+  side,
   year,
 }: TimelineMonth & {
+  side?: 'start' | 'end'
   year: number
 }) {
   return (
-    <div className="grid min-w-0 gap-4 sm:grid-cols-[4rem_minmax(0,1fr)] sm:gap-6">
-      <div>
+    <div
+      className={`grid min-w-0 gap-4 sm:gap-4 ${
+        side === 'start'
+          ? 'sm:grid-cols-[minmax(0,1fr)_4rem]'
+          : 'sm:grid-cols-[4rem_minmax(0,1fr)]'
+      }`}
+    >
+      <div
+        className={
+          side === 'start' ? 'text-center sm:col-start-2' : 'text-center'
+        }
+      >
         <h3 className="text-base font-semibold tabular-nums">{month} 月</h3>
         <p className="text-muted mt-1 text-xs tabular-nums">
           {events.length} 件事
         </p>
       </div>
 
-      <ul className="grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-2">
+      <ul
+        className={`grid min-w-0 grid-cols-1 gap-3 lg:grid-cols-2 ${
+          side === 'start' ? 'sm:col-start-1 sm:row-start-1' : ''
+        }`}
+      >
         {events.map(event => {
           const eventTitleId = `timeline-${year}-${month}-${event.id}`
           const dateTime = `${year}-${padDatePart(month)}-${padDatePart(event.day)}`
@@ -140,7 +162,11 @@ function MonthCard({
                 role="article"
                 variant="secondary"
               >
-                <Card.Header className="flex-row items-center justify-between gap-3 p-0">
+                <Card.Header
+                  className={`flex-row items-center justify-between gap-3 p-0 ${
+                    side === 'start' ? 'sm:flex-row-reverse' : ''
+                  }`}
+                >
                   <time
                     className="text-accent text-xs font-semibold tabular-nums"
                     dateTime={dateTime}

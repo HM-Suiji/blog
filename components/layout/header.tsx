@@ -1,5 +1,7 @@
 'use client'
 
+import type { Route } from 'next'
+
 import React from 'react'
 
 import Link from 'next/link'
@@ -43,7 +45,7 @@ export const Header: React.FC = () => {
               render={props => (
                 <Link
                   {...props}
-                  href={item.href}
+                  href={item.href as Route}
                   transitionTypes={['nav-tab']}
                 />
               )}
@@ -67,7 +69,11 @@ export const Header: React.FC = () => {
             href={item.href}
             isCurrent={pathname.startsWith(item.href)}
             render={props => (
-              <Link {...props} href={item.href} transitionTypes={['nav-tab']} />
+              <Link
+                {...props}
+                href={item.href as Route}
+                transitionTypes={['nav-tab']}
+              />
             )}
           >
             {item.label}
