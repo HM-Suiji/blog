@@ -40,6 +40,10 @@ export const siteConfig = {
       href: '/timeline',
     },
     {
+      label: '足迹',
+      href: '/journey',
+    },
+    {
       label: '关于',
       href: '/about',
       children: [

@@ -9,7 +9,11 @@ import { Post } from '@/types/post'
 
 export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
   return (
-    <Link href={`/posts/${post.slug}`} transitionTypes={['nav-forward']}>
+    <Link
+      href={`/posts/${post.slug}`}
+      prefetch={true}
+      transitionTypes={['nav-forward']}
+    >
       <Card className="h-auto md:h-36 w-full items-stretch flex-col md:flex-row">
         <div className="md:relative my-auto w-full md:w-24 md:h-16 shrink-0 overflow-hidden rounded-2xl md:block">
           <Image
@@ -25,8 +29,12 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
             <span className="text-xs text-muted">{post.publishedAt}</span>
           </div>
           <Card.Header className="my-auto">
-            <ViewTransition name={post.title} share="text-morph" default="none">
-              {post.title}
+            <ViewTransition
+              name={`post-title-${post.id}`}
+              share="text-morph"
+              default="none"
+            >
+              <span>{post.title}</span>
             </ViewTransition>
           </Card.Header>
           <Card.Description className="line-clamp-2 md:line-clamp-3 my-auto">

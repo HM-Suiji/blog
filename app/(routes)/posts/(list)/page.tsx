@@ -1,5 +1,3 @@
-import { ViewTransition } from 'react'
-
 import { Metadata } from 'next'
 import { cacheLife, cacheTag } from 'next/cache'
 
@@ -29,20 +27,18 @@ export default async function PostsPage() {
   cacheLife('weeks')
   const posts = await findPosts()
   return (
-    <DirectionalTransition>
-      <ViewTransition enter="slide-up" default="none">
-        <div className="min-h-screen w-full flex flex-col pt-8">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl md:text-3xl font-semibold">博客列表</h1>
-            <RSSButton />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 border md:border-l mt-4 gap-2 p-2">
-            {posts.map(post => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
+    <DirectionalTransition reveal>
+      <div className="min-h-screen w-full flex flex-col pt-8">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl md:text-3xl font-semibold">博客列表</h1>
+          <RSSButton />
         </div>
-      </ViewTransition>
+        <div className="grid grid-cols-1 md:grid-cols-2 border md:border-l mt-4 gap-2 p-2">
+          {posts.map(post => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
+      </div>
     </DirectionalTransition>
   )
 }
