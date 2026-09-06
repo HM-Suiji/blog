@@ -60,10 +60,18 @@ export default function ProjectSection() {
             </div>
           </Card>
         ))}
-        <div className="w-full max-w-xs md:w-80 h-64 border hidden md:block"></div>
-        <div className="w-full max-w-xs md:w-80 h-64 border hidden md:block"></div>
-        <div className="w-full max-w-xs md:w-80 h-64 border hidden md:block"></div>
-        <div className="w-full max-w-xs md:w-80 h-64 border hidden md:block"></div>
+        {Array(
+          6 - siteConfig.projects.length >= 0
+            ? 6 - siteConfig.projects.length
+            : 0
+        )
+          .fill(null)
+          .map((_, index) => (
+            <div
+              key={index}
+              className="w-full max-w-xs md:w-80 h-64 border hidden md:block"
+            />
+          ))}
       </div>
     </div>
   )

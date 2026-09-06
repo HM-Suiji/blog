@@ -96,6 +96,23 @@ export const siteConfig = {
       external: false,
       tags: ['Taro', 'MiniApp', 'WeChat'],
     },
+    {
+      title: '17b331星图观测站',
+      stats: '⭐️❤☁️',
+      image: '/images/projects/17b331.avif',
+      avatar: '/images/projects/17b331-team.avif',
+      alt: '17b331星图观测站',
+      avatarAlt: '17b331',
+      by: (
+        <Link href="https://github.com/17b331-DevPlan" target="_blank">
+          17b331 Team
+          <Link.Icon />
+        </Link>
+      ),
+      external: true,
+      tags: ['React', 'Next.js', 'Agents'],
+      link: 'https://www.17b331.com/',
+    },
   ],
   profile: {
     name: '穗积',
