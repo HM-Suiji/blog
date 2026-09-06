@@ -110,7 +110,7 @@ export const siteConfig = {
         </Link>
       ),
       external: true,
-      tags: ['React', 'Next.js', 'Agents'],
+      tags: ['Vue', 'Nest', 'React', 'Monorepo'],
       link: 'https://www.17b331.com/',
     },
   ],
