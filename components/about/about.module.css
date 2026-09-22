@@ -1,0 +1,402 @@
+.skillsCard,
+.careerCard {
+  border-radius: 16px;
+  min-height: 460px;
+  --about-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.skillsCard:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.skillsContent {
+  display: grid;
+  align-items: center;
+  margin-block: 24px;
+  min-height: 256px;
+}
+.marquee,
+.skillList {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+.marquee {
+  overflow: hidden;
+  padding-block: 12px;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  transition:
+    opacity 300ms ease,
+    transform 500ms var(--about-ease),
+    filter 400ms ease;
+}
+.track {
+  display: flex;
+  width: max-content;
+  animation: drift 36s linear infinite;
+}
+.iconGroup {
+  display: grid;
+  grid-template-rows: repeat(2, 104px);
+  grid-auto-flow: column;
+  gap: 18px;
+  padding-right: 18px;
+}
+.iconTile {
+  display: flex;
+  width: 104px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 28px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 6%);
+}
+.iconTile:nth-child(even) {
+  transform: translateX(-36px);
+}
+.iconTile svg {
+  width: 52px;
+  height: 52px;
+}
+
+.skillList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 12px;
+  padding: 8px 32px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease;
+}
+.skillItem {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  transform: translateY(14px);
+  transition: transform 350ms var(--about-ease);
+}
+.skillIcon {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.skillItem > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.skillsCard:focus-within .marquee {
+  opacity: 0;
+  transform: scale(0.96) translateY(8px);
+  filter: blur(5px);
+}
+.skillsCard:focus-within .track {
+  animation-play-state: paused;
+}
+.skillsCard:focus-within .skillList {
+  opacity: 1;
+  pointer-events: auto;
+}
+.skillsCard:focus-within .skillItem {
+  transform: translateY(0);
+  transition-delay: calc(var(--skill-order) * 18ms);
+}
+
+/* The whole card is the hover target; both layers share a cell, so no layout shift. */
+@media (hover: hover) and (pointer: fine) {
+  .skillsCard:hover .marquee {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+    filter: blur(5px);
+  }
+  .skillsCard:hover .track {
+    animation-play-state: paused;
+  }
+  .skillsCard:hover .skillList {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .skillsCard:hover .skillItem {
+    transform: translateY(0);
+    transition-delay: calc(var(--skill-order) * 18ms);
+  }
+}
+
+.careerExperience {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.careerDetails {
+  display: grid;
+  padding: 22px 32px 0;
+}
+.detailPanel {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(7px);
+  pointer-events: none;
+  transition:
+    opacity 200ms ease,
+    transform 350ms var(--about-ease);
+}
+.detailPanel[data-visible='true'] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.careerCard [data-category='建站'] {
+  --node-color: #2879ee;
+}
+.careerCard [data-category='研究'] {
+  --node-color: #009bb5;
+}
+.careerCard [data-category='生活'],
+.careerCard [data-category='创作'] {
+  --node-color: #8460eb;
+}
+.careerLegend {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.careerDot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--node-color);
+}
+.detailDate {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--node-color);
+}
+
+.journeyGraphic {
+  position: relative;
+  margin-block: auto 14px;
+  padding: 18px 24px 0;
+}
+.journeyAxis {
+  position: absolute;
+  inset: 109px 0 auto;
+  height: 4px;
+  background: var(--separator);
+}
+.journeyNodes {
+  display: grid;
+  grid-template-columns: repeat(var(--event-count), minmax(0, 1fr));
+  gap: 6px;
+}
+.journeyColumn {
+  position: relative;
+  min-width: 0;
+  padding-bottom: 6px;
+}
+.journeyColumn::after {
+  content: '';
+  position: absolute;
+  top: 96px;
+  left: 16px;
+  height: 28px;
+  width: 2px;
+  background: var(--separator);
+  pointer-events: none;
+}
+.journeyNode {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: 10px;
+  width: 100%;
+  height: 128px;
+  min-width: 0;
+  padding: 42px 4px 0;
+  border-radius: 8px;
+  background: transparent !important;
+  color: var(--node-color);
+  white-space: normal;
+  cursor: var(--cursor-interactive, pointer);
+  transition:
+    opacity 300ms ease,
+    filter 300ms ease;
+}
+.nodeLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 22px;
+  transition: transform 400ms var(--about-ease);
+}
+.nodeLabel svg {
+  width: 18px;
+  height: 18px;
+}
+.nodeCapsule {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 26px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--node-color);
+  box-shadow: 0 3px 6px color-mix(in srgb, var(--node-color) 18%, transparent);
+  transform-origin: left center;
+  transition:
+    transform 450ms var(--about-ease),
+    box-shadow 300ms ease;
+}
+.nodeShine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 15%,
+    rgb(255 255 255 / 50%) 50%,
+    transparent 85%
+  );
+  transform: translateX(-100%);
+}
+.nodeStem {
+  display: none;
+}
+.journeyColumn:nth-child(3n + 2) .journeyNode {
+  padding-top: 0;
+}
+.journeyColumn:nth-child(3n + 2) .nodeCapsule {
+  width: 32px;
+}
+.journeyColumn:nth-child(3n + 2) .nodeStem {
+  display: block;
+  position: absolute;
+  left: 19px;
+  top: 66px;
+  height: 24px;
+  border-left: 2px dashed color-mix(in srgb, var(--node-color) 35%, transparent);
+}
+.axisDate {
+  display: block;
+  padding-left: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.journeyGraphic[data-exploring='true'] .journeyNode:not([data-active='true']) {
+  filter: grayscale(1);
+  opacity: 0.32;
+}
+.journeyNode[data-active='true'] .nodeLabel {
+  transform: translateY(-5px);
+}
+.journeyNode[data-active='true'] .nodeCapsule {
+  transform: translateY(-3px) scaleY(1.12);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--node-color) 35%, transparent);
+}
+.journeyNode[data-active='true'] .nodeShine {
+  animation: shine 700ms var(--about-ease) both;
+}
+.journeyNode:focus-visible {
+  outline: 2px solid var(--node-color);
+  outline-offset: 3px;
+}
+.timelineLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  transition: color 200ms ease;
+}
+.timelineLink svg {
+  transition: transform 250ms var(--about-ease);
+}
+.timelineLink:hover,
+.timelineLink:focus-visible {
+  color: var(--accent);
+}
+.timelineLink:hover svg {
+  transform: translate(2px, -2px);
+}
+.timelineLink:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@keyframes drift {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes shine {
+  to {
+    transform: translateX(100%);
+  }
+}
+@media (max-width: 639px) {
+  .skillList {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding-inline: 24px;
+  }
+  .careerDetails {
+    padding-inline: 24px;
+  }
+  .journeyGraphic {
+    padding-inline: 20px;
+    margin-top: 20px;
+  }
+  .skillsContent {
+    min-height: 346px;
+  }
+  .nodeLabel {
+    font-size: 14px;
+  }
+  .nodeLabel svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .marquee {
+    display: none;
+  }
+  .skillList {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .skillItem {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skillsCard *,
+  .careerCard * {
+    animation: none !important;
+    transition: none !important;
+  }
+  .journeyNode[data-active='true'] .nodeLabel,
+  .journeyNode[data-active='true'] .nodeCapsule {
+    transform: none;
+  }
+}
