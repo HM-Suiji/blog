@@ -1,3 +1,5 @@
+import type { Root } from 'mdast'
+
 import GithubSlugger from 'github-slugger'
 import matter from 'gray-matter'
 import { toString } from 'mdast-util-to-string'
@@ -27,6 +29,20 @@ export interface Heading {
   depth: 1 | 2 | 3 | 4 | 5 | 6
   text: string
   id: string
+}
+
+export function remarkHeadingIds() {
+  return (tree: Root) => {
+    const slugger = new GithubSlugger()
+
+    visit(tree, 'heading', node => {
+      const id = slugger.slug(toString(node))
+      node.data = {
+        ...node.data,
+        hProperties: { ...node.data?.hProperties, id },
+      }
+    })
+  }
 }
 
 export function extractHeadings(raw: string): Heading[] {

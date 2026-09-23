@@ -18,6 +18,7 @@ import { components, PostTitle } from '@/mdx-components'
 import { findPostBySlug, findPosts } from '@/server/actions/post.action'
 import { cacheSelector } from '@/utils/cache'
 import { getPost } from '@/utils/get-post'
+import { remarkHeadingIds } from '@/utils/mdx'
 
 export const generateMetadata = async ({
   params,
@@ -103,7 +104,7 @@ export default async function PostSlugPage({
     },
     options: {
       mdxOptions: {
-        remarkPlugins: [remarkGfm],
+        remarkPlugins: [remarkGfm, remarkHeadingIds],
       },
     },
   })
@@ -161,12 +162,9 @@ export default async function PostSlugPage({
             <CommentsContainer postId={post.id} postName={post.title} />
           </Suspense>
         </div>
-        <div className="relative hidden lg:block">
-          <div className="border p-2 sticky top-16">
-            <h2>博客目录</h2>
-            <PostSidebar headings={headings} />
-          </div>
-        </div>
+        <aside className="relative hidden min-w-0 lg:block">
+          <PostSidebar headings={headings} />
+        </aside>
       </div>
     </DirectionalTransition>
   )

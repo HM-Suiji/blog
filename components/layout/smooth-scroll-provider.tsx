@@ -26,9 +26,9 @@ export function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
 
       const lenis = new Lenis({
         anchors: {
+          // Lenis already respects the target's CSS scroll-margin.
           duration: 0.95,
           easing: time => Math.min(1, 1.001 - 2 ** (-10 * time)),
-          offset: -88,
         },
         lerp: 0.085,
         smoothWheel: true,

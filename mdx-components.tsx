@@ -15,17 +15,27 @@ export const components: MDXComponents = {
   h1: props => <PostTitle {...props} />,
   h2: props => (
     <WrapHeadingWithId>
-      <h2>{props.children}</h2>
+      <h2 {...props} />
     </WrapHeadingWithId>
   ),
   h3: props => (
     <WrapHeadingWithId>
-      <h3>{props.children}</h3>
+      <h3 {...props} />
     </WrapHeadingWithId>
   ),
   h4: props => (
     <WrapHeadingWithId>
-      <h4>{props.children}</h4>
+      <h4 {...props} />
+    </WrapHeadingWithId>
+  ),
+  h5: props => (
+    <WrapHeadingWithId>
+      <h5 {...props} />
+    </WrapHeadingWithId>
+  ),
+  h6: props => (
+    <WrapHeadingWithId>
+      <h6 {...props} />
     </WrapHeadingWithId>
   ),
   code: props => (
@@ -101,7 +111,7 @@ const WrapHeadingWithId: React.FC<{ children: React.ReactNode }> = ({
         const slugger = new GithubSlugger()
         const headingText =
           typeof props.children === 'string' ? props.children : ''
-        const slugId = slugger.slug(headingText)
+        const slugId = props.id ?? slugger.slug(headingText)
 
         return (
           <Link className="no-underline" href={`#${slugId}`}>
