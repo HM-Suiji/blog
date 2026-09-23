@@ -19,19 +19,20 @@ export function ThemeSwitcher() {
 
   return (
     <Segment
+      aria-label="外观主题"
       className="gap-0"
       defaultSelectedKey="system"
       size="sm"
       selectedKey={theme}
       onSelectionChange={item => setTheme(item as string)}
     >
-      <Segment.Item aria-label="Light" className="size-7 px-0" id="light">
+      <Segment.Item aria-label="浅色主题" className="size-9 px-0" id="light">
         <Sun className="size-3.5" />
       </Segment.Item>
-      <Segment.Item aria-label="Dark" className="size-7 px-0" id="dark">
+      <Segment.Item aria-label="深色主题" className="size-9 px-0" id="dark">
         <Moon className="size-3.5" />
       </Segment.Item>
-      <Segment.Item aria-label="System" className="size-7 px-0" id="system">
+      <Segment.Item aria-label="跟随系统" className="size-9 px-0" id="system">
         <SunMoon />
       </Segment.Item>
     </Segment>

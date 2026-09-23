@@ -10,7 +10,11 @@ import { useHits, useSearchBox } from 'react-instantsearch-core'
 import { Command } from '@heroui-pro/react'
 import { Button, Card, Chip, Kbd } from '@heroui/react'
 
-export function SearchCommand() {
+export function SearchCommand({
+  triggerClassName,
+}: {
+  triggerClassName?: string
+}) {
   const [isOpen, setOpen] = useState(false)
   const { query, refine } = useSearchBox()
   const { items } = useHits()
@@ -28,7 +32,13 @@ export function SearchCommand() {
     document.addEventListener(
       'keydown',
       event => {
-        if (event.key === 'k' && event.ctrlKey) {
+        if (
+          event.key.toLowerCase() === 'k' &&
+          (event.ctrlKey || event.metaKey) &&
+          !event.altKey &&
+          !event.repeat &&
+          !event.defaultPrevented
+        ) {
           event.preventDefault()
           setOpen(true)
         }
@@ -47,12 +57,16 @@ export function SearchCommand() {
   return (
     <>
       <Button
-        className="w-48 flex justify-between text-muted"
+        className={triggerClassName ?? 'w-48 flex justify-between text-muted'}
+        aria-label="搜索文章"
+        aria-keyshortcuts="Control+K Meta+K"
         variant="secondary"
         onPress={() => setOpen(true)}
       >
-        <SearchIcon />
-        搜索内容
+        <SearchIcon aria-hidden="true" className="size-4 shrink-0" />
+        <span data-search-label className="whitespace-nowrap">
+          搜索内容
+        </span>
         <Kbd>
           <Kbd.Abbr keyValue="ctrl" />
           <Kbd.Content>K</Kbd.Content>
@@ -62,6 +76,7 @@ export function SearchCommand() {
         <Command.Backdrop isOpen={isOpen} onOpenChange={setOpen}>
           <Command.Container>
             <Command.Dialog
+              aria-label="搜索文章"
               className="max-h-128"
               filter={() => true}
               inputValue={inputValue}
@@ -74,7 +89,10 @@ export function SearchCommand() {
                 <Command.InputGroup.Prefix>
                   <SearchIcon />
                 </Command.InputGroup.Prefix>
-                <Command.InputGroup.Input placeholder="搜索文章..." />
+                <Command.InputGroup.Input
+                  aria-label="搜索文章"
+                  placeholder="搜索文章..."
+                />
                 <Command.InputGroup.ClearButton />
                 <Command.InputGroup.Suffix>
                   <Kbd className="text-xs">
