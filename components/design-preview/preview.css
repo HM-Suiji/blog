@@ -316,13 +316,26 @@
   object-fit: cover;
   border-radius: 24px;
   mix-blend-mode: lighten;
-  transition: transform 400ms ease;
 }
-.obs-orbit[data-destination='1'] .obs-orbit-sculpture {
-  transform: scale(1.04) rotate(-4deg);
+.obs-orbit-parallax,
+.obs-orbit-perspective,
+.obs-orbit-model {
+  position: absolute;
+  inset: 0;
 }
-.obs-orbit[data-destination='2'] .obs-orbit-sculpture {
-  transform: scale(1.04) rotate(4deg);
+.obs-orbit-perspective {
+  transform-style: preserve-3d;
+}
+.obs-interest-button > svg,
+.obs-interest-button > span:not(.obs-interest-indicator) {
+  position: relative;
+  z-index: 1;
+}
+.obs-interest-indicator {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--obs-accent) 18%, var(--obs-surface));
 }
 .light .obs-orbit-art {
   background: #101013;
@@ -337,6 +350,7 @@
   border-radius: 15px;
 }
 .obs .obs-interest-button {
+  position: relative;
   min-width: 0;
   flex: 1;
   gap: 7px;
@@ -348,7 +362,6 @@
 }
 .obs .obs-interest-button[aria-pressed='true'] {
   color: var(--obs-accent-text);
-  background: color-mix(in srgb, var(--obs-accent) 18%, var(--obs-surface));
 }
 .obs .obs-interest-button:hover {
   color: var(--obs-fg);

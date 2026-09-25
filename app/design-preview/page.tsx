@@ -34,7 +34,7 @@ export default function ObservatoryHome() {
     <>
       <section className="obs-hero" aria-labelledby="intro-title">
         <div className="obs-hero-copy">
-          <div className="obs-intro-identity">
+          <div className="obs-intro-identity" data-intro>
             <Image
               src="/images/avatar.avif"
               alt="穗积的头像"
@@ -47,17 +47,19 @@ export default function ObservatoryHome() {
               <span className="obs-identity-handle">/ HM-Suiji</span>
             </span>
           </div>
-          <h1 id="intro-title">
+          <h1 id="intro-title" data-intro>
             认真构建，
             <br />
             <span>自由探索。</span>
           </h1>
-          <p className="obs-intro">有产品与设计意识的全栈开发者。</p>
-          <p className="obs-hero-description">
+          <p className="obs-intro" data-intro>
+            有产品与设计意识的全栈开发者。
+          </p>
+          <p className="obs-hero-description" data-intro>
             用代码实现想法，用文字记录思考。
             <br />在 Web、AI 和生活之间，保持一点好奇心。
           </p>
-          <div className="obs-hero-actions">
+          <div className="obs-hero-actions" data-intro>
             <Link className="obs-primary-link" href="#flight-logs">
               开始阅读 <ArrowRight size={18} aria-hidden="true" />
             </Link>
@@ -70,7 +72,7 @@ export default function ObservatoryHome() {
               在 GitHub 找到我 <ArrowUpRight size={17} aria-hidden="true" />
             </a>
           </div>
-          <div className="obs-hero-signature">
+          <div className="obs-hero-signature" data-intro>
             <span className="obs-signal" aria-hidden="true" /> 正在探索 AI
             与更好的产品体验
           </div>
@@ -82,7 +84,7 @@ export default function ObservatoryHome() {
         className="obs-selected"
         aria-labelledby="selected-title"
       >
-        <div className="obs-section-heading">
+        <div className="obs-section-heading" data-reveal>
           <div>
             <p className="obs-section-kicker">最近的思考与创造</p>
             <h2 id="selected-title">
@@ -93,7 +95,7 @@ export default function ObservatoryHome() {
             全部文章 <ArrowUpRight size={17} aria-hidden="true" />
           </Link>
         </div>
-        <div className="obs-feature-grid">
+        <div className="obs-feature-grid" data-reveal>
           <Link className="obs-featured-article" href="/design-preview/article">
             <div className="obs-featured-visual" aria-hidden="true">
               <span className="obs-featured-label">Next.js / Engineering</span>
@@ -186,7 +188,11 @@ export default function ObservatoryHome() {
           </article>
         </div>
       </section>
-      <section className="obs-latest" aria-labelledby="latest-title">
+      <section
+        className="obs-latest"
+        data-reveal
+        aria-labelledby="latest-title"
+      >
         <div className="obs-latest-heading">
           <BookOpen size={18} aria-hidden="true" />
           <h2 id="latest-title">继续翻阅</h2>
@@ -212,7 +218,11 @@ export default function ObservatoryHome() {
           ))}
         </div>
       </section>
-      <section className="obs-beyond" aria-labelledby="beyond-title">
+      <section
+        className="obs-beyond"
+        data-reveal
+        aria-labelledby="beyond-title"
+      >
         <div>
           <p className="obs-section-kicker">生活也值得被记录</p>
           <h2 id="beyond-title">

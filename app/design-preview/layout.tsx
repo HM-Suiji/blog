@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 
 import { ObservatoryHeader } from '@/components/design-preview/header'
+import { PageReveal } from '@/components/motion/page-reveal'
 import '@/components/design-preview/preview.css'
 
 export const metadata: Metadata = {
@@ -37,7 +38,7 @@ export default function DesignPreviewLayout({
       </div>
       <ObservatoryHeader />
       <main className="obs-container" id="observatory-main" tabIndex={-1}>
-        {children}
+        <PageReveal>{children}</PageReveal>
       </main>
       <footer className="obs-footer obs-container">
         <div>
