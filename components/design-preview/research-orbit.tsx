@@ -109,7 +109,7 @@ export function ResearchOrbit({
               }
             >
               <Image
-                src="/images/design-preview/orbit-sculpture.png"
+                src="/images/identity/orbit-sculpture.png"
                 alt=""
                 fill
                 sizes="(max-width: 767px) 90vw, 500px"

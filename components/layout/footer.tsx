@@ -1,11 +1,32 @@
+import Link from 'next/link'
+
 import { siteConfig } from '@/config/site'
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="mt-12 h-20 md:h-28 w-full bottom-0 flex items-center justify-center border">
-      <div className="flex gap-2 text-muted text-sm md:text-base">
-        © {siteConfig.copyright}
+    <footer className="obs-footer obs-container">
+      <div>
+        <Link href="/" className="obs-footer-name">
+          {siteConfig.name}
+        </Link>
+        <p>保持好奇，继续探索。</p>
       </div>
+      <nav aria-label="社交与订阅" className="obs-footer-links">
+        {siteConfig.socials.map(social => (
+          <a
+            key={social.name}
+            href={social.href}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {social.name} <span aria-hidden="true">↗</span>
+          </a>
+        ))}
+        <a href="/rss.xml">
+          RSS <span aria-hidden="true">↗</span>
+        </a>
+      </nav>
+      <span className="obs-copyright">© {siteConfig.copyright}</span>
     </footer>
   )
 }

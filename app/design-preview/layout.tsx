@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 import { ObservatoryHeader } from '@/components/design-preview/header'
 import { PageReveal } from '@/components/motion/page-reveal'
-import '@/components/design-preview/preview.css'
+import '@/assets/styles/site.css'
 
 export const metadata: Metadata = {
   title: {

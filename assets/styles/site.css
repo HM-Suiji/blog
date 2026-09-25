@@ -1,3 +1,54 @@
+/* Also theme portaled search, menus and toasts on public/preview pages. */
+html:has(.obs) {
+  --background: #101013;
+  --foreground: #f3f1f8;
+  --surface: #19181e;
+  --surface-secondary: #232129;
+  --surface-tertiary: #2c2933;
+  --surface-secondary-foreground: #f3f1f8;
+  --surface-tertiary-foreground: #f3f1f8;
+  --overlay: #19181e;
+  --muted: #b0abbc;
+  --border: #ffffff14;
+  --separator: #ffffff14;
+  --field-background: #19181e;
+  --field-border: #ffffff24;
+  --radius: 0.875rem;
+  --accent-foreground: #fff;
+}
+html.light:has(.obs) {
+  --background: #faf9fc;
+  --foreground: #26232e;
+  --surface: #fff;
+  --surface-secondary: #f0edf6;
+  --surface-tertiary: #e9e4f2;
+  --surface-secondary-foreground: #26232e;
+  --surface-tertiary-foreground: #26232e;
+  --overlay: #fff;
+  --muted: #666071;
+  --border: #25174217;
+  --separator: #25174217;
+  --field-background: #fff;
+  --field-border: #25174229;
+}
+.site-shell {
+  display: flex;
+  flex-direction: column;
+}
+.site-main {
+  flex: 1;
+  min-width: 0;
+}
+.site-main:focus {
+  outline: none;
+}
+.site-shell .obs-footer {
+  margin-top: 56px;
+}
+.obs-footer-links {
+  flex-wrap: wrap;
+}
+
 .obs {
   --obs-bg: #101013;
   --obs-surface: #19181e;

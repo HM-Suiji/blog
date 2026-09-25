@@ -1,16 +1,20 @@
 import { FloatButton } from '@/components/float-button'
 import { Footer } from '@/components/layout/footer'
 import { Header } from '@/components/layout/header'
+import '@/assets/styles/site.css'
 
 export default function RoutesLayout({ children }: LayoutProps<'/'>) {
   return (
-    <>
+    <div className="obs site-shell">
+      <a className="obs-skip" href="#main-content">
+        跳至内容
+      </a>
       <Header />
-      <section className="min-h-full mx-auto w-full px-4 md:px-6 max-w-5xl 2xl:max-w-6xl">
+      <main id="main-content" tabIndex={-1} className="obs-container site-main">
         {children}
-      </section>
+      </main>
       <FloatButton />
       <Footer />
-    </>
+    </div>
   )
 }
