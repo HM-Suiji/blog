@@ -1,14 +1,28 @@
 'use client'
 
+import type { Route } from 'next'
+
 import { useEffect, useState } from 'react'
 
-import { SearchIcon } from 'lucide-react'
+import { LoaderCircle, RefreshCw, SearchIcon, WifiOff } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useHits, useSearchBox } from 'react-instantsearch-core'
+import {
+  useHits,
+  useInstantSearch,
+  useSearchBox,
+} from 'react-instantsearch-core'
 
 import { Command } from '@heroui-pro/react'
 import { Button, Card, Chip, Kbd } from '@heroui/react'
+
+type SearchHit = {
+  objectID: string
+  title: string
+  description: string
+  url: Route
+  tags?: string[]
+}
 
 export function SearchCommand({
   triggerClassName,
@@ -17,10 +31,15 @@ export function SearchCommand({
 }) {
   const [isOpen, setOpen] = useState(false)
   const { query, refine } = useSearchBox()
-  const { items } = useHits()
+  const { items } = useHits<SearchHit>()
+  const { status, error, refresh } = useInstantSearch({ catchError: true })
   const router = useRouter()
   const pathname = usePathname()
   const [inputValue, setInputValue] = useState(query)
+  const hasQuery = inputValue.trim().length > 0
+  const isSearching = status === 'loading' || status === 'stalled'
+  const hasError = status === 'error' && error !== undefined
+  const showResults = hasQuery && !isSearching && !hasError
 
   const handleChange = (value: string) => {
     setInputValue(value)
@@ -100,19 +119,70 @@ export function SearchCommand({
                   </Kbd>
                 </Command.InputGroup.Suffix>
               </Command.InputGroup>
-              <Command.List
-                renderEmptyState={() => (
-                  <div className="text-muted flex h-12 items-center justify-center text-sm">
-                    {query && '没有找到相关内容'}
-                    {!query && '请输入内容开始搜索'}
+              {hasError ? (
+                <div className="mx-4 my-3 rounded-2xl border border-border bg-surface-secondary p-5">
+                  <div role="alert" className="flex items-start gap-3">
+                    <WifiOff
+                      aria-hidden="true"
+                      className="mt-0.5 size-5 shrink-0 text-muted"
+                    />
+                    <div>
+                      <p className="font-medium">暂时无法连接搜索服务</p>
+                      <p className="mt-1 text-sm leading-6 text-muted">
+                        搜索未完成，请稍后重试。你输入的内容会保留。
+                      </p>
+                    </div>
                   </div>
-                )}
-                onAction={key =>
-                  router.push(key as any, { transitionTypes: ['nav-forward'] })
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onPress={refresh}
+                    className="mt-4"
+                  >
+                    <RefreshCw aria-hidden="true" className="size-4" />
+                    重新搜索
+                  </Button>
+                </div>
+              ) : null}
+              <Command.List
+                aria-label="文章搜索结果"
+                aria-busy={hasQuery && isSearching}
+                renderEmptyState={() =>
+                  hasError ? null : (
+                    <div
+                      role="status"
+                      aria-live="polite"
+                      className="text-muted flex min-h-24 items-center justify-center gap-2 px-5 text-center text-sm"
+                    >
+                      {!hasQuery ? (
+                        '输入标题、标签或关键词，寻找一篇文章'
+                      ) : isSearching ? (
+                        <>
+                          {status === 'stalled' ? (
+                            <LoaderCircle
+                              aria-hidden="true"
+                              className="size-4 animate-spin motion-reduce:animate-none"
+                            />
+                          ) : null}
+                          {status === 'stalled'
+                            ? '搜索仍在进行，请稍候…'
+                            : '正在搜索…'}
+                        </>
+                      ) : (
+                        '没有找到相关内容，试试其他关键词'
+                      )}
+                    </div>
+                  )
                 }
+                onAction={key => {
+                  const hit = items.find(item => item.url === key)
+                  if (!hit) return
+                  setOpen(false)
+                  router.push(hit.url, { transitionTypes: ['nav-forward'] })
+                }}
                 className="gap-2 flex flex-col"
               >
-                {query &&
+                {showResults &&
                   items.map(item => (
                     <Command.Item
                       className="p-0 mx-2 rounded-xl"
@@ -133,7 +203,7 @@ export function SearchCommand({
                             {item.description}
                           </Card.Description>
                           <Card.Content className="w-full flex flex-row gap-2 flex-wrap">
-                            {item.tags?.map((tag: string) => (
+                            {item.tags?.map(tag => (
                               <Chip key={tag}>{tag}</Chip>
                             ))}
                           </Card.Content>

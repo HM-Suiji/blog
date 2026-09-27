@@ -71,6 +71,9 @@ export function Header({ preview = false }: { preview?: boolean }) {
   const layoutId = useId()
   const brandRef = useRef<HTMLAnchorElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const desktopLinksRef = useRef<HTMLDivElement>(null)
+  const desktopThemeRef = useRef<HTMLDivElement>(null)
+  const menuTriggerRef = useRef<HTMLButtonElement>(null)
   const [isMenuOpen, setMenuOpen] = useState(false)
   const [hoveredHref, setHoveredHref] = useState<string | null>(null)
   const currentPage = mobileNav.find(item =>
@@ -92,19 +95,39 @@ export function Header({ preview = false }: { preview?: boolean }) {
   useEffect(() => {
     const desktopQuery = window.matchMedia('(min-width: 920px)')
     let focusFrame = 0
-    const closeOnDesktop = () => {
-      if (!desktopQuery.matches) return
-      const focusWasInMenu = menuRef.current?.contains(document.activeElement)
+    const handleBreakpointChange = () => {
+      cancelAnimationFrame(focusFrame)
+      const activeElement = document.activeElement
+      if (!desktopQuery.matches) {
+        const focusWasOnDesktopControl =
+          desktopLinksRef.current?.contains(activeElement) ||
+          desktopThemeRef.current?.contains(activeElement)
+
+        if (focusWasOnDesktopControl) {
+          focusFrame = requestAnimationFrame(() => {
+            if (!desktopQuery.matches) {
+              menuTriggerRef.current?.focus({ preventScroll: true })
+            }
+          })
+        }
+        return
+      }
+
+      const focusWasInMenu = menuRef.current?.contains(activeElement)
       setMenuOpen(false)
       // The mobile trigger is hidden at this breakpoint, so restore to the brand.
       if (focusWasInMenu) {
-        focusFrame = requestAnimationFrame(() => brandRef.current?.focus())
+        focusFrame = requestAnimationFrame(() => {
+          if (desktopQuery.matches) {
+            brandRef.current?.focus({ preventScroll: true })
+          }
+        })
       }
     }
 
-    desktopQuery.addEventListener('change', closeOnDesktop)
+    desktopQuery.addEventListener('change', handleBreakpointChange)
     return () => {
-      desktopQuery.removeEventListener('change', closeOnDesktop)
+      desktopQuery.removeEventListener('change', handleBreakpointChange)
       cancelAnimationFrame(focusFrame)
     }
   }, [])
@@ -144,6 +167,7 @@ export function Header({ preview = false }: { preview?: boolean }) {
 
           <LayoutGroup id={layoutId}>
             <div
+              ref={desktopLinksRef}
               className={styles.links}
               onPointerLeave={() => setHoveredHref(null)}
               onBlur={event => {
@@ -188,11 +212,12 @@ export function Header({ preview = false }: { preview?: boolean }) {
             <SearchProvider>
               <SearchCommand triggerClassName={styles.searchTrigger} />
             </SearchProvider>
-            <div className={styles.desktopTheme}>
+            <div ref={desktopThemeRef} className={styles.desktopTheme}>
               <ThemeSwitcher />
             </div>
             <Popover isOpen={isMenuOpen} onOpenChange={setMenuOpen}>
               <Button
+                ref={menuTriggerRef}
                 isIconOnly
                 variant="ghost"
                 className={styles.menuToggle}

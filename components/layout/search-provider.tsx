@@ -9,6 +9,7 @@ export function SearchProvider({ children }: { children: React.ReactNode }) {
     <InstantSearch
       searchClient={searchClient}
       indexName={process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME!}
+      stalledSearchDelay={300}
     >
       {children}
     </InstantSearch>
