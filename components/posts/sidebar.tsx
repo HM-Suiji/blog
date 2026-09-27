@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import Link from 'next/link'
 
-import { cn } from '@heroui/react'
+import styles from './reading.module.css'
 
 export const PostSidebar: React.FC<{ headings: Heading[] }> = ({
   headings,
@@ -116,42 +116,32 @@ export const PostSidebar: React.FC<{ headings: Heading[] }> = ({
   if (!headings.length) return null
 
   return (
-    <nav
-      aria-label="博客目录"
-      className="sticky top-20 flex max-h-[calc(100dvh-8rem)] min-h-0 flex-col overflow-hidden border p-2"
-    >
-      <h2 className="shrink-0 px-2 py-1 text-sm font-semibold text-foreground">
-        博客目录
-      </h2>
+    <nav aria-label="博客目录" className={styles.stickyContents}>
+      <h2>本文目录</h2>
       <ul
         ref={listRef}
         data-lenis-prevent
-        className="mt-2 min-h-0 space-y-0.5 overflow-y-auto overscroll-contain px-1 pb-1 text-sm text-muted [scrollbar-gutter:stable] [scrollbar-width:thin]"
+        className={`${styles.contentsList} ${styles.desktopContents}`}
       >
         {headings.map(heading => (
           <li key={heading.id}>
             <Link
-              href={`#${heading.id}`}
+              href={`#${encodeURIComponent(heading.id)}`}
               aria-current={
                 activeHeading === heading.id ? 'location' : undefined
               }
-              className={cn(
-                'block rounded-lg border-l-2 border-transparent py-2 pr-2 pl-2 leading-relaxed wrap-anywhere transition-colors hover:bg-surface-hover hover:text-foreground focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent motion-reduce:transition-none',
-                {
-                  'pl-4': heading.depth === 3,
-                  'pl-6': heading.depth === 4,
-                  'pl-8': heading.depth === 5,
-                  'pl-10': heading.depth === 6,
-                  'border-accent bg-surface-hover text-foreground':
-                    activeHeading === heading.id,
-                }
-              )}
+              style={{
+                paddingInlineStart: 12 + Math.max(0, heading.depth - 2) * 12,
+              }}
             >
               {heading.text}
             </Link>
           </li>
         ))}
       </ul>
+      <a className={styles.topLink} href="#">
+        返回顶部 <span aria-hidden="true">↑</span>
+      </a>
     </nav>
   )
 }

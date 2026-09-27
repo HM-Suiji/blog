@@ -1,11 +1,12 @@
 import { ViewTransition } from 'react'
 
+import { ArrowUpRight, Pin } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Card } from '@heroui/react'
-
 import { Post } from '@/types/post'
+
+import styles from './archive.module.css'
 
 export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
   return (
@@ -13,35 +14,47 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
       href={`/posts/${post.slug}`}
       prefetch={true}
       transitionTypes={['nav-forward']}
+      className={styles.postCard}
     >
-      <Card className="h-auto md:h-36 w-full items-stretch flex-col md:flex-row">
-        <div className="md:relative my-auto w-full md:w-24 md:h-16 shrink-0 overflow-hidden rounded-2xl md:block">
+      {post.cover && (
+        <div className={styles.cover}>
           <Image
             src={post.cover}
-            alt={post.title}
+            alt=""
             width={960}
             height={640}
-            sizes="(max-width: 768px) 100vw, 96px"
+            sizes="(max-width: 700px) calc(100vw - 40px), (max-width: 1200px) 48vw, 550px"
           />
         </div>
-        <div className="flex flex-1 flex-col min-w-0 p-2 md:p-0">
-          <div>
-            <span className="text-xs text-muted">{post.publishedAt}</span>
-          </div>
-          <Card.Header className="my-auto">
-            <ViewTransition
-              name={`post-title-${post.id}`}
-              share="text-morph"
-              default="none"
-            >
-              <span>{post.title}</span>
-            </ViewTransition>
-          </Card.Header>
-          <Card.Description className="line-clamp-2 md:line-clamp-3 my-auto">
-            {post.description}
-          </Card.Description>
+      )}
+      <div className={styles.cardContent}>
+        <div className={styles.cardMetadata}>
+          <time dateTime={post.publishedAt}>
+            {post.publishedAt.replaceAll('-', '.')}
+          </time>
+          {post.pin && (
+            <span>
+              <Pin size={12} aria-hidden="true" /> 置顶
+            </span>
+          )}
         </div>
-      </Card>
+        <ViewTransition
+          name={`post-title-${post.id}`}
+          share="text-morph"
+          default="none"
+        >
+          <h2>{post.title}</h2>
+        </ViewTransition>
+        <p className={styles.description}>{post.description}</p>
+        <div className={styles.cardFooter}>
+          <span className={styles.tags}>
+            {post.tags.slice(0, 2).join(' · ')}
+          </span>
+          <span className={styles.cardArrow} aria-hidden="true">
+            <ArrowUpRight size={20} />
+          </span>
+        </div>
+      </div>
     </Link>
   )
 }

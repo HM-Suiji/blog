@@ -3,6 +3,7 @@ import { cacheLife, cacheTag } from 'next/cache'
 
 import { RSSButton } from '@/components/feature-button'
 import { DirectionalTransition } from '@/components/layout/directional-transition'
+import styles from '@/components/posts/archive.module.css'
 import { PostCard } from '@/components/posts/post-card'
 import { findPosts } from '@/server/actions/post.action'
 import { cacheSelector } from '@/utils/cache'
@@ -26,18 +27,36 @@ export default async function PostsPage() {
   cacheTag(cacheSelector.posts)
   cacheLife('weeks')
   const posts = await findPosts()
+
   return (
     <DirectionalTransition reveal>
-      <div className="min-h-screen w-full flex flex-col pt-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl md:text-3xl font-semibold">博客列表</h1>
-          <RSSButton />
+      <div className={styles.page}>
+        <header className={styles.header}>
+          <div>
+            <span className={styles.eyebrow}>持续记录，保持好奇</span>
+            <h1>
+              文章与思考<span>。</span>
+            </h1>
+            <p>关于 Web 工程、AI 与开发实践，也记录探索过程中的想法。</p>
+          </div>
+          <div className={styles.rss}>
+            <RSSButton />
+          </div>
+        </header>
+        <div className={styles.sectionLabel}>
+          <h2>
+            所有文章 <span>{posts.length}</span>
+          </h2>
+          <span>按发布时间排序</span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 border md:border-l mt-4 gap-2 p-2">
+        <div className={styles.grid}>
           {posts.map(post => (
             <PostCard key={post.id} post={post} />
           ))}
         </div>
+        {posts.length === 0 && (
+          <p className={styles.empty}>下一篇思考，正在路上。</p>
+        )}
       </div>
     </DirectionalTransition>
   )
