@@ -31,6 +31,7 @@ export const siteConfig = {
   },
   nav: [
     { label: '博客', href: '/posts' },
+    { label: '项目', href: '/projects' },
     {
       label: '友链',
       href: '/friends',

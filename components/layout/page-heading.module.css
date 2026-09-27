@@ -1,0 +1,176 @@
+.page {
+  min-width: 0;
+  padding-block: 64px 112px;
+}
+
+.heading {
+  max-width: 720px;
+  margin-bottom: 48px;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--obs-accent-text, var(--accent));
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.eyebrow > span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 4px color-mix(in oklab, currentColor 10%, transparent);
+}
+
+.title {
+  margin: 18px 0;
+  color: var(--obs-fg, var(--foreground));
+  font-size: clamp(36px, 4.8vw, 56px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.description {
+  max-width: 580px;
+  color: var(--obs-muted, var(--muted));
+  font-size: 16px;
+  line-height: 1.9;
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  color: var(--obs-muted, var(--muted));
+  font-size: 14px;
+}
+
+.panel {
+  min-width: 0;
+  padding: 32px;
+  border: 1px solid var(--obs-line, var(--border));
+  border-radius: 24px;
+  background: var(--obs-surface, var(--surface));
+  box-shadow: none;
+}
+
+.profile {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 32px;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.detailsGrid > * {
+  border: 1px solid var(--obs-line, var(--border));
+  border-radius: 24px;
+  background: var(--obs-surface, var(--surface));
+  box-shadow: none;
+}
+
+.subscription {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.friendConstellation {
+  padding-block: 28px;
+  border-block: 1px solid var(--obs-line, var(--border));
+}
+
+.friendConstellation > div {
+  width: 100%;
+  margin-top: 0;
+}
+
+.friendConstellation > div > div:first-child > div {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.friendForms {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 24px;
+  margin-top: 64px;
+}
+
+.sectionHeading {
+  margin-bottom: 24px;
+}
+
+.sectionHeading h2 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.sectionHeading p {
+  margin-top: 8px;
+  color: var(--obs-muted, var(--muted));
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  margin-top: 64px;
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding-block: 40px 80px;
+  }
+
+  .heading {
+    margin-bottom: 32px;
+  }
+
+  .description {
+    font-size: 15px;
+  }
+
+  .panel {
+    padding: 24px;
+    border-radius: 20px;
+  }
+
+  .profile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  .detailsGrid,
+  .friendForms {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .friendForms {
+    margin-top: 40px;
+  }
+
+  .timeline {
+    gap: 48px;
+    margin-top: 48px;
+  }
+}
