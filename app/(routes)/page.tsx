@@ -1,18 +1,15 @@
-import { HeroSection } from '@/components/home/hero-section'
-import { PostsSection } from '@/components/home/posts-section'
-import ProjectSection from '@/components/home/project-section'
-import { SocialSection } from '@/components/home/social-section'
+import { HomeContent } from '@/components/home/home-content'
 import { DirectionalTransition } from '@/components/layout/directional-transition'
+import { PageReveal } from '@/components/motion/page-reveal'
+import { findPosts } from '@/server/actions/post.action'
 
-export default function Home() {
+export default async function Home() {
+  const posts = await findPosts()
   return (
     <DirectionalTransition>
-      <div className="w-full h-full">
-        <HeroSection />
-        <ProjectSection />
-        <PostsSection />
-        <SocialSection />
-      </div>
+      <PageReveal>
+        <HomeContent posts={posts} />
+      </PageReveal>
     </DirectionalTransition>
   )
 }

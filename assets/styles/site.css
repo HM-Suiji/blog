@@ -111,6 +111,11 @@ html.light:has(.obs) {
 .obs svg {
   flex-shrink: 0;
 }
+.obs .button--primary {
+  --button-bg: var(--obs-accent-solid);
+  --button-bg-hover: color-mix(in oklch, var(--obs-accent) 92%, #000);
+  --button-bg-pressed: var(--button-bg-hover);
+}
 .obs-container {
   width: min(1120px, calc(100% - 64px));
   margin-inline: auto;
@@ -771,6 +776,10 @@ html.light:has(.obs) {
   line-height: 1.6;
 }
 .obs .obs-log p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
   margin-top: 7px;
   color: var(--obs-muted);
   font-size: 13px;
@@ -1137,5 +1146,62 @@ html.light:has(.obs) {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+.obs-newsletter {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 56px;
+  margin-top: 64px;
+  padding: 36px 40px;
+  background: var(--obs-surface);
+  border: 1px solid var(--obs-line);
+  border-radius: 24px;
+}
+.obs-newsletter h2 {
+  font-size: 29px;
+  line-height: 1.4;
+  font-weight: 550;
+  letter-spacing: -0.04em;
+}
+.obs-newsletter p:last-child {
+  margin-top: 14px;
+  color: var(--obs-muted);
+  font-size: 13px;
+  line-height: 1.9;
+}
+.obs-newsletter a {
+  color: var(--obs-accent-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.obs .obs-subscribe-card {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: none;
+  background: transparent;
+  box-shadow: none;
+  border: 0;
+  gap: 0;
+}
+.obs .obs-subscribe-form {
+  gap: 16px;
+}
+.obs-empty-note {
+  padding: 28px 0;
+  color: var(--obs-muted);
+}
+@media (max-width: 767px) {
+  .obs-newsletter {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 42px;
+    padding: 26px 22px;
+    border-radius: 20px;
+  }
+  .obs-newsletter h2 {
+    font-size: 25px;
   }
 }
