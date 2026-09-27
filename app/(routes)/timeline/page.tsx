@@ -4,6 +4,9 @@ import { Timeline } from '@heroui-pro/react'
 import { Card, Chip } from '@heroui/react'
 
 import { DirectionalTransition } from '@/components/layout/directional-transition'
+import { PageHeading } from '@/components/layout/page-heading'
+import styles from '@/components/layout/page-heading.module.css'
+import { PageReveal } from '@/components/motion/page-reveal'
 import { timelineYears, type TimelineMonth } from '@/config/timeline'
 
 export const metadata: Metadata = {
@@ -22,97 +25,96 @@ function padDatePart(value: number) {
 export default function TimelinePage() {
   return (
     <DirectionalTransition>
-      <div className="min-h-screen w-full pt-12 pb-20">
-        <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
-          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">
-            生活时间线
-          </h1>
-          <p className="text-muted max-w-xl text-sm leading-6 md:text-base">
-            记录那些值得留住的生活片段、项目节点与成长经历。按年归档，每个月的故事都在同一行里。
-          </p>
-        </div>
+      <PageReveal className={styles.page}>
+        <div>
+          <PageHeading
+            eyebrow="生活时间线"
+            title="一点一滴，慢慢向前。"
+            description="记录那些值得留住的生活片段、项目节点与成长经历。每一次尝试，都是旅程的一部分。"
+          />
 
-        <div className="mx-auto mt-14 flex max-w-5xl flex-col gap-16">
-          {timelineYears.map(year => (
-            <section
-              key={year.year}
-              aria-labelledby={`timeline-year-${year.year}`}
-              className="relative min-w-0"
-            >
-              <header className="mb-6 flex items-baseline justify-between lg:absolute lg:inset-y-0 lg:left-0 lg:mb-0 lg:block lg:w-24 lg:text-right">
-                <div className="lg:sticky lg:top-24">
-                  <h2
-                    id={`timeline-year-${year.year}`}
-                    className="text-3xl font-semibold tracking-tight tabular-nums"
-                  >
-                    {year.year}
-                  </h2>
-                  <p className="text-muted mt-1 text-xs tabular-nums">
-                    {year.months.length} 个月 · {getEventCount(year.months)}{' '}
-                    件事
-                  </p>
-                </div>
-              </header>
+          <div className={styles.timeline}>
+            {timelineYears.map(year => (
+              <section
+                key={year.year}
+                aria-labelledby={`timeline-year-${year.year}`}
+                className="relative min-w-0"
+              >
+                <header className="mb-6 flex items-baseline justify-between lg:absolute lg:inset-y-0 lg:left-0 lg:mb-0 lg:block lg:w-24 lg:text-right">
+                  <div className="lg:sticky lg:top-24">
+                    <h2
+                      id={`timeline-year-${year.year}`}
+                      className="text-3xl font-semibold tracking-tight tabular-nums"
+                    >
+                      {year.year}
+                    </h2>
+                    <p className="text-muted mt-1 text-xs tabular-nums">
+                      {year.months.length} 个月 · {getEventCount(year.months)}{' '}
+                      件事
+                    </p>
+                  </div>
+                </header>
 
-              <div className="mx-auto w-full max-w-3xl">
-                <div className="sm:hidden">
-                  <Timeline
-                    aria-label={`${year.year} 年生活时间线`}
-                    className="min-w-0"
-                    density="comfortable"
-                    size="sm"
-                  >
-                    {year.months.map(month => (
-                      <Timeline.Item
-                        key={month.month}
-                        status={month.isCurrent ? 'current' : 'default'}
-                      >
-                        <Timeline.Content>
-                          <MonthCard
-                            month={month.month}
-                            events={month.events}
-                            year={year.year}
-                          />
-                        </Timeline.Content>
-                      </Timeline.Item>
-                    ))}
-                  </Timeline>
-                </div>
-
-                <div className="hidden sm:block">
-                  <Timeline
-                    aria-label={`${year.year} 年生活时间线`}
-                    size="sm"
-                    axis="center"
-                    itemAlign="center"
-                    placement="alternate"
-                  >
-                    {year.months.map((month, index) => {
-                      const side = index % 2 === 1 ? 'start' : 'end'
-                      return (
+                <div className="mx-auto w-full lg:pl-36">
+                  <div className="sm:hidden">
+                    <Timeline
+                      aria-label={`${year.year} 年生活时间线`}
+                      className="min-w-0"
+                      density="comfortable"
+                      size="sm"
+                    >
+                      {year.months.map(month => (
                         <Timeline.Item
                           key={month.month}
-                          side={side}
                           status={month.isCurrent ? 'current' : 'default'}
                         >
-                          <Timeline.Content side={side}>
+                          <Timeline.Content>
                             <MonthCard
                               month={month.month}
                               events={month.events}
-                              side={side}
                               year={year.year}
                             />
                           </Timeline.Content>
                         </Timeline.Item>
-                      )
-                    })}
-                  </Timeline>
+                      ))}
+                    </Timeline>
+                  </div>
+
+                  <div className="hidden sm:block">
+                    <Timeline
+                      aria-label={`${year.year} 年生活时间线`}
+                      size="sm"
+                      axis="center"
+                      itemAlign="center"
+                      placement="alternate"
+                    >
+                      {year.months.map((month, index) => {
+                        const side = index % 2 === 1 ? 'start' : 'end'
+                        return (
+                          <Timeline.Item
+                            key={month.month}
+                            side={side}
+                            status={month.isCurrent ? 'current' : 'default'}
+                          >
+                            <Timeline.Content side={side}>
+                              <MonthCard
+                                month={month.month}
+                                events={month.events}
+                                side={side}
+                                year={year.year}
+                              />
+                            </Timeline.Content>
+                          </Timeline.Item>
+                        )
+                      })}
+                    </Timeline>
+                  </div>
                 </div>
-              </div>
-            </section>
-          ))}
+              </section>
+            ))}
+          </div>
         </div>
-      </div>
+      </PageReveal>
     </DirectionalTransition>
   )
 }
@@ -151,14 +153,14 @@ function MonthCard({
         }`}
       >
         {events.map(event => {
-          const eventTitleId = `timeline-${year}-${month}-${event.id}`
+          const eventTitleId = `timeline-${year}-${month}-${event.id}-${side ?? 'mobile'}`
           const dateTime = `${year}-${padDatePart(month)}-${padDatePart(event.day)}`
 
           return (
             <li key={event.id} className="min-w-0">
               <Card
                 aria-labelledby={eventTitleId}
-                className="h-full gap-3 p-4 shadow-none"
+                className="h-full gap-3 rounded-2xl border border-[var(--obs-line)] bg-[var(--obs-surface)] p-4 shadow-none"
                 role="article"
                 variant="secondary"
               >

@@ -7,6 +7,9 @@ import { ExploreFriend } from '@/components/feature-button'
 import { FriendCanvas } from '@/components/friend-canvas'
 import { FriendForm } from '@/components/friend-form'
 import { DirectionalTransition } from '@/components/layout/directional-transition'
+import { PageHeading } from '@/components/layout/page-heading'
+import styles from '@/components/layout/page-heading.module.css'
+import { PageReveal } from '@/components/motion/page-reveal'
 import { siteConfig } from '@/config/site'
 import { findFriends } from '@/server/actions/friend.action'
 import { cacheSelector } from '@/utils/cache'
@@ -37,38 +40,48 @@ export default async function FriendsPage() {
 
   return (
     <DirectionalTransition>
-      <div className="min-h-screen w-full flex flex-col pt-12 items-center px-4">
-        <div className="flex flex-col items-center gap-2">
-          <h1 className="text-2xl font-semibold">友情链接</h1>
-          <h3 className="text-muted text-center">海内存知己，天涯若比邻</h3>
-          <div className="flex gap-2 items-center">
-            <div className="flex gap-2">
-              已收录<span className="text-accent">{friends.length}</span>位朋友
+      <PageReveal className={styles.page}>
+        <PageHeading
+          eyebrow="相邻的星球"
+          title="在这里，遇见彼此。"
+          description="海内存知己，天涯若比邻。沿着这些链接，去朋友们的博客坐坐，发现更多有趣的人和故事。"
+        >
+          <span>
+            已收录 <span className="text-accent">{friends.length}</span> 位朋友
+          </span>
+          <ExploreFriend friends={friends} />
+        </PageHeading>
+        <div className={styles.friendConstellation}>
+          <FriendCanvas friends={friends} />
+        </div>
+        <div className={styles.friendForms}>
+          <section className={styles.panel} aria-labelledby="friend-link-title">
+            <header className={styles.sectionHeading}>
+              <h2 id="friend-link-title">我的友链</h2>
+              <p>很高兴与你相遇。这是我的博客信息，欢迎交换链接。</p>
+            </header>
+            <div className="w-full min-w-0 overflow-x-auto">
+              <CodeBlock>
+                <CodeBlock.Header>
+                  <span className="text-muted text-xs">JSON</span>
+                  <CodeBlock.CopyButton code={code} />
+                </CodeBlock.Header>
+                <CodeBlock.Code code={code} language="json" />
+              </CodeBlock>
             </div>
-            <ExploreFriend friends={friends} />
-          </div>
+          </section>
+          <section
+            className={styles.panel}
+            aria-labelledby="friend-apply-title"
+          >
+            <header className={styles.sectionHeading}>
+              <h2 id="friend-apply-title">成为我的朋友</h2>
+              <p>留下你的博客，让我们的宇宙有一次交集。</p>
+            </header>
+            <FriendForm />
+          </section>
         </div>
-        <FriendCanvas friends={friends} />
-        <div className="mt-20 md:mt-40 justify-center flex flex-col gap-2 w-full">
-          <h2 className="mx-auto text-2xl">我的友链</h2>
-          <h3 className="mx-auto text-muted text-center">
-            很高兴能与你们相遇！
-          </h3>
-          <div className="w-full overflow-x-auto">
-            <CodeBlock>
-              <CodeBlock.Header>
-                <span className="text-muted text-xs uppercase">json</span>
-                <CodeBlock.CopyButton code={code} />
-              </CodeBlock.Header>
-              <CodeBlock.Code code={code} language="typescript" />
-            </CodeBlock>
-          </div>
-        </div>
-        <div className="mt-16 p-4 md:px-8 w-full border rounded-sm">
-          <h2 className="flex justify-center text-2xl my-6">成为我的朋友</h2>
-          <FriendForm />
-        </div>
-      </div>
+      </PageReveal>
     </DirectionalTransition>
   )
 }

@@ -5,6 +5,9 @@ import { Avatar, Card, Chip } from '@heroui/react'
 import { CareerCard } from '@/components/about/career-card'
 import { SkillsCard } from '@/components/about/skills-card'
 import { DirectionalTransition } from '@/components/layout/directional-transition'
+import { PageHeading } from '@/components/layout/page-heading'
+import styles from '@/components/layout/page-heading.module.css'
+import { PageReveal } from '@/components/motion/page-reveal'
 import { ProfileJsonLd } from '@/components/seo/profile-json-ld'
 import { SubscribeMe } from '@/components/subscribe'
 import { siteConfig } from '@/config/site'
@@ -20,60 +23,67 @@ export default function AboutPage() {
 
   return (
     <DirectionalTransition>
-      <div className="min-h-screen flex flex-col items-center">
-        <ProfileJsonLd />
-        <div className="w-full max-w-6xl flex flex-col pt-12 items-center px-4 sm:px-6">
-          <div className="flex flex-col items-center gap-2">
-            <h1 className="text-2xl font-semibold">关于我</h1>
-            <h2 className="text-muted text-center">{siteConfig.slogan}</h2>
-          </div>
-          <Card className="mt-8 w-full rounded-2xl p-6 sm:p-8 flex flex-col items-center gap-6 md:flex-row md:gap-8">
-            <Avatar
-              className="size-24 shrink-0 rounded-2xl"
-              aria-label={siteConfig.author}
-            >
-              <Avatar.Image alt={siteConfig.author} src={siteConfig.avatar} />
-              <Avatar.Fallback className="text-2xl">
-                {siteConfig.author}
-              </Avatar.Fallback>
-            </Avatar>
-            <Card.Header className="flex min-w-0 flex-col items-center gap-2 p-0 md:items-start md:flex-1">
-              <Card.Title className="text-xl">{name}</Card.Title>
-              <Card.Description className="text-center leading-relaxed md:text-left">
-                {siteConfig.description}
-              </Card.Description>
-            </Card.Header>
-            <div className="w-full flex flex-col gap-3 md:w-auto md:max-w-64">
-              <div className="flex items-center gap-2">
-                <span className="text-muted w-16 shrink-0">星座</span>
-                <span>{constellation}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-muted w-16 shrink-0">MBTI</span>
-                <Chip size="sm" color="accent" variant="secondary">
-                  {MBTI}
-                </Chip>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-muted w-16 shrink-0">爱好</span>
-                <div className="flex gap-1 flex-wrap">
-                  {hobbies.map(hobby => (
-                    <Chip size="sm" key={hobby}>
-                      {hobby}
-                    </Chip>
-                  ))}
+      <PageReveal className={styles.page}>
+        <div>
+          <ProfileJsonLd />
+          <PageHeading
+            eyebrow="宇宙船的驾驶员"
+            title="你好，我是穗积。"
+            description="一个关注产品与设计的全栈开发者。写代码，也用摄影、游戏和日常里的小事，记录自己的探索。"
+          />
+          <div>
+            <Card className={`${styles.panel} ${styles.profile}`} data-intro>
+              <Avatar
+                className="size-24 shrink-0 rounded-2xl"
+                aria-label={siteConfig.author}
+              >
+                <Avatar.Image alt={siteConfig.author} src={siteConfig.avatar} />
+                <Avatar.Fallback className="text-2xl">
+                  {siteConfig.author}
+                </Avatar.Fallback>
+              </Avatar>
+              <Card.Header className="flex min-w-0 flex-col items-start gap-3 p-0 md:flex-1">
+                <Card.Title className="text-2xl tracking-tight">
+                  {name}
+                </Card.Title>
+                <Card.Description className="leading-7">
+                  {siteConfig.description}
+                </Card.Description>
+              </Card.Header>
+              <div className="w-full flex flex-col gap-3 md:w-auto md:max-w-64">
+                <div className="flex items-center gap-2">
+                  <span className="text-muted w-16 shrink-0">星座</span>
+                  <span>{constellation}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted w-16 shrink-0">MBTI</span>
+                  <Chip size="sm" color="accent" variant="secondary">
+                    {MBTI}
+                  </Chip>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted w-16 shrink-0">爱好</span>
+                  <div className="flex gap-1 flex-wrap">
+                    {hobbies.map(hobby => (
+                      <Chip size="sm" key={hobby}>
+                        {hobby}
+                      </Chip>
+                    ))}
+                  </div>
                 </div>
               </div>
+            </Card>
+            <div className={styles.detailsGrid}>
+              <SkillsCard />
+              <CareerCard />
             </div>
-          </Card>
-          <div className="mt-5 grid w-full grid-cols-1 gap-5 lg:grid-cols-2">
-            <SkillsCard />
-            <CareerCard />
+          </div>
+
+          <div className={styles.subscription}>
+            <SubscribeMe className={styles.panel} />
           </div>
         </div>
-
-        <SubscribeMe />
-      </div>
+      </PageReveal>
     </DirectionalTransition>
   )
 }
