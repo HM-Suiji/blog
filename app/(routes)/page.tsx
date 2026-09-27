@@ -4,11 +4,12 @@ import { PageReveal } from '@/components/motion/page-reveal'
 import { findPosts } from '@/server/actions/post.action'
 
 export default async function Home() {
-  const posts = await findPosts()
+  // A temporary content-service outage should not hide the profile and projects.
+  const posts = await findPosts().catch(() => null)
   return (
     <DirectionalTransition>
       <PageReveal>
-        <HomeContent posts={posts} />
+        <HomeContent posts={posts ?? []} postsUnavailable={posts === null} />
       </PageReveal>
     </DirectionalTransition>
   )

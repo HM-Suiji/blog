@@ -36,9 +36,11 @@ const previewLogs = [
 export function HomeContent({
   preview = false,
   posts = [],
+  postsUnavailable = false,
 }: {
   preview?: boolean
   posts?: Post[]
+  postsUnavailable?: boolean
 }) {
   const featured =
     posts.find(post => post.slug === 'nextjs-partial-prerendering') ?? posts[0]
@@ -52,10 +54,15 @@ export function HomeContent({
     : '/projects/cherry-studio'
   const title = preview
     ? '探秘 Next.js PPR：让静态博客拥有动态评论'
-    : (featured?.title ?? '从一篇文章开始，认识我的思考。')
+    : postsUnavailable
+      ? '文章暂时未能抵达。'
+      : (featured?.title ?? '从一篇文章开始，认识我的思考。')
   const description = preview
     ? '在静态与动态之间，找到适合内容的渲染方式。'
-    : (featured?.description ?? '关于开发、产品与生活的记录。')
+    : postsUnavailable
+      ? '暂时无法连接文章服务。可以稍后重试，也可以先看看我的项目。'
+      : (featured?.description ?? '关于开发、产品与生活的记录。')
+  const isPpr = preview || featured?.slug === 'nextjs-partial-prerendering'
   const date = preview ? '2026-07-30' : featured?.publishedAt.slice(0, 10)
   const logs = preview
     ? previewLogs
@@ -141,7 +148,9 @@ export function HomeContent({
             transitionTypes={['nav-forward']}
           >
             <div className="obs-featured-visual" aria-hidden="true">
-              <span className="obs-featured-label">Next.js / Engineering</span>
+              <span className="obs-featured-label">
+                {isPpr ? 'Next.js / Engineering' : 'Writing / Notes'}
+              </span>
               <div className="obs-render-diagram">
                 <span className="obs-render-page">
                   <i />
@@ -155,9 +164,11 @@ export function HomeContent({
                 </span>
               </div>
               <span className="obs-featured-visual-copy">
-                Static by nature.
+                {isPpr ? 'Static by nature.' : 'Keep building.'}
                 <br />
-                <strong>Dynamic by design.</strong>
+                <strong>
+                  {isPpr ? 'Dynamic by design.' : 'Keep exploring.'}
+                </strong>
               </span>
               <span className="obs-visual-orb" />
             </div>
@@ -166,7 +177,7 @@ export function HomeContent({
                 <span className="obs-tag">
                   {preview ? 'Web 工程' : (featured?.tags[0] ?? '技术文章')}
                 </span>
-                <span>精选文章</span>
+                <span>{preview || featured ? '精选文章' : '航行日志'}</span>
                 {date && (
                   <time dateTime={date}>{date.replaceAll('-', '.')}</time>
                 )}
@@ -174,7 +185,8 @@ export function HomeContent({
               <h3>{title}</h3>
               <p>{description}</p>
               <span className="obs-card-action">
-                阅读这篇文章 <ArrowUpRight size={18} aria-hidden="true" />
+                {preview || featured ? '阅读这篇文章' : '前往文章列表'}
+                <ArrowUpRight size={18} aria-hidden="true" />
               </span>
             </div>
           </Link>
@@ -246,7 +258,13 @@ export function HomeContent({
         <div className="obs-log-list">
           {!logs.length && (
             <p className="obs-empty-note">
-              新的记录正在酝酿中，先看看精选文章吧。
+              {postsUnavailable ? (
+                <>
+                  暂时无法读取最新文章。<a href="/">重新加载</a>
+                </>
+              ) : (
+                '新的记录正在酝酿中，先看看其他内容吧。'
+              )}
             </p>
           )}
           {logs.map(log => (

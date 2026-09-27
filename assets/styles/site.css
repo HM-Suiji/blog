@@ -1193,6 +1193,11 @@ html.light:has(.obs) {
   padding: 28px 0;
   color: var(--obs-muted);
 }
+.obs-empty-note a {
+  color: var(--obs-accent-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 @media (max-width: 767px) {
   .obs-newsletter {
     grid-template-columns: 1fr;
