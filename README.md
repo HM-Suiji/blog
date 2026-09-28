@@ -77,13 +77,21 @@ cd blog
 bun install
 ```
 
-4. 启动开发服务器
+4. 复制 `.env.example` 为 `.env.local`，填写 Neon 的 `DATABASE_URL` 及所需环境变量。
+
+如果本地查询报 `fetch failed` / `UND_ERR_CONNECT_TIMEOUT`，且访问 Neon
+需要代理，在 `.env.local` 中设置 `DATABASE_PROXY_URL=http://127.0.0.1:7897`
+（端口以代理软件实际配置为准），并确保代理已启动。此配置仅用于数据库 HTTP
+请求，支持 Next.js 的 Node.js 运行时和 Bun 脚本；可直连的环境留空即可。
+修改后重启开发服务器。
+
+5. 启动开发服务器
 
 ```bash
 bun run dev
 ```
 
-5. 访问 `http://localhost:3000` 查看项目
+6. 访问 `http://localhost:3000` 查看项目
 
 ## 前后端架构
 
